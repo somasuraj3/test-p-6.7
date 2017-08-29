@@ -1,0 +1,174 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.cybage.sonar.report</groupId>
+	<artifactId>sonar-analysis-pdf-report-plugin</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>sonar-plugin</packaging>
+
+	<url>https://github.com/SonarCommunity/sonar-pdf-report</url>
+	<name>SonarQube Analysis PDF Report</name>
+	<description>SonarQube plugin for PDF reporting</description>
+	<inceptionYear>2017</inceptionYear>
+	<organization>
+		<name>Cybage Software Pvt. Ltd.</name>
+		<url>http://www.cybage.com</url>
+	</organization>
+	<!-- <licenses> <license> <name>GNU LGPL 3</name> <url>http://www.gnu.org/licenses/lgpl.txt</url> 
+		</license> </licenses> -->
+
+	<developers>
+		<developer>
+			<id>surajso</id>
+			<name>Suraj Soma</name>
+			<email>surajso@cybage.com</email>
+			<organization>Cybage Software Pvt. Ltd.</organization>
+			<url>http://www.cybage.com</url>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+
+	<!-- <scm> <connection>scm:git:git@github.com:SonarCommunity/sonar-pdf-report.git</connection> 
+		<developerConnection>scm:git:git@github.com:SonarCommunity/sonar-pdf-report.git</developerConnection> 
+		<url>https://github.com/SonarCommunity/sonar-pdf-report</url> <tag>HEAD</tag> 
+		</scm> <issueManagement> <system>JIRA</system> <url>http://jira.codehaus.org/browse/SONARPLUGINS/component/14372</url> 
+		</issueManagement> -->
+
+	<properties>
+		<sonar.pluginName>PDF Report</sonar.pluginName>
+		<sonar.pluginClass>com.cybage.sonar.report.pdf.plugin.PDFReportPlugin</sonar.pluginClass>
+		<sonar.version>5.6</sonar.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.sonarsource.sonarqube</groupId>
+			<artifactId>sonar-plugin-api</artifactId>
+			<version>${sonar.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- <dependency> <groupId>com.lowagie</groupId> <artifactId>itext</artifactId> 
+			<version>2.1.4</version> </dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.12</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.sonarsource.sonarqube/sonar-ws -->
+		<dependency>
+			<groupId>org.sonarsource.sonarqube</groupId>
+			<artifactId>sonar-ws</artifactId>
+			<version>${sonar.version}</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-eclipse-plugin -->
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-eclipse-plugin</artifactId>
+			<version>2.10</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<suiteXmlFiles>
+						<suiteXmlFile>src/test/config/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<artifactSet>
+						<includes>
+							<include>org.sonarsource.sonarqube:sonar-ws</include>
+						</includes>
+					</artifactSet>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.2</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
+				<artifactId>sonar-packaging-maven-plugin</artifactId>
+				<version>1.17</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.3.0.603</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>sonar-mysql-dev</id>
+			<properties>
+				<sonar.host.url>http://localhost:9000</sonar.host.url>
+				<sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar</sonar.jdbc.url>
+				<sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
+				<sonar.jdbc.username>root</sonar.jdbc.username>
+				<sonar.jdbc.password>root</sonar.jdbc.password>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>
