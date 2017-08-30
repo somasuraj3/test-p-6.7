@@ -98,8 +98,8 @@ public class PDFGenerator {
 						sonarProjectId, config, configLang);
 			}
 
-			//ByteArrayOutputStream baos = reporter.getReport();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ByteArrayOutputStream baos = reporter.getReport();
+			//ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			FileOutputStream fos = new FileOutputStream(new File(path));
 			baos.writeTo(fos);
 			fos.flush();
@@ -108,13 +108,13 @@ public class PDFGenerator {
 					+ ".pdf on build output directory)");
 		} catch (IOException e) {
 			e.printStackTrace();
-		} /*catch (DocumentException e) {
+		} catch (DocumentException e) {
 			LOGGER.error("Problem generating PDF file.");
 			e.printStackTrace();
 		} catch (ReportException e) {
 			LOGGER.error("Internal error: " + e.getMessage());
 			e.printStackTrace();
-		}*/
+		}
 	}
 	
 	

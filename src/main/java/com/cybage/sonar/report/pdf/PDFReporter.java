@@ -21,17 +21,26 @@ package com.cybage.sonar.report.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.resources.Project;
+import org.sonar.api.utils.HttpDownloader.HttpException;
+import org.sonarqube.ws.client.HttpConnector;
+import org.sonarqube.ws.client.WsClient;
+import org.sonarqube.ws.client.WsClientFactories;
 
+import com.cybage.sonar.report.pdf.builder.ProjectBuilder;
+import com.cybage.sonar.report.pdf.entity.Project;
 import com.cybage.sonar.report.pdf.entity.exception.ReportException;
 import com.cybage.sonar.report.pdf.util.Credentials;
+import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
@@ -42,9 +51,9 @@ import com.itextpdf.text.pdf.PdfWriter;
  * used in yhe PDF document), the project key and the implementation of
  * printPdfBody method.
  */
-/*public abstract class PDFReporter {
+public abstract class PDFReporter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PDFReporter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PDFReporter.class);
 
 	private Credentials credentials;
 
@@ -57,36 +66,36 @@ import com.itextpdf.text.pdf.PdfWriter;
 	public ByteArrayOutputStream getReport() throws DocumentException, IOException, ReportException {
 		// Creation of documents
 		Document mainDocument = new Document(PageSize.A4, 50, 50, 110, 50);
-		Toc tocDocument = new Toc();
+		//Toc tocDocument = new Toc();
 		Document frontPageDocument = new Document(PageSize.A4, 50, 50, 110, 50);
-		ByteArrayOutputStream mainDocumentBaos = new ByteArrayOutputStream();
+		//ByteArrayOutputStream mainDocumentBaos = new ByteArrayOutputStream();
 		ByteArrayOutputStream frontPageDocumentBaos = new ByteArrayOutputStream();
-		PdfWriter mainDocumentWriter = PdfWriter.getInstance(mainDocument, mainDocumentBaos);
+		//PdfWriter mainDocumentWriter = PdfWriter.getInstance(mainDocument, mainDocumentBaos);
 		PdfWriter frontPageDocumentWriter = PdfWriter.getInstance(frontPageDocument, frontPageDocumentBaos);
 
 		// Events for TOC, header and pages numbers
-		Events events = new Events(tocDocument, new Header(this.getLogo(), this.getProject()));
-		mainDocumentWriter.setPageEvent(events);
+		//Events events = new Events(tocDocument, new Header(this.getLogo(), this.getProject()));
+		//mainDocumentWriter.setPageEvent(events);
 
-		mainDocument.open();
-		tocDocument.getTocDocument().open();
+		//mainDocument.open();
+		//tocDocument.getTocDocument().open();
 		frontPageDocument.open();
 
-		LOG.info("Generating PDF report...");
+		LOGGER.info("Generating PDF report...");
 		printFrontPage(frontPageDocument, frontPageDocumentWriter);
-		printTocTitle(tocDocument);
-		printPdfBody(mainDocument);
-		mainDocument.close();
-		tocDocument.getTocDocument().close();
+		//printTocTitle(tocDocument);
+		//printPdfBody(mainDocument);
+		//mainDocument.close();
+		//tocDocument.getTocDocument().close();
 		frontPageDocument.close();
 
 		// Get Readers
-		PdfReader mainDocumentReader = new PdfReader(mainDocumentBaos.toByteArray());
-		PdfReader tocDocumentReader = new PdfReader(tocDocument.getTocOutputStream().toByteArray());
-		PdfReader frontPageDocumentReader = new PdfReader(frontPageDocumentBaos.toByteArray());
+		//PdfReader mainDocumentReader = new PdfReader(mainDocumentBaos.toByteArray());
+		//PdfReader tocDocumentReader = new PdfReader(tocDocument.getTocOutputStream().toByteArray());
+		//PdfReader frontPageDocumentReader = new PdfReader(frontPageDocumentBaos.toByteArray());
 
 		// New document
-		Document documentWithToc = new Document(tocDocumentReader.getPageSizeWithRotation(1));
+		/*Document documentWithToc = new Document(tocDocumentReader.getPageSizeWithRotation(1));
 		ByteArrayOutputStream finalBaos = new ByteArrayOutputStream();
 		PdfCopy copy = new PdfCopy(documentWithToc, finalBaos);
 
@@ -99,32 +108,34 @@ import com.itextpdf.text.pdf.PdfWriter;
 			copy.addPage(copy.getImportedPage(mainDocumentReader, i));
 		}
 		documentWithToc.close();
-
+*/
 		// Return the final document (with TOC)
-		return finalBaos;
+		//return finalBaos;
+		return frontPageDocumentBaos;
 	}
 
 	public Project getProject() throws HttpException, IOException, ReportException {
 		if (project == null) {
-			Sonar sonar = Sonar.create(credentials.getUrl(), credentials.getUsername(), credentials.getPassword());
-			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(credentials, sonar, this);
+			HttpConnector httpConnector = HttpConnector.newBuilder().url(credentials.getUrl())
+					.credentials(credentials.getUsername(), credentials.getPassword()).build();
+			WsClient wsClient = WsClientFactories.getDefault().newClient(httpConnector);
+			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(credentials, wsClient, this);
 			project = projectBuilder.initializeProject(getProjectKey());
 		}
 		return project;
 	}
 
-	public Image getCCNDistribution(final Project project) {
-		String data;
-		if (project.getMeasure("class_complexity_distribution").getTextValue() != null) {
-			data = project.getMeasure("class_complexity_distribution").getTextValue();
-		} else {
-			data = "N/A";
-		}
-		ComplexityDistributionBuilder complexityDistributionBuilder = ComplexityDistributionBuilder
-				.getInstance(credentials.getUrl());
-		ComplexityDistribution ccnDist = new ComplexityDistribution(data);
-		return complexityDistributionBuilder.getGraphic(ccnDist);
-	}
+	/*
+	 * public Image getCCNDistribution(final Project project) { String data; if
+	 * (project.getMeasure("class_complexity_distribution").getTextValue() !=
+	 * null) { data =
+	 * project.getMeasure("class_complexity_distribution").getTextValue(); }
+	 * else { data = "N/A"; } ComplexityDistributionBuilder
+	 * complexityDistributionBuilder = ComplexityDistributionBuilder
+	 * .getInstance(credentials.getUrl()); ComplexityDistribution ccnDist = new
+	 * ComplexityDistribution(data); return
+	 * complexityDistributionBuilder.getGraphic(ccnDist); }
+	 */
 
 	public String getTextProperty(final String key) {
 		return getLangProperties().getProperty(key);
@@ -177,11 +188,11 @@ import com.itextpdf.text.pdf.PdfWriter;
 		try {
 			tendencyImage = Image.getInstance(this.getClass().getResource("/tendency/" + iconName));
 		} catch (BadElementException e) {
-			LOG.error("Can not generate tendency image", e);
+			LOGGER.error("Can not generate tendency image", e);
 		} catch (MalformedURLException e) {
-			LOG.error("Can not generate tendency image", e);
+			LOGGER.error("Can not generate tendency image", e);
 		} catch (IOException e) {
-			LOG.error("Can not generate tendency image", e);
+			LOGGER.error("Can not generate tendency image", e);
 		}
 		return tendencyImage;
 	}
@@ -203,37 +214,4 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 	public abstract String getReportType();
 
-}*/
-
-public abstract class PDFReporter {
-	private static final Logger LOG = LoggerFactory.getLogger(PDFReporter.class);
-
-	private Credentials credentials;
-
-	private Project project = null;
-
-	public PDFReporter(final Credentials credentials) {
-		this.credentials = credentials;
-	}
-
-	public ByteArrayOutputStream getReport() throws DocumentException, IOException, ReportException {
-		return null;
-		
-	}
-	protected abstract void printPdfBody(Document document) throws DocumentException, IOException, ReportException;
-
-	//protected abstract void printTocTitle(Toc tocDocument) throws DocumentException, IOException;
-
-	protected abstract URL getLogo();
-
-	protected abstract String getProjectKey();
-
-	protected abstract void printFrontPage(Document frontPageDocument, PdfWriter frontPageWriter)
-			throws ReportException;
-
-	protected abstract Properties getReportProperties();
-
-	protected abstract Properties getLangProperties();
-
-	public abstract String getReportType();
 }

@@ -63,6 +63,14 @@ public class PDFPostJob implements PostJob {
 
 	@Override
 	public void execute(PostJobContext postJobContext) {
+		
+		try {
+			//wait(10);
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String projectKey = postJobContext.settings().getString("sonar.projectKey");
 		
 		LOGGER.info("Executing decorator: PDF Report");
