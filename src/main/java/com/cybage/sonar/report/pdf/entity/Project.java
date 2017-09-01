@@ -38,7 +38,7 @@ public class Project {
 	    if (measures.containsMeasure(measureKey)) {
 	      return measures.getMeasure(measureKey);
 	    } else {
-	      return new Measure(null, "N/A");
+	      return new Measure();
 	    }
 	  }
 

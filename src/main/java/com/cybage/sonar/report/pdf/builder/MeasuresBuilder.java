@@ -20,154 +20,126 @@
 package com.cybage.sonar.report.pdf.builder;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.utils.HttpDownloader.HttpException;
-import org.sonar.report.pdf.entity.Measure;
-import org.sonar.report.pdf.entity.Measures;
-import org.sonar.wsclient.Sonar;
-import org.sonar.wsclient.services.Metric;
-import org.sonar.wsclient.services.MetricQuery;
-import org.sonar.wsclient.services.Resource;
-import org.sonar.wsclient.services.ResourceQuery;
+import org.sonarqube.ws.WsMeasures.ComponentWsResponse;
+import org.sonarqube.ws.client.WsClient;
+import org.sonarqube.ws.client.measure.ComponentWsRequest;
+
+import com.cybage.sonar.report.pdf.entity.Measure;
+import com.cybage.sonar.report.pdf.entity.Measures;
+import com.cybage.sonar.report.pdf.util.MetricKeys;
 
 public class MeasuresBuilder {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MeasuresBuilder.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MeasuresBuilder.class);
 
-  private static MeasuresBuilder builder;
+	private static MeasuresBuilder builder;
 
-  private Sonar sonar;
+	private WsClient wsClient;
 
-  private static List<String> measuresKeys = null;
+	private static List<String> measuresKeys = null;
 
-  private static Integer DEFAULT_SPLIT_LIMIT = 20;
+	private static Integer DEFAULT_SPLIT_LIMIT = 20;
 
-  public MeasuresBuilder(final Sonar sonar) {
-    this.sonar = sonar;
-  }
+	public MeasuresBuilder(final WsClient wsClient) {
+		this.wsClient = wsClient;
+	}
 
-  public static MeasuresBuilder getInstance(final Sonar sonar) {
-    if (builder == null) {
-      return new MeasuresBuilder(sonar);
-    }
+	public static MeasuresBuilder getInstance(final WsClient wsClient) {
+		if (builder == null) {
+			return new MeasuresBuilder(wsClient);
+		}
 
-    return builder;
-  }
+		return builder;
+	}
 
-  public List<String> getAllMetricKeys() throws HttpException, IOException {
+	public Measures initMeasuresByProjectKey(final String projectKey) throws HttpException, IOException {
 
-    MetricQuery query = MetricQuery.all();
-    List<Metric> allMetricKeysNodes = sonar.findAll(query);
-    List<String> allMetricKeys = new ArrayList<String>();
-    Iterator<Metric> it = allMetricKeysNodes.iterator();
-    while (it.hasNext()) {
-      allMetricKeys.add(it.next().getKey());
-    }
-    return allMetricKeys;
-  }
+		Measures measures = new Measures();
 
-  public Measures initMeasuresByProjectKey(final String projectKey)
-      throws HttpException, IOException {
+		if (measuresKeys == null) {
+			measuresKeys = MetricKeys.getAllMetricKeys();
+		}
 
-    Measures measures = new Measures();
+		// Avoid "Post too large"
+		if (measuresKeys.size() > DEFAULT_SPLIT_LIMIT) {
+			initMeasuresSplittingRequests(measures, projectKey);
+		} else {
+			this.addMeasures(measures, measuresKeys, projectKey);
+		}
 
-    if (measuresKeys == null) {
-      measuresKeys = getAllMetricKeys();
-    }
+		return measures;
 
-    // Avoid "Post too large"
-    if (measuresKeys.size() > DEFAULT_SPLIT_LIMIT) {
-      initMeasuresSplittingRequests(measures, projectKey);
-    } else {
-      this.addMeasures(measures, measuresKeys, projectKey);
-    }
+	}
 
-    return measures;
+	/**
+	 * This method does the required requests to get all measures from Sonar,
+	 * but taking care to avoid too large requests (measures are taken by 20).
+	 */
+	private void initMeasuresSplittingRequests(final Measures measures, final String projectKey)
+			throws HttpException, IOException {
+		Iterator<String> it = measuresKeys.iterator();
+		LOGGER.debug("Getting " + measuresKeys.size() + " metric measures from Sonar by splitting requests");
+		List<String> twentyMeasures = new ArrayList<String>(20);
+		int i = 0;
+		while (it.hasNext()) {
+			twentyMeasures.add(it.next());
+			i++;
+			if (i % DEFAULT_SPLIT_LIMIT == 0) {
+				LOGGER.debug("Split request for: " + twentyMeasures);
+				addMeasures(measures, twentyMeasures, projectKey);
+				i = 0;
+				twentyMeasures.clear();
+			}
+		}
+		if (i != 0) {
+			LOGGER.debug("Split request for remain metric measures: " + twentyMeasures);
+			addMeasures(measures, twentyMeasures, projectKey);
+		}
+	}
 
-  }
+	/**
+	 * Add measures to this.
+	 */
+	private void addMeasures(final Measures measures, final List<String> measuresAsString, final String projectKey)
+			throws HttpException, IOException {
 
-  /**
-   * This method does the required requests to get all measures from Sonar, but
-   * taking care to avoid too large requests (measures are taken by 20).
-   */
-  private void initMeasuresSplittingRequests(final Measures measures,
-      final String projectKey) throws HttpException, IOException {
-    Iterator<String> it = measuresKeys.iterator();
-    LOG.debug("Getting " + measuresKeys.size()
-        + " metric measures from Sonar by splitting requests");
-    List<String> twentyMeasures = new ArrayList<String>(20);
-    int i = 0;
-    while (it.hasNext()) {
-      twentyMeasures.add(it.next());
-      i++;
-      if (i % DEFAULT_SPLIT_LIMIT == 0) {
-        LOG.debug("Split request for: " + twentyMeasures);
-        addMeasures(measures, twentyMeasures, projectKey);
-        i = 0;
-        twentyMeasures.clear();
-      }
-    }
-    if (i != 0) {
-      LOG.debug("Split request for remain metric measures: "
-          + twentyMeasures);
-      addMeasures(measures, twentyMeasures, projectKey);
-    }
-  }
+		/*
+		 * String[] measuresAsArray = measuresAsString .toArray(new
+		 * String[measuresAsString.size()]); ResourceQuery query =
+		 * ResourceQuery.createForMetrics(projectKey, measuresAsArray);
+		 * query.setDepth(0); query.setIncludeTrends(true); Resource resource =
+		 * wsClient.find(query);
+		 */
+		ComponentWsRequest compWsReq = new ComponentWsRequest();
+		compWsReq.setComponentKey(projectKey);
+		compWsReq.setMetricKeys(measuresAsString);
 
-  /**
-   * Add measures to this.
-   */
-  private void addMeasures(final Measures measures,
-      final List<String> measuresAsString, final String projectKey)
-      throws HttpException, IOException {
+		ComponentWsResponse compWsRes = wsClient.measures().component(compWsReq);
 
-    String[] measuresAsArray = measuresAsString
-        .toArray(new String[measuresAsString.size()]);
-    ResourceQuery query = ResourceQuery.createForMetrics(projectKey,
-        measuresAsArray);
-    query.setDepth(0);
-    query.setIncludeTrends(true);
-    Resource resource = sonar.find(query);
-    if (resource != null) {
-      this.addAllMeasuresFromDocument(measures, resource);
-    } else {
-      LOG.debug("Empty response when looking for measures: " + measuresAsString.toString());
-    }
-  }
+		if (compWsRes.getComponent().getMeasuresCount() != 0) {
+			this.addAllMeasuresFromDocument(measures, compWsRes);
+		} else {
+			LOGGER.debug("Empty response when looking for measures: " + measuresAsString.toString());
+		}
+	}
 
-  private void addAllMeasuresFromDocument(final Measures measures, final Resource resource) {
+	private void addAllMeasuresFromDocument(final Measures measures, final ComponentWsResponse compWsRes) {
+		List<org.sonarqube.ws.WsMeasures.Measure> allNodes = compWsRes.getComponent().getMeasuresList();
+		Iterator<org.sonarqube.ws.WsMeasures.Measure> it = allNodes.iterator();
+		while (it.hasNext()) {
+			addMeasureFromNode(measures, it.next());
+		}
+	}
 
-    List<org.sonar.wsclient.services.Measure> allNodes = resource.getMeasures();
-    Iterator<org.sonar.wsclient.services.Measure> it = allNodes.iterator();
-    while (it.hasNext()) {
-      addMeasureFromNode(measures, it.next());
-    }
-    try {
-
-      Date dateNode = resource.getDate();
-      if (dateNode != null) {
-        measures.setDate(dateNode);
-      }
-
-      String versionNode = resource.getVersion();
-      if (versionNode != null) {
-        measures.setVersion(versionNode);
-      }
-    } catch (ParseException e) {
-      LOG.error("Can not parse date", e);
-    }
-  }
-
-  private void addMeasureFromNode(final Measures measures,
-      final org.sonar.wsclient.services.Measure measureNode) {
-    Measure measure = MeasureBuilder.initFromNode(measureNode);
-    measures.addMeasure(measure.getKey(), measure);
-  }
+	private void addMeasureFromNode(final Measures measures, final org.sonarqube.ws.WsMeasures.Measure measureNode) {
+		Measure measure = MeasureBuilder.initFromNode(measureNode);
+		measures.addMeasure(measure.getMetric(), measure);
+	}
 }

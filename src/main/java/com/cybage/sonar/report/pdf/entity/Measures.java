@@ -19,8 +19,6 @@
  */
 package com.cybage.sonar.report.pdf.entity;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -30,26 +28,8 @@ import java.util.Set;
 public class Measures {
 
   private Hashtable<String, Measure> measuresTable = new Hashtable<String, Measure>();
-  private Date date;
-  private String version = "N/A";
 
   public Measures() {
-  }
-
-  public Date getDate() {
-    return date;
-  }
-
-  public void setDate(final Date date) throws ParseException {
-    this.date = date;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(final String version) {
-    this.version = version;
   }
 
   public int getMeasuresCount() {

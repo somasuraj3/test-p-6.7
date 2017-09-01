@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.utils.HttpDownloader.HttpException;
 import org.sonarqube.ws.WsComponents.Component;
+import org.sonarqube.ws.WsComponents.SearchWsResponse;
 import org.sonarqube.ws.WsComponents.ShowWsResponse;
 import org.sonarqube.ws.WsComponents.TreeWsResponse;
 import org.sonarqube.ws.client.WsClient;
@@ -105,7 +106,6 @@ public class ProjectBuilder {
 			//resourceQueryChild.setDepth(1);
 			//List<InputComponent> childNodes = wsClient.findAll(treeWsReq);
 			TreeWsResponse treeWsRes = wsClient.components().tree(treeWsReq);
-			
 
 			Iterator<Component> it = treeWsRes.getComponentsList().iterator(); 
 			project.setSubprojects(new ArrayList<Project>(0));
@@ -140,7 +140,7 @@ public class ProjectBuilder {
 	}
 
 	private void initMeasures(final Project project) throws IOException {
-		LOGGER.info("    Retrieving measures");
+		LOGGER.info("Retrieving measures");
 		MeasuresBuilder measuresBuilder = MeasuresBuilder.getInstance(wsClient);
 		Measures measures = measuresBuilder.initMeasuresByProjectKey(project.getKey());
 		project.setMeasures(measures);

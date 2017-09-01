@@ -19,90 +19,48 @@
  */
 package com.cybage.sonar.report.pdf.entity;
 
+import java.util.List;
+
 public class Measure {
 
-  private String key;
-  private String value;
-  private String formatValue;
-  private String textValue;
-  private String dataValue;
-  private Integer qualitativeTendency;
-  private Integer quantitativeTendency;
-  private String alert;
+	private String metric;
+	private String value;
+	private List<Period> periods = null;
 
-  public Measure(final String measureKey, final String measureFValue) {
-    this.key = measureKey;
-    this.formatValue = measureFValue;
-    this.qualitativeTendency = 0;
-    this.quantitativeTendency = 0;
-  }
+	public Measure(String metric, String value, List<Period> periods) {
+		super();
+		this.metric = metric;
+		this.value = value;
+		this.periods = periods;
+	}
 
-  public Measure() {
+	public Measure() {
+		this.metric = "";
+		this.value = "";
+		this.periods = null;
+	}
 
-  }
+	public String getMetric() {
+		return metric;
+	}
 
-  public String getKey() {
-    return key;
-  }
+	public void setMetric(String metric) {
+		this.metric = metric;
+	}
 
-  public void setKey(final String key) {
-    this.key = key;
-  }
+	public String getValue() {
+		return value;
+	}
 
-  public String getValue() {
-    return value;
-  }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-  public void setValue(final String value) {
-    this.value = value;
-  }
+	public List<Period> getPeriods() {
+		return periods;
+	}
 
-  public String getFormatValue() {
-    return formatValue;
-  }
-
-  public void setFormatValue(final String formatValue) {
-    this.formatValue = formatValue;
-  }
-
-  public String getTextValue() {
-    return textValue;
-  }
-
-  public void setTextValue(final String textValue) {
-    this.textValue = textValue;
-  }
-
-  public String getDataValue() {
-    return dataValue;
-  }
-
-  public void setDataValue(final String dataValue) {
-    this.dataValue = dataValue;
-  }
-
-  public Integer getQualitativeTendency() {
-    return qualitativeTendency;
-  }
-
-  public void setQualitativeTendency(final Integer qualitativeTendency) {
-    this.qualitativeTendency = qualitativeTendency;
-  }
-
-  public Integer getQuantitativeTendency() {
-    return quantitativeTendency;
-  }
-
-  public void setQuantitativeTendency(final Integer quantitativeTendency) {
-    this.quantitativeTendency = quantitativeTendency;
-  }
-
-  public String getAlert() {
-    return alert;
-  }
-
-  public void setAlert(final String alert) {
-    this.alert = alert;
-  }
-
+	public void setPeriods(List<Period> periods) {
+		this.periods = periods;
+	}
 }

@@ -22,6 +22,7 @@ package com.cybage.sonar.report.pdf;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -103,15 +104,17 @@ public class ExecutivePDFReporter extends PDFReporter {
 			title.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 
 			String projectRow = super.getProject().getName();
-			String versionRow = super.getProject().getMeasures().getVersion();
+			// String versionRow = super.getProject().getMeasures().getVersion();
+			String versionRow = "1.1.1.1.1";
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			String dateRow = df.format(super.getProject().getMeasures().getDate());
+			// String dateRow = df.format(super.getProject().getMeasures().getDate());
+			String dateRow = df.format(new Date());
 			String descriptionRow = super.getProject().getDescription();
 
 			title.addCell(new Phrase(projectRow, Style.FRONTPAGE_FONT_1));
 			title.addCell(new Phrase(versionRow, Style.FRONTPAGE_FONT_1));
 			title.addCell(new Phrase(descriptionRow, Style.FRONTPAGE_FONT_2));
-			title.addCell(new Phrase(super.getProject().getMeasure(MetricKeys.PROFILE).getDataValue(),
+			title.addCell(new Phrase(super.getProject().getMeasure(MetricKeys.PROFILE).getValue(),
 					Style.FRONTPAGE_FONT_3));
 			title.addCell(new Phrase(dateRow, Style.FRONTPAGE_FONT_3));
 			title.setTotalWidth(pageSize.getWidth() - frontPageDocument.leftMargin() - frontPageDocument.rightMargin());
