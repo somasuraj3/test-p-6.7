@@ -26,7 +26,7 @@ public class Measure {
 	private String metric;
 	private String value;
 	private List<Period> periods = null;
-
+	
 	public Measure(String metric, String value, List<Period> periods) {
 		super();
 		this.metric = metric;

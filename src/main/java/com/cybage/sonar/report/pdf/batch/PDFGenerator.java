@@ -99,7 +99,6 @@ public class PDFGenerator {
 			}
 
 			ByteArrayOutputStream baos = reporter.getReport();
-			//ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			FileOutputStream fos = new FileOutputStream(new File(path));
 			baos.writeTo(fos);
 			fos.flush();
