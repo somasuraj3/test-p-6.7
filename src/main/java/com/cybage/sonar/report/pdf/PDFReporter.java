@@ -66,60 +66,75 @@ public abstract class PDFReporter {
 	}
 
 	public ByteArrayOutputStream getReport() throws DocumentException, IOException, ReportException {
+
 		// Creation of documents
-	    //Document mainDocument = new Document(PageSize.A4, 50, 50, 110, 50);
-	    Toc tocDocument = new Toc();
-	    Document frontPageDocument = new Document(PageSize.A4, 50, 50, 110, 50);
-	    // ByteArrayOutputStream mainDocumentBaos = new ByteArrayOutputStream();
-	    ByteArrayOutputStream frontPageDocumentBaos = new ByteArrayOutputStream();
-	    //PdfWriter mainDocumentWriter = PdfWriter.getInstance(mainDocument,
-	    //   mainDocumentBaos);
-	    PdfWriter frontPageDocumentWriter = PdfWriter.getInstance(
-	        frontPageDocument, frontPageDocumentBaos);
+		Document mainDocument = new Document(PageSize.A4, 50, 50, 110, 50);
+		Toc tocDocument = new Toc();
+		Document frontPageDocument = new Document(PageSize.A4, 50, 50, 110, 50);
+		ByteArrayOutputStream mainDocumentBaos = new ByteArrayOutputStream();
+		ByteArrayOutputStream frontPageDocumentBaos = new ByteArrayOutputStream();
+		PdfWriter mainDocumentWriter = PdfWriter.getInstance(mainDocument, mainDocumentBaos);
+		PdfWriter frontPageDocumentWriter = PdfWriter.getInstance(frontPageDocument, frontPageDocumentBaos);
 
-	    // Events for TOC, header and pages numbers
-	    Events events = new Events(tocDocument, new Header(this.getLogo(),
-	        this.getProject()));
-	    //mainDocumentWriter.setPageEvent(events);
+		try {
+			// Events for TOC, header and pages numbers
+			Events events = new Events(tocDocument, new Header(this.getLogo(), this.getProject()));
+			mainDocumentWriter.setPageEvent(events);
 
-	    tocDocument.setHeader(new Header(this.getLogo(), this.getProject()));
-	    //mainDocument.open();
-	    tocDocument.getTocDocument().open();
-	    frontPageDocument.open();
+			// tocDocument.setHeader(new Header(this.getLogo(),
+			// this.getProject()));
+			mainDocument.open();
+			tocDocument.getTocDocument().open();
+			frontPageDocument.open();
 
-	    LOGGER.info("Generating PDF report...");
-	    printFrontPage(frontPageDocument, frontPageDocumentWriter);
-	    printTocTitle(tocDocument);
-	    //printPdfBody(mainDocument);
-	    //mainDocument.close();
-	    tocDocument.getTocDocument().close();
-	    frontPageDocument.close();
+			LOGGER.info("Generating PDF report...");
+			printFrontPage(frontPageDocument, frontPageDocumentWriter);
+			printTocTitle(tocDocument);
+			printPdfBody(mainDocument);
+			try{	
+				mainDocument.close();
+			}catch (Exception e) {
+				// TODO: handle exception
+				LOGGER.error("In PDFReporter : Exception 1.1");
+				e.printStackTrace();
+			}
+			
+			tocDocument.getTocDocument().close();
+			frontPageDocument.close();
+		} catch (Exception e) {
+			LOGGER.error("In PDFReporter : Exception 1");
+			e.printStackTrace();
+		}
+		try {
 
-	    // Get Readers
-	    //PdfReader mainDocumentReader = new PdfReader(mainDocumentBaos.toByteArray());
-	    PdfReader tocDocumentReader = new PdfReader(tocDocument
-	        .getTocOutputStream().toByteArray());
-	    PdfReader frontPageDocumentReader = new PdfReader(
-	        frontPageDocumentBaos.toByteArray());
+			// Get Readers
+			PdfReader mainDocumentReader = new PdfReader(mainDocumentBaos.toByteArray());
+			PdfReader tocDocumentReader = new PdfReader(tocDocument.getTocOutputStream().toByteArray());
+			PdfReader frontPageDocumentReader = new PdfReader(frontPageDocumentBaos.toByteArray());
 
-	    // New document
-	    Document documentWithToc = new Document(
-	        tocDocumentReader.getPageSizeWithRotation(1));
-	    ByteArrayOutputStream finalBaos = new ByteArrayOutputStream();
-	    PdfCopy copy = new PdfCopy(documentWithToc, finalBaos);
+			// New document
+			Document documentWithToc = new Document(tocDocumentReader.getPageSizeWithRotation(1));
+			ByteArrayOutputStream finalBaos = new ByteArrayOutputStream();
+			PdfCopy copy = new PdfCopy(documentWithToc, finalBaos);
 
-	    documentWithToc.open();
-	    copy.addPage(copy.getImportedPage(frontPageDocumentReader, 1));
-	    for (int i = 1; i <= tocDocumentReader.getNumberOfPages(); i++) {
-	      copy.addPage(copy.getImportedPage(tocDocumentReader, i));
-	    }
-	    /*for (int i = 1; i <= mainDocumentReader.getNumberOfPages(); i++) {
-	      copy.addPage(copy.getImportedPage(mainDocumentReader, i));
-	    }*/
-	    documentWithToc.close();
+			documentWithToc.open();
+			copy.addPage(copy.getImportedPage(frontPageDocumentReader, 1));
+			for (int i = 1; i <= tocDocumentReader.getNumberOfPages(); i++) {
+				copy.addPage(copy.getImportedPage(tocDocumentReader, i));
+			}
+			for (int i = 1; i <= mainDocumentReader.getNumberOfPages(); i++) {
+				copy.addPage(copy.getImportedPage(mainDocumentReader, i));
+			}
+			documentWithToc.close();
 
-	    // Return the final document (with TOC)
-	    return finalBaos;
+			// Return the final document (with TOC)
+			return finalBaos;
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.error("In PDFReport : Exception 2");
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public Project getProject() throws HttpException, IOException, ReportException {
