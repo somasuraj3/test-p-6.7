@@ -19,6 +19,9 @@
  */
 package com.cybage.sonar.report.pdf;
 
+import static com.cybage.sonar.report.pdf.util.MetricDomains.*;
+import static com.cybage.sonar.report.pdf.util.MetricKeys.*;
+
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -33,9 +36,6 @@ import com.cybage.sonar.report.pdf.entity.exception.ReportException;
 import com.cybage.sonar.report.pdf.util.Credentials;
 import com.cybage.sonar.report.pdf.util.Rating;
 import com.cybage.sonar.report.pdf.util.SonarUtil;
-
-import static com.cybage.sonar.report.pdf.util.MetricDomains.*;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.*;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ChapterAutoNumber;
@@ -43,13 +43,11 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -192,7 +190,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 	protected void printDashboard(final Project project, final Section section) throws DocumentException {
 		printReliabilityBoard(project, section);
-		// printSecurityBoard(project, section);
+		printSecurityBoard(project, section);
 		// printMaintainabilityBoard(project, section);
 		// printDuplicationsBoard(project, section);
 		// printSizeBoard(project, section);
@@ -311,6 +309,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(NEW_BUGS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
 		newBugsValue.setVerticalAlignment(Element.ALIGN_CENTER);
 		newBugsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+		newBugsValue.setBackgroundColor(new BaseColor(255, 255, 204));
 		newBugsValue.setExtraParagraphSpace(10);
 		tableNewBugs.addCell(newBugsValue);
 
@@ -384,6 +383,110 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 	protected void printSecurityBoard(final Project project, final Section section) throws DocumentException {
 
+		// Reliability
+				Paragraph securityTitle = new Paragraph(getTextProperty("metrics." + SECURITY), Style.UNDERLINED_FONT);
+
+				// Main Reliability Table
+				PdfPTable tableSecurity = new PdfPTable(3);
+				tableSecurity.setWidthPercentage(93);
+				tableSecurity.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tableSecurity.setWidths(new int[] { 2, 2, 2 });
+				tableSecurity.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+
+				// Vulnerabilities Table
+				PdfPTable tableVulnerabilities = new PdfPTable(1);
+				tableVulnerabilities.setSpacingAfter(5);
+				tableVulnerabilities.getDefaultCell().setBorderColor(BaseColor.GRAY);
+
+				PdfPCell vulnerabilitiesValue = new PdfPCell(new Phrase(project.getMeasure(VULNERABILITIES).getValue(), Style.DASHBOARD_DATA_FONT));
+				vulnerabilitiesValue.setVerticalAlignment(Element.ALIGN_CENTER);
+				vulnerabilitiesValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+				vulnerabilitiesValue.setExtraParagraphSpace(10);
+				tableVulnerabilities.addCell(vulnerabilitiesValue);
+
+				PdfPCell vulnerabilities = new PdfPCell(new Phrase(getTextProperty("metrics." + VULNERABILITIES), Style.DASHBOARD_TITLE_FONT));
+				vulnerabilities.setVerticalAlignment(Element.ALIGN_CENTER);
+				vulnerabilities.setHorizontalAlignment(Element.ALIGN_CENTER);
+				vulnerabilities.setExtraParagraphSpace(3);
+				tableVulnerabilities.addCell(vulnerabilities);
+
+				// New Vulnerabilities Table
+				PdfPTable tableNewVulnerabilities = new PdfPTable(1);
+				tableNewVulnerabilities.setSpacingAfter(5);
+
+				PdfPCell newVulnerabilitiesValue = new PdfPCell(
+						new Phrase(project.getMeasure(NEW_VULNERABILITIES).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+				newVulnerabilitiesValue.setVerticalAlignment(Element.ALIGN_CENTER);
+				newVulnerabilitiesValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+				newVulnerabilitiesValue.setBackgroundColor(new BaseColor(255, 255, 204));
+				newVulnerabilitiesValue.setExtraParagraphSpace(10);
+				tableNewVulnerabilities.addCell(newVulnerabilitiesValue);
+
+				PdfPCell newVulnerabilities = new PdfPCell(new Phrase(getTextProperty("metrics." + NEW_VULNERABILITIES), Style.DASHBOARD_TITLE_FONT));
+				newVulnerabilities.setVerticalAlignment(Element.ALIGN_CENTER);
+				newVulnerabilities.setHorizontalAlignment(Element.ALIGN_CENTER);
+				newVulnerabilities.setExtraParagraphSpace(3);
+				tableNewVulnerabilities.addCell(newVulnerabilities);
+
+				// Security Rating Table
+				PdfPTable tableSecurityRating = new PdfPTable(1);
+				tableSecurityRating.setSpacingAfter(5);
+
+				PdfPCell securityRatingValue = new PdfPCell(
+						new Phrase(Rating.getRating(project.getMeasure(SECURITY_RATING).getValue()),
+								Rating.getRatingStyle(project.getMeasure(SECURITY_RATING).getValue())));
+				securityRatingValue.setVerticalAlignment(Element.ALIGN_CENTER);
+				securityRatingValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+				securityRatingValue.setExtraParagraphSpace(10);
+				tableSecurityRating.addCell(securityRatingValue);
+
+				PdfPCell securityRating = new PdfPCell(
+						new Phrase(getTextProperty("metrics." + SECURITY_RATING), Style.DASHBOARD_TITLE_FONT));
+				securityRating.setVerticalAlignment(Element.ALIGN_CENTER);
+				securityRating.setHorizontalAlignment(Element.ALIGN_CENTER);
+				securityRating.setExtraParagraphSpace(3);
+				tableSecurityRating.addCell(securityRating);
+
+				// Security Other Metrics Table
+				PdfPTable tableSecurityOther = new PdfPTable(1);
+				tableSecurityOther.setWidthPercentage(93);
+				tableSecurityOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+				tableSecurityOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+
+				PdfPTable tableSecurityRemediationEffort = new PdfPTable(2);
+				tableSecurityRemediationEffort.setWidthPercentage(100);
+				tableSecurityRemediationEffort.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tableSecurityRemediationEffort.setWidths(new int[] { 8, 2 });
+
+				PdfPCell securityRemediationEffort = new PdfPCell(
+						new Phrase(getTextProperty("metrics." + SECURITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
+				securityRemediationEffort.setVerticalAlignment(Element.ALIGN_CENTER);
+				securityRemediationEffort.setHorizontalAlignment(Element.ALIGN_LEFT);
+				securityRemediationEffort.setExtraParagraphSpace(5);
+				tableSecurityRemediationEffort.addCell(securityRemediationEffort);
+
+				PdfPCell securityRemediationEffortValue = new PdfPCell(new Phrase(
+						SonarUtil
+								.getConversion(Integer.parseInt(project.getMeasure(SECURITY_REMEDIATION_EFFORT).getValue())),
+						Style.DASHBOARD_DATA_FONT_2));
+				securityRemediationEffortValue.setVerticalAlignment(Element.ALIGN_CENTER);
+				securityRemediationEffortValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				securityRemediationEffortValue.setExtraParagraphSpace(5);
+				securityRemediationEffortValue.setPaddingRight(2);
+				tableSecurityRemediationEffort.addCell(securityRemediationEffortValue);
+
+				tableSecurityOther.addCell(tableSecurityRemediationEffort);
+
+				tableSecurity.addCell(tableVulnerabilities);
+				tableSecurity.addCell(tableNewVulnerabilities);
+				tableSecurity.addCell(tableSecurityRating);
+
+				section.add(new Paragraph(" "));
+				section.add(securityTitle);
+				section.add(new Paragraph(" "));
+				section.add(tableSecurity);
+				section.add(new Paragraph(" "));
+				section.add(tableSecurityOther);
 	}
 
 	protected void printMaintainabilityBoard(final Project project, final Section section) throws DocumentException {
