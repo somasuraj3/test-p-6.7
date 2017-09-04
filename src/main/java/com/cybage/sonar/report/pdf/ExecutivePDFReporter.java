@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.cybage.sonar.report.pdf.entity.Project;
 import com.cybage.sonar.report.pdf.entity.exception.ReportException;
 import com.cybage.sonar.report.pdf.util.Credentials;
+import com.cybage.sonar.report.pdf.util.Rating;
 
 import static com.cybage.sonar.report.pdf.util.MetricDomains.*;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.*;
@@ -41,11 +42,13 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -123,8 +126,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			title.addCell(new Phrase(projectRow, Style.FRONTPAGE_FONT_1));
 			title.addCell(new Phrase(versionRow, Style.FRONTPAGE_FONT_1));
 			title.addCell(new Phrase(descriptionRow, Style.FRONTPAGE_FONT_2));
-			title.addCell(
-					new Phrase(super.getProject().getMeasure(PROFILE).getValue(), Style.FRONTPAGE_FONT_3));
+			title.addCell(new Phrase(super.getProject().getMeasure(PROFILE).getValue(), Style.FRONTPAGE_FONT_3));
 			title.addCell(new Phrase(dateRow, Style.FRONTPAGE_FONT_3));
 			title.setTotalWidth(pageSize.getWidth() - frontPageDocument.leftMargin() - frontPageDocument.rightMargin());
 			title.writeSelectedRows(0, -1, frontPageDocument.leftMargin(), Style.FRONTPAGE_LOGO_POSITION_Y - 150,
@@ -147,6 +149,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			// Chapter 1: Report Overview (Parent project)
 			ChapterAutoNumber chapter1 = new ChapterAutoNumber(new Paragraph(project.getName(), Style.CHAPTER_FONT));
 			chapter1.add(new Paragraph(getTextProperty("main.text.misc.overview"), Style.NORMAL_FONT));
+			chapter1.add(new Paragraph(" "));
 			Section section11 = chapter1
 					.addSection(new Paragraph(getTextProperty("general.report_overview"), Style.TITLE_FONT));
 			printDashboard(project, section11);
@@ -187,219 +190,14 @@ public class ExecutivePDFReporter extends PDFReporter {
 	}
 
 	protected void printDashboard(final Project project, final Section section) throws DocumentException {
-		try {
-			// Reliability
-		    Paragraph staticAnalysis = new Paragraph(
-		        getTextProperty("metrics." + RELIABILITY), Style.UNDERLINED_FONT);
-		    PdfPTable staticAnalysisTable = new PdfPTable(4);
-		    staticAnalysisTable.getDefaultCell().setBorderColor(BaseColor.WHITE);
-
-		    PdfPTable bugsTable = new PdfPTable(1);
-		    Style.noBorderTable(bugsTable);
-		    
-		    bugsTable.addCell(new Phrase(project.getMeasure(BUGS).getValue(),
-			        Style.DASHBOARD_TITLE_FONT));
-		    bugsTable.addCell(new Phrase(getTextProperty("metrics.bugs"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    
-		    PdfPTable bugsTable2 = new PdfPTable(1);
-		    Style.noBorderTable(bugsTable2);
-		    
-		    bugsTable2.addCell(new Phrase(project.getMeasure(NEW_BUGS).getValue(),
-			        Style.DASHBOARD_TITLE_FONT));
-		    bugsTable2.addCell(new Phrase(getTextProperty("metrics.new_bugs"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    
-		    PdfPTable bugsTable3 = new PdfPTable(1);
-		    Style.noBorderTable(bugsTable3);
-		    
-		    bugsTable3.addCell(new Phrase(project.getMeasure(RELIABILITY_RATING).getValue(),
-			        Style.DASHBOARD_TITLE_FONT));
-		    bugsTable3.addCell(new Phrase(getTextProperty("metrics.reliability_rating"),
-		        Style.DASHBOARD_TITLE_FONT));
-		        
-		    PdfPTable bugsTable4 = new PdfPTable(1);
-		    Style.noBorderTable(bugsTable4);
-		    
-		    bugsTable4.addCell(new Phrase(project.getMeasure(RELIABILITY_REMEDIATION_EFFORT).getValue(),
-			        Style.DASHBOARD_TITLE_FONT));
-		    bugsTable4.addCell(new Phrase(getTextProperty("metrics.reliability_remediation_effort"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    
-		    /*PdfPTable bugsTableTendency = new PdfPTable(2);
-		    Style.noBorderTable(bugsTableTendency);
-		    bugsTableTendency.getDefaultCell().setFixedHeight(
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    bugsTableTendency.addCell(new Phrase("formatted value", Style.DASHBOARD_DATA_FONT));
-		    bugsTableTendency.addCell(new Phrase("formatted value", Style.DASHBOARD_DATA_FONT));
-
-		    bugsTable.addCell(bugsTableTendency);
-		    bugsTable.addCell(new Phrase("1 packages", Style.DASHBOARD_DATA_FONT_2));
-		    bugsTable.addCell(new Phrase("1 classes", Style.DASHBOARD_DATA_FONT_2));
-		    bugsTable.addCell(new Phrase("1 methods", Style.DASHBOARD_DATA_FONT_2));
-		    bugsTable.addCell(new Phrase("1 duplicated lines", Style.DASHBOARD_DATA_FONT_2));
-
-		    
-		    PdfPTable comments = new PdfPTable(1);
-		    Style.noBorderTable(comments);
-		    comments.addCell(new Phrase(getTextProperty("general.comments"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    PdfPTable commentsTendency = new PdfPTable(2);
-		    commentsTendency.getDefaultCell().setFixedHeight(
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    Style.noBorderTable(commentsTendency);
-		    commentsTendency.addCell(new Phrase("abc",
-		        Style.DASHBOARD_DATA_FONT));
-		    commentsTendency.addCell(new Phrase("1 duplicated lines", Style.DASHBOARD_DATA_FONT_2));
-		    comments.addCell(commentsTendency);
-		    comments.addCell(new Phrase("1 comment lines", Style.DASHBOARD_DATA_FONT_2));
-
-		    PdfPTable complexity = new PdfPTable(1);
-		    Style.noBorderTable(complexity);
-		    complexity.addCell(new Phrase(getTextProperty("general.complexity"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    PdfPTable complexityTendency = new PdfPTable(2);
-		    complexityTendency.getDefaultCell().setFixedHeight(
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    Style.noBorderTable(complexityTendency);
-		    complexityTendency.addCell(new Phrase("1 duplicated lines", Style.DASHBOARD_DATA_FONT_2));
-		    complexityTendency.addCell(new Phrase("1 duplicated lines", Style.DASHBOARD_DATA_FONT_2));
-		    complexity.addCell(complexityTendency);
-		    complexity.addCell(new Phrase("1 duplicated lines", Style.DASHBOARD_DATA_FONT_2));
-		    complexity.addCell(new Phrase("1 duplicated lines", Style.DASHBOARD_DATA_FONT_2));
-*/
-		    staticAnalysisTable.setSpacingBefore(10);
-		    staticAnalysisTable.addCell(bugsTable);
-		    staticAnalysisTable.addCell(bugsTable2);
-		    staticAnalysisTable.addCell(bugsTable3);
-		    staticAnalysisTable.addCell(bugsTable4);
-		    staticAnalysisTable.setSpacingAfter(20);
-
-		    /*// Dynamic Analysis
-		    Paragraph dynamicAnalysis = new Paragraph(
-		        getTextProperty("general.dynamic_analysis"), Style.UNDERLINED_FONT);
-		    PdfPTable dynamicAnalysisTable = new PdfPTable(3);
-		    Style.noBorderTable(dynamicAnalysisTable);
-
-		    PdfPTable codeCoverage = new PdfPTable(1);
-		    Style.noBorderTable(codeCoverage);
-		    codeCoverage.addCell(new Phrase(getTextProperty("general.code_coverage"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    PdfPTable codeCoverageTendency = new PdfPTable(2);
-		    Style.noBorderTable(codeCoverageTendency);
-		    codeCoverageTendency.getDefaultCell().setFixedHeight(
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    codeCoverageTendency.addCell(new Phrase(project.getMeasure(
-		        MetricKeys.COVERAGE).getFormatValue()
-		        + " coverage", Style.DASHBOARD_DATA_FONT));
-		    codeCoverageTendency.addCell(getTendencyImage(
-		        project.getMeasure(MetricKeys.COVERAGE).getQualitativeTendency(),
-		        project.getMeasure(MetricKeys.COVERAGE).getQuantitativeTendency()));
-		    codeCoverage.addCell(codeCoverageTendency);
-		    codeCoverage.addCell(new Phrase(project.getMeasure(MetricKeys.TESTS)
-		        .getFormatValue() + " tests", Style.DASHBOARD_DATA_FONT_2));
-
-		    PdfPTable testSuccess = new PdfPTable(1);
-		    Style.noBorderTable(testSuccess);
-		    testSuccess.addCell(new Phrase(getTextProperty("general.test_success"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    PdfPTable testSuccessTendency = new PdfPTable(2);
-		    Style.noBorderTable(testSuccessTendency);
-		    testSuccessTendency.getDefaultCell().setFixedHeight(
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    testSuccessTendency.addCell(new Phrase(project.getMeasure(
-		        MetricKeys.TEST_SUCCESS_DENSITY).getFormatValue(),
-		        Style.DASHBOARD_DATA_FONT));
-		    testSuccessTendency.addCell(getTendencyImage(
-		        project.getMeasure(MetricKeys.TEST_SUCCESS_DENSITY)
-		            .getQualitativeTendency(),
-		        project.getMeasure(MetricKeys.TEST_SUCCESS_DENSITY)
-		            .getQuantitativeTendency()));
-		    testSuccess.addCell(testSuccessTendency);
-		    testSuccess.addCell(new Phrase(project.getMeasure(MetricKeys.TEST_FAILURES)
-		        .getFormatValue() + " failures", Style.DASHBOARD_DATA_FONT_2));
-		    testSuccess.addCell(new Phrase(project.getMeasure(MetricKeys.TEST_ERRORS)
-		        .getFormatValue() + " errors", Style.DASHBOARD_DATA_FONT_2));
-
-		    dynamicAnalysisTable.setSpacingBefore(10);
-		    dynamicAnalysisTable.addCell(codeCoverage);
-		    dynamicAnalysisTable.addCell(testSuccess);
-		    dynamicAnalysisTable.addCell("");
-		    dynamicAnalysisTable.setSpacingAfter(20);
-
-		    Paragraph codingRulesViolations = new Paragraph(
-		        getTextProperty("general.coding_rules_violations"),
-		        Style.UNDERLINED_FONT);
-		    PdfPTable codingRulesViolationsTable = new PdfPTable(3);
-		    Style.noBorderTable(codingRulesViolationsTable);
-
-		    PdfPTable technicalDebt = new PdfPTable(1);
-		    Style.noBorderTable(technicalDebt);
-		    technicalDebt
-		        .addCell(new Phrase(getTextProperty("general.technical_debt"),
-		            Style.DASHBOARD_TITLE_FONT));
-		    PdfPTable technicalDebtTendency = new PdfPTable(2);
-		    Style.noBorderTable(technicalDebtTendency);
-		    technicalDebtTendency.getDefaultCell().setFixedHeight(
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    technicalDebtTendency.addCell(new Phrase(project.getMeasure(
-		        MetricKeys.TECHNICAL_DEBT).getFormatValue(),
-		        Style.DASHBOARD_DATA_FONT));
-
-		    // Workarround for avoid resizing
-		    Image tendencyTechnicalDebtResize = getTendencyImage(
-		        project.getMeasure(MetricKeys.TECHNICAL_DEBT)
-		            .getQualitativeTendency(),
-		        project.getMeasure(MetricKeys.TECHNICAL_DEBT)
-		            .getQuantitativeTendency());
-		    tendencyTechnicalDebtResize.scaleAbsolute(Style.TENDENCY_ICONS_HEIGHT,
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    PdfPCell tendencyRulesCell = new PdfPCell(tendencyTechnicalDebtResize);
-		    tendencyRulesCell.setBorder(0);
-		    technicalDebtTendency.addCell(tendencyRulesCell);
-		    technicalDebt.addCell(technicalDebtTendency);
-
-		    PdfPTable violations = new PdfPTable(1);
-		    Style.noBorderTable(violations);
-		    violations.addCell(new Phrase(getTextProperty("general.violations"),
-		        Style.DASHBOARD_TITLE_FONT));
-		    PdfPTable violationsTendency = new PdfPTable(2);
-		    Style.noBorderTable(violationsTendency);
-		    violationsTendency.getDefaultCell().setFixedHeight(
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    violationsTendency.addCell(new Phrase(project.getMeasure(
-		        MetricKeys.VIOLATIONS).getFormatValue(), Style.DASHBOARD_DATA_FONT));
-
-		    // Workarround for avoid resizing
-		    Image tendencyResize = getTendencyImage(
-		        project.getMeasure(MetricKeys.VIOLATIONS).getQualitativeTendency(),
-		        project.getMeasure(MetricKeys.VIOLATIONS).getQuantitativeTendency());
-		    tendencyResize.scaleAbsolute(Style.TENDENCY_ICONS_HEIGHT,
-		        Style.TENDENCY_ICONS_HEIGHT);
-		    PdfPCell tendencyCell = new PdfPCell(tendencyResize);
-		    tendencyCell.setBorder(0);
-		    violationsTendency.addCell(tendencyCell);
-
-		    violations.addCell(violationsTendency);
-
-		    codingRulesViolationsTable.setSpacingBefore(10);
-		    codingRulesViolationsTable.addCell(technicalDebt);
-		    codingRulesViolationsTable.addCell(violations);
-		    codingRulesViolationsTable.addCell("");
-		    codingRulesViolationsTable.setSpacingAfter(20);
-*/
-		    section.add(Chunk.NEWLINE);
-		    section.add(staticAnalysis);
-		    section.add(staticAnalysisTable);
-		    //section.add(dynamicAnalysis);
-		    //section.add(dynamicAnalysisTable);
-		    //section.add(codingRulesViolations);
-		    //section.add(codingRulesViolationsTable);
-		} catch (Exception e) {
-			// TODO: handle exception
-			LOGGER.error("In ExecutivePDFReporter : In printDashboard");
-			e.printStackTrace();
-		}
+		printReliabilityBoard(project, section);
+		//printSecurityBoard(project, section);
+		//printMaintainabilityBoard(project, section);
+		//printDuplicationsBoard(project, section);
+		//printSizeBoard(project, section);
+		//printComplexityBoard(project, section);
+		//printDocumentationBoard(project, section);
+		//printIssuesBoard(project, section);
 	}
 
 	protected void printMostDuplicatedFiles(final Project project, final Section section) {
@@ -474,6 +272,133 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tocTitle.setAlignment(Element.ALIGN_CENTER);
 		tocDocument.getTocDocument().add(tocTitle);
 		tocDocument.getTocDocument().add(Chunk.NEWLINE);
+	}
+
+	protected void printReliabilityBoard(final Project project, final Section section) throws DocumentException {
+		// Reliability
+		Paragraph reliabilityTitle = new Paragraph(getTextProperty("metrics." + RELIABILITY), Style.UNDERLINED_FONT);
+		
+		// Main Reliability Table
+		PdfPTable tableReliability = new PdfPTable(3);
+		tableReliability.setWidthPercentage(93);
+		tableReliability.setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableReliability.setWidths(new int[] {2, 2, 2});
+		tableReliability.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		
+		// Bugs Table
+		PdfPTable tableBugs = new PdfPTable(1);
+		tableBugs.setSpacingAfter(5);
+		tableBugs.getDefaultCell().setBorderColor(BaseColor.GRAY);
+		
+		PdfPCell bugsValue = new PdfPCell(new Phrase(project.getMeasure(BUGS).getValue(), Style.DASHBOARD_DATA_FONT));
+		bugsValue.setVerticalAlignment(Element.ALIGN_CENTER);
+		bugsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+		bugsValue.setExtraParagraphSpace(10);
+		tableBugs.addCell(bugsValue);
+		
+		PdfPCell bugs = new PdfPCell(new Phrase(getTextProperty("metrics." + BUGS), Style.DASHBOARD_TITLE_FONT));
+		bugs.setVerticalAlignment(Element.ALIGN_CENTER);
+		bugs.setHorizontalAlignment(Element.ALIGN_CENTER);
+		bugs.setExtraParagraphSpace(3);
+		tableBugs.addCell(bugs);
+		
+		// New Bugs Table
+		PdfPTable tableNewBugs = new PdfPTable(1);
+		tableNewBugs.setSpacingAfter(5);
+		
+		PdfPCell newBugsValue = new PdfPCell(new Phrase(project.getMeasure(NEW_BUGS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+		newBugsValue.setVerticalAlignment(Element.ALIGN_CENTER);
+		newBugsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+		newBugsValue.setExtraParagraphSpace(10);
+		tableNewBugs.addCell(newBugsValue);
+		
+		PdfPCell newBugs = new PdfPCell(new Phrase(getTextProperty("metrics." + NEW_BUGS), Style.DASHBOARD_TITLE_FONT));
+		newBugs.setVerticalAlignment(Element.ALIGN_CENTER);
+		newBugs.setHorizontalAlignment(Element.ALIGN_CENTER);
+		newBugs.setExtraParagraphSpace(3);
+		tableNewBugs.addCell(newBugs);
+		
+		// Reliability Rating Table
+		PdfPTable tableReliabilityRating = new PdfPTable(1);
+		tableReliabilityRating.setSpacingAfter(5);
+		
+		PdfPCell reliabilityRatingValue = new PdfPCell(new Phrase(Rating.getRating(project.getMeasure(RELIABILITY_RATING).getValue()), Rating.getRatingStyle(project.getMeasure(RELIABILITY_RATING).getValue())));
+		reliabilityRatingValue.setVerticalAlignment(Element.ALIGN_CENTER);
+		reliabilityRatingValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+		reliabilityRatingValue.setExtraParagraphSpace(10);
+		tableReliabilityRating.addCell(reliabilityRatingValue);
+		
+		PdfPCell reliabilityRating = new PdfPCell(new Phrase(getTextProperty("metrics." + RELIABILITY_RATING), Style.DASHBOARD_TITLE_FONT));
+		reliabilityRating.setVerticalAlignment(Element.ALIGN_CENTER);
+		reliabilityRating.setHorizontalAlignment(Element.ALIGN_CENTER);
+		reliabilityRating.setExtraParagraphSpace(3);
+		tableReliabilityRating.addCell(reliabilityRating);
+		
+		// Reliability Other Metrics Table
+		PdfPTable tableReliabilityOther = new PdfPTable(1);
+		tableReliabilityOther.setWidthPercentage(93);
+		tableReliabilityOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		tableReliabilityOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+		
+		PdfPTable tableReliabilityRemediationEffort = new PdfPTable(2);
+		tableReliabilityRemediationEffort.setWidthPercentage(100);
+		tableReliabilityRemediationEffort.setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableReliabilityRemediationEffort.setWidths(new int[] {8, 2});
+		
+		PdfPCell reliabilityRemediationEffort = new PdfPCell(new Phrase(getTextProperty("metrics." + RELIABILITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
+		reliabilityRemediationEffort.setVerticalAlignment(Element.ALIGN_CENTER);
+		reliabilityRemediationEffort.setHorizontalAlignment(Element.ALIGN_LEFT);
+		reliabilityRemediationEffort.setExtraParagraphSpace(5);
+		tableReliabilityRemediationEffort.addCell(reliabilityRemediationEffort);
+		
+		PdfPCell reliabilityRemediationEffortValue = new PdfPCell(new Phrase(project.getMeasure(RELIABILITY_REMEDIATION_EFFORT).getValue(), Style.DASHBOARD_DATA_FONT_2));
+		reliabilityRemediationEffortValue.setVerticalAlignment(Element.ALIGN_CENTER);
+		reliabilityRemediationEffortValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		reliabilityRemediationEffortValue.setExtraParagraphSpace(5);
+		reliabilityRemediationEffortValue.setPaddingRight(2);
+		tableReliabilityRemediationEffort.addCell(reliabilityRemediationEffortValue);
+		
+		tableReliabilityOther.addCell(tableReliabilityRemediationEffort);
+		
+		tableReliability.addCell(tableBugs);
+		tableReliability.addCell(tableNewBugs);
+		tableReliability.addCell(tableReliabilityRating);
+		
+		section.add(new Paragraph(" "));
+		section.add(reliabilityTitle);
+		section.add(new Paragraph(" "));
+		section.add(tableReliability);
+		section.add(new Paragraph(" "));
+		section.add(tableReliabilityOther);
+		
+	}
+
+	protected void printSecurityBoard(final Project project, final Section section) throws DocumentException {
+
+	}
+
+	protected void printMaintainabilityBoard(final Project project, final Section section) throws DocumentException {
+
+	}
+
+	protected void printDuplicationsBoard(final Project project, final Section section) throws DocumentException {
+
+	}
+
+	protected void printSizeBoard(final Project project, final Section section) throws DocumentException {
+
+	}
+
+	protected void printComplexityBoard(final Project project, final Section section) throws DocumentException {
+
+	}
+
+	protected void printDocumentationBoard(final Project project, final Section section) throws DocumentException {
+
+	}
+
+	protected void printIssuesBoard(final Project project, final Section section) throws DocumentException {
+
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import java.util.List;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPTable;
 
 public class Style {
@@ -88,20 +89,43 @@ public class Style {
 	/**
 	 * Dashboard metric title font
 	 */
-	public static final Font DASHBOARD_TITLE_FONT = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD,
-			BaseColor.BLACK);
+	public static final Font DASHBOARD_TITLE_FONT = new Font(FontFamily.COURIER, 11, Font.NORMAL, new BaseColor(0, 134, 179));
 
 	/**
 	 * Dashboard metric value font
 	 */
-	public static final Font DASHBOARD_DATA_FONT = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD, BaseColor.GRAY);
+	public static final Font DASHBOARD_DATA_FONT = new Font(FontFamily.COURIER, 28, Font.NORMAL, BaseColor.DARK_GRAY);
 
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_DATA_FONT_2 = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD,
-			new BaseColor(100, 150, 190));
-
+	public static final Font DASHBOARD_DATA_FONT_2 = new Font(FontFamily.COURIER, 10, Font.NORMAL,	BaseColor.DARK_GRAY);
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font DASHBOARD_RATING_FONT_A = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(0, 153, 0));
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font DASHBOARD_RATING_FONT_B = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(156, 218, 12));
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font DASHBOARD_RATING_FONT_C = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(255, 255, 0));
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font DASHBOARD_RATING_FONT_D = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(255, 128, 0));
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font DASHBOARD_RATING_FONT_E = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(255, 0, 0));
+	
 	/**
 	 * Tendency icons height + 2 (used in tables style)
 	 */

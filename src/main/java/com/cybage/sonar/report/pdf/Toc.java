@@ -46,10 +46,11 @@ public class Toc extends PdfPageEventHelper {
 	private PdfPTable content;
 	private PdfWriter writer;
 
-	public Toc() {
+	public Toc() throws DocumentException {
 		toc = new Document(PageSize.A4, 50, 50, 110, 50);
 		content = new PdfPTable(2);
 		Rectangle page = toc.getPageSize();
+		content.setWidths(new int[] {5, 2});
 		content.setTotalWidth(page.getWidth() - toc.leftMargin() - toc.rightMargin());
 		content.getDefaultCell().setUseVariableBorders(true);
 		content.getDefaultCell().setBorderColorBottom(BaseColor.WHITE);
