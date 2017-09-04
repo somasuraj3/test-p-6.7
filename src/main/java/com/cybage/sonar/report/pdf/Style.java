@@ -99,7 +99,7 @@ public class Style {
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_DATA_FONT_2 = new Font(FontFamily.COURIER, 10, Font.NORMAL,	BaseColor.DARK_GRAY);
+	public static final Font DASHBOARD_DATA_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.DARK_GRAY);
 	
 	/**
 	 * Dashboard metric details font
