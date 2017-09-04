@@ -32,6 +32,7 @@ import com.cybage.sonar.report.pdf.entity.Project;
 import com.cybage.sonar.report.pdf.entity.exception.ReportException;
 import com.cybage.sonar.report.pdf.util.Credentials;
 import com.cybage.sonar.report.pdf.util.Rating;
+import com.cybage.sonar.report.pdf.util.SonarUtil;
 
 import static com.cybage.sonar.report.pdf.util.MetricDomains.*;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.*;
@@ -191,13 +192,13 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 	protected void printDashboard(final Project project, final Section section) throws DocumentException {
 		printReliabilityBoard(project, section);
-		//printSecurityBoard(project, section);
-		//printMaintainabilityBoard(project, section);
-		//printDuplicationsBoard(project, section);
-		//printSizeBoard(project, section);
-		//printComplexityBoard(project, section);
-		//printDocumentationBoard(project, section);
-		//printIssuesBoard(project, section);
+		// printSecurityBoard(project, section);
+		// printMaintainabilityBoard(project, section);
+		// printDuplicationsBoard(project, section);
+		// printSizeBoard(project, section);
+		// printComplexityBoard(project, section);
+		// printDocumentationBoard(project, section);
+		// printIssuesBoard(project, section);
 	}
 
 	protected void printMostDuplicatedFiles(final Project project, final Section section) {
@@ -277,100 +278,108 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printReliabilityBoard(final Project project, final Section section) throws DocumentException {
 		// Reliability
 		Paragraph reliabilityTitle = new Paragraph(getTextProperty("metrics." + RELIABILITY), Style.UNDERLINED_FONT);
-		
+
 		// Main Reliability Table
 		PdfPTable tableReliability = new PdfPTable(3);
 		tableReliability.setWidthPercentage(93);
 		tableReliability.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableReliability.setWidths(new int[] {2, 2, 2});
+		tableReliability.setWidths(new int[] { 2, 2, 2 });
 		tableReliability.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-		
+
 		// Bugs Table
 		PdfPTable tableBugs = new PdfPTable(1);
 		tableBugs.setSpacingAfter(5);
 		tableBugs.getDefaultCell().setBorderColor(BaseColor.GRAY);
-		
+
 		PdfPCell bugsValue = new PdfPCell(new Phrase(project.getMeasure(BUGS).getValue(), Style.DASHBOARD_DATA_FONT));
 		bugsValue.setVerticalAlignment(Element.ALIGN_CENTER);
 		bugsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
 		bugsValue.setExtraParagraphSpace(10);
 		tableBugs.addCell(bugsValue);
-		
+
 		PdfPCell bugs = new PdfPCell(new Phrase(getTextProperty("metrics." + BUGS), Style.DASHBOARD_TITLE_FONT));
 		bugs.setVerticalAlignment(Element.ALIGN_CENTER);
 		bugs.setHorizontalAlignment(Element.ALIGN_CENTER);
 		bugs.setExtraParagraphSpace(3);
 		tableBugs.addCell(bugs);
-		
+
 		// New Bugs Table
 		PdfPTable tableNewBugs = new PdfPTable(1);
 		tableNewBugs.setSpacingAfter(5);
-		
-		PdfPCell newBugsValue = new PdfPCell(new Phrase(project.getMeasure(NEW_BUGS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+
+		PdfPCell newBugsValue = new PdfPCell(
+				new Phrase(project.getMeasure(NEW_BUGS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
 		newBugsValue.setVerticalAlignment(Element.ALIGN_CENTER);
 		newBugsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
 		newBugsValue.setExtraParagraphSpace(10);
 		tableNewBugs.addCell(newBugsValue);
-		
+
 		PdfPCell newBugs = new PdfPCell(new Phrase(getTextProperty("metrics." + NEW_BUGS), Style.DASHBOARD_TITLE_FONT));
 		newBugs.setVerticalAlignment(Element.ALIGN_CENTER);
 		newBugs.setHorizontalAlignment(Element.ALIGN_CENTER);
 		newBugs.setExtraParagraphSpace(3);
 		tableNewBugs.addCell(newBugs);
-		
+
 		// Reliability Rating Table
 		PdfPTable tableReliabilityRating = new PdfPTable(1);
 		tableReliabilityRating.setSpacingAfter(5);
-		
-		PdfPCell reliabilityRatingValue = new PdfPCell(new Phrase(Rating.getRating(project.getMeasure(RELIABILITY_RATING).getValue()), Rating.getRatingStyle(project.getMeasure(RELIABILITY_RATING).getValue())));
+
+		PdfPCell reliabilityRatingValue = new PdfPCell(
+				new Phrase(Rating.getRating(project.getMeasure(RELIABILITY_RATING).getValue()),
+						Rating.getRatingStyle(project.getMeasure(RELIABILITY_RATING).getValue())));
 		reliabilityRatingValue.setVerticalAlignment(Element.ALIGN_CENTER);
 		reliabilityRatingValue.setHorizontalAlignment(Element.ALIGN_CENTER);
 		reliabilityRatingValue.setExtraParagraphSpace(10);
 		tableReliabilityRating.addCell(reliabilityRatingValue);
-		
-		PdfPCell reliabilityRating = new PdfPCell(new Phrase(getTextProperty("metrics." + RELIABILITY_RATING), Style.DASHBOARD_TITLE_FONT));
+
+		PdfPCell reliabilityRating = new PdfPCell(
+				new Phrase(getTextProperty("metrics." + RELIABILITY_RATING), Style.DASHBOARD_TITLE_FONT));
 		reliabilityRating.setVerticalAlignment(Element.ALIGN_CENTER);
 		reliabilityRating.setHorizontalAlignment(Element.ALIGN_CENTER);
 		reliabilityRating.setExtraParagraphSpace(3);
 		tableReliabilityRating.addCell(reliabilityRating);
-		
+
 		// Reliability Other Metrics Table
 		PdfPTable tableReliabilityOther = new PdfPTable(1);
 		tableReliabilityOther.setWidthPercentage(93);
 		tableReliabilityOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableReliabilityOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-		
+
 		PdfPTable tableReliabilityRemediationEffort = new PdfPTable(2);
 		tableReliabilityRemediationEffort.setWidthPercentage(100);
 		tableReliabilityRemediationEffort.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableReliabilityRemediationEffort.setWidths(new int[] {8, 2});
-		
-		PdfPCell reliabilityRemediationEffort = new PdfPCell(new Phrase(getTextProperty("metrics." + RELIABILITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
+		tableReliabilityRemediationEffort.setWidths(new int[] { 8, 2 });
+
+		PdfPCell reliabilityRemediationEffort = new PdfPCell(
+				new Phrase(getTextProperty("metrics." + RELIABILITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
 		reliabilityRemediationEffort.setVerticalAlignment(Element.ALIGN_CENTER);
 		reliabilityRemediationEffort.setHorizontalAlignment(Element.ALIGN_LEFT);
 		reliabilityRemediationEffort.setExtraParagraphSpace(5);
 		tableReliabilityRemediationEffort.addCell(reliabilityRemediationEffort);
-		
-		PdfPCell reliabilityRemediationEffortValue = new PdfPCell(new Phrase(project.getMeasure(RELIABILITY_REMEDIATION_EFFORT).getValue(), Style.DASHBOARD_DATA_FONT_2));
+
+		PdfPCell reliabilityRemediationEffortValue = new PdfPCell(new Phrase(
+				SonarUtil
+						.getConversion(Integer.parseInt(project.getMeasure(RELIABILITY_REMEDIATION_EFFORT).getValue())),
+				Style.DASHBOARD_DATA_FONT_2));
 		reliabilityRemediationEffortValue.setVerticalAlignment(Element.ALIGN_CENTER);
 		reliabilityRemediationEffortValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		reliabilityRemediationEffortValue.setExtraParagraphSpace(5);
 		reliabilityRemediationEffortValue.setPaddingRight(2);
 		tableReliabilityRemediationEffort.addCell(reliabilityRemediationEffortValue);
-		
+
 		tableReliabilityOther.addCell(tableReliabilityRemediationEffort);
-		
+
 		tableReliability.addCell(tableBugs);
 		tableReliability.addCell(tableNewBugs);
 		tableReliability.addCell(tableReliabilityRating);
-		
+
 		section.add(new Paragraph(" "));
 		section.add(reliabilityTitle);
 		section.add(new Paragraph(" "));
 		section.add(tableReliability);
 		section.add(new Paragraph(" "));
 		section.add(tableReliabilityOther);
-		
+
 	}
 
 	protected void printSecurityBoard(final Project project, final Section section) throws DocumentException {
