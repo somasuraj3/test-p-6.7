@@ -32,7 +32,8 @@ public class MetricKeys {
 	public static final String NEW_BUGS = "new_bugs";
 	public static final String RELIABILITY_RATING = "reliability_rating";
 	public static final String RELIABILITY_REMEDIATION_EFFORT = "reliability_remediation_effort";
-
+	public static final String NEW_RELIABILITY_REMEDIATION_EFFORT = "new_reliability_remediation_effort";
+	
 	// SECURITY
 	public static final String VULNERABILITIES = "vulnerabilities";
 	public static final String NEW_VULNERABILITIES = "new_vulnerabilities";

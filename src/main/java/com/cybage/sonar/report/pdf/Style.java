@@ -89,7 +89,7 @@ public class Style {
 	/**
 	 * Dashboard metric title font
 	 */
-	public static final Font DASHBOARD_TITLE_FONT = new Font(FontFamily.COURIER, 11, Font.NORMAL, new BaseColor(0, 134, 179));
+	public static final Font DASHBOARD_TITLE_FONT = new Font(FontFamily.COURIER, 11, Font.NORMAL, new BaseColor(6, 12, 76));
 
 	/**
 	 * Dashboard metric value font
@@ -125,6 +125,13 @@ public class Style {
 	 * Dashboard metric details font
 	 */
 	public static final Font DASHBOARD_RATING_FONT_E = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(255, 0, 0));
+	
+	/**
+	 * Dashboard metric table background color
+	 */
+	public static final BaseColor DASHBOARD_NEW_METRIC_BACKGROUND_COLOR = new BaseColor(188, 226, 72);
+	
+	
 	
 	/**
 	 * Tendency icons height + 2 (used in tables style)
