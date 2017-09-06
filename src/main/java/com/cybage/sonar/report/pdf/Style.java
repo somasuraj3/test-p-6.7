@@ -89,7 +89,7 @@ public class Style {
 	/**
 	 * Dashboard metric title font
 	 */
-	public static final Font DASHBOARD_TITLE_FONT = new Font(FontFamily.COURIER, 11, Font.NORMAL, new BaseColor(6, 12, 76));
+	public static final Font DASHBOARD_TITLE_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL, new BaseColor(6, 12, 76));
 
 	/**
 	 * Dashboard metric value font

@@ -20,6 +20,8 @@
 
 package com.cybage.sonar.report.pdf.batch;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FileSystem;
@@ -30,6 +32,8 @@ import org.sonar.api.batch.postjob.PostJobDescriptor;
 //import org.sonar.report.pdf.util.FileUploader;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
+
+import com.cybage.sonar.report.pdf.util.FileUploader;
 
 public class PDFPostJob implements PostJob {
 
@@ -58,17 +62,15 @@ public class PDFPostJob implements PostJob {
 
 	@Override
 	public void describe(PostJobDescriptor arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void execute(PostJobContext postJobContext) {
 		
 		try {
-			//wait(10);
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String projectKey = postJobContext.settings().getString("sonar.projectKey");
@@ -83,25 +85,19 @@ public class PDFPostJob implements PostJob {
 		String reportType = postJobContext.settings().hasKey(REPORT_TYPE)
 				? postJobContext.settings().getString(REPORT_TYPE) : REPORT_TYPE_DEFAULT_VALUE;
 
-		LOGGER.info("sonarHostURL : " + sonarHostUrl);
-		LOGGER.info("username : " + username);
-		LOGGER.info("password : " + password);
-		LOGGER.info("reportType : " + reportType);
-		LOGGER.info("projectKey : " + projectKey);
-
 		PDFGenerator generator = new PDFGenerator(projectKey, fs, sonarHostUrl, username, password, reportType);
 
 		generator.execute();
 
-		/*String path = fs.workDir().getAbsolutePath() + "/" + project.getEffectiveKey().replace(':', '-') + ".pdf";
+		/*String path = fs.workDir().getAbsolutePath() + "/" + projectKey.replace(':', '-') + ".pdf";
 
 		File pdf = new File(path);
 		if (pdf.exists()) {
-			FileUploader.upload(pdf, sonarHostUrl + "/pdf_report/store", username, password);
+			FileUploader.upload(pdf, sonarHostUrl, username, password);
 		} else {
-			LOG.error("PDF file not found in local filesystem. Report could not be sent to server.");
-		}
-		 */
+			LOGGER.error("PDF file not found in local filesystem. Report could not be sent to server.");
+		}*/
+		
 	}
 	
 

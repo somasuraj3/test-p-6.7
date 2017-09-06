@@ -78,6 +78,7 @@ public class MetricKeys {
 
 	// Issues
 	public static final String VIOLATIONS = "violations";
+	public static final String NEW_VIOLATIONS = "new_violations";
 	public static final String OPEN_ISSUES = "open_issues";
 	public static final String REOPENED_ISSUES = "reopened_issues";
 	public static final String CONFIRMED_ISSUES = "confirmed_issues";

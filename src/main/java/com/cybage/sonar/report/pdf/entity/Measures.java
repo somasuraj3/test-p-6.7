@@ -30,6 +30,7 @@ public class Measures {
   private Hashtable<String, Measure> measuresTable = new Hashtable<String, Measure>();
 
   public Measures() {
+	  
   }
 
   public int getMeasuresCount() {

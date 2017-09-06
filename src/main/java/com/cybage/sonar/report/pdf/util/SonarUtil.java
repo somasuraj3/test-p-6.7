@@ -11,12 +11,12 @@ public class SonarUtil {
 			minutes = minutes % 60;
 			return hours + "h " + minutes + "min";
 		}else if(minutes >= 1140){
-			days = minutes / 1140;
+			days = (minutes / 60) / 8;
 			//minutes = minutes - (minutes * days);
 			minutes = minutes % 1140;
 			hours = minutes / 60;
 			minutes = minutes % 60;
-			return days + "d " + hours + "h " + minutes + "min";
+			return days + "d "; //+ hours + "h " + minutes + "min";
 		}else{
 			return minutes + "min";
 		}

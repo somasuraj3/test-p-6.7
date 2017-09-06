@@ -69,22 +69,6 @@
 			<version>${sonar.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.sonarsource.sonarqube/sonar-server -->
-		<dependency>
-			<groupId>org.sonarsource.sonarqube</groupId>
-			<artifactId>sonar-server</artifactId>
-			<version>${sonar.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.sonarsource.sonarqube/sonar-ce -->
-		<dependency>
-			<groupId>org.sonarsource.sonarqube</groupId>
-			<artifactId>sonar-ce</artifactId>
-			<version>${sonar.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>

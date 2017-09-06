@@ -38,8 +38,6 @@ public class PDFReportPlugin implements Plugin {
 
 	@Override
 	public void define(Context context) {
-		// TODO Auto-generated method stub
 		context.addExtension(PDFPostJob.class);
-		
 	}
 }

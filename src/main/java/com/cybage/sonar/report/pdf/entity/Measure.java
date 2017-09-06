@@ -19,6 +19,7 @@
  */
 package com.cybage.sonar.report.pdf.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Measure {
@@ -37,7 +38,7 @@ public class Measure {
 	public Measure() {
 		this.metric = "";
 		this.value = "";
-		this.periods = null;
+		this.periods = new ArrayList<>();
 	}
 
 	public String getMetric() {
