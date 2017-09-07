@@ -144,6 +144,8 @@ public abstract class PDFReporter {
 			WsClient wsClient = WsClientFactories.getDefault().newClient(httpConnector);
 			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(credentials, wsClient, this);
 			project = projectBuilder.initializeProject(getProjectKey());
+			LOGGER.info("Collected Measures");
+			project.getMeasures().getMeasuresKeys().stream().forEach(k -> LOGGER.info(k));
 		}
 		return project;
 	}

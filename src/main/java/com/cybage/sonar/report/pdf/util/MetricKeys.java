@@ -33,7 +33,7 @@ public class MetricKeys {
 	public static final String RELIABILITY_RATING = "reliability_rating";
 	public static final String RELIABILITY_REMEDIATION_EFFORT = "reliability_remediation_effort";
 	public static final String NEW_RELIABILITY_REMEDIATION_EFFORT = "new_reliability_remediation_effort";
-	
+
 	// SECURITY
 	public static final String VULNERABILITIES = "vulnerabilities";
 	public static final String NEW_VULNERABILITIES = "new_vulnerabilities";
@@ -87,28 +87,29 @@ public class MetricKeys {
 
 	// Others
 	public static final String PROFILE = "profile";
-	
+
 	// Get all metric keys as list
 	public static List<String> getAllMetricKeys() {
 		List<String> allMetricKeys = new ArrayList<String>();
 		allMetricKeys.addAll(Arrays.asList(MetricKeys.BUGS, MetricKeys.NEW_BUGS, MetricKeys.RELIABILITY_RATING,
-				MetricKeys.RELIABILITY_REMEDIATION_EFFORT, MetricKeys.VULNERABILITIES, MetricKeys.NEW_VULNERABILITIES,
-				MetricKeys.SECURITY_RATING, MetricKeys.SECURITY_REMEDIATION_EFFORT,
-				MetricKeys.NEW_SECURITY_REMEDIATION_EFFORT, MetricKeys.CODE_SMELLS, MetricKeys.NEW_CODE_SMELLS,
-				MetricKeys.SQALE_RATING, MetricKeys.SQALE_INDEX, MetricKeys.NEW_TECHNICAL_DEBT,
-				MetricKeys.SQALE_DEBT_RATIO, MetricKeys.NEW_SQALE_DEBT_RATIO,
+				MetricKeys.NEW_RELIABILITY_REMEDIATION_EFFORT, MetricKeys.RELIABILITY_REMEDIATION_EFFORT,
+				MetricKeys.VULNERABILITIES, MetricKeys.NEW_VULNERABILITIES, MetricKeys.SECURITY_RATING,
+				MetricKeys.SECURITY_REMEDIATION_EFFORT, MetricKeys.NEW_SECURITY_REMEDIATION_EFFORT,
+				MetricKeys.CODE_SMELLS, MetricKeys.NEW_CODE_SMELLS, MetricKeys.SQALE_RATING, MetricKeys.SQALE_INDEX,
+				MetricKeys.NEW_TECHNICAL_DEBT, MetricKeys.SQALE_DEBT_RATIO, MetricKeys.NEW_SQALE_DEBT_RATIO,
 				MetricKeys.EFFORT_TO_REACH_MAINTAINABILITY_RATING_A, MetricKeys.DUPLICATED_LINES_DENSITY,
 				MetricKeys.DUPLICATED_BLOCKS, MetricKeys.DUPLICATED_LINES, MetricKeys.DUPLICATED_FILES,
 				MetricKeys.NCLOC, MetricKeys.LINES, MetricKeys.STATEMENTS, MetricKeys.FUNCTIONS, MetricKeys.CLASSES,
 				MetricKeys.FILES, MetricKeys.DIRECTORIES, MetricKeys.COMPLEXITY, MetricKeys.FUNCTION_COMPLEXITY,
 				MetricKeys.FILE_COMPLEXITY, MetricKeys.CLASS_COMPLEXITY, MetricKeys.COMMENT_LINES_DENSITY,
-				MetricKeys.COMMENT_LINES, MetricKeys.VIOLATIONS, MetricKeys.OPEN_ISSUES, MetricKeys.REOPENED_ISSUES,
-				MetricKeys.CONFIRMED_ISSUES, MetricKeys.FALSE_POSITIVE_ISSUES, MetricKeys.WONT_FIX_ISSUES));
+				MetricKeys.COMMENT_LINES, MetricKeys.VIOLATIONS, MetricKeys.NEW_VIOLATIONS, MetricKeys.OPEN_ISSUES,
+				MetricKeys.REOPENED_ISSUES, MetricKeys.CONFIRMED_ISSUES, MetricKeys.FALSE_POSITIVE_ISSUES,
+				MetricKeys.WONT_FIX_ISSUES));
 		return allMetricKeys;
 	}
-	
+
 	// Get list of strings as single string separated by comma
 	public static String getAllMetricKeysAsString(List<String> metricKeys) {
-		return Joiner.on(",").join(metricKeys); 
+		return Joiner.on(",").join(metricKeys);
 	}
 }

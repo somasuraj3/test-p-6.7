@@ -17,51 +17,27 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package com.cybage.sonar.report.pdf.entity;
+package com.cybage.sonar.report.pdf.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.sonar.api.web.AbstractRubyTemplate;
+import org.sonar.api.web.Description;
+import org.sonar.api.web.RubyRailsWidget;
 
-public class Measure {
+/**
+ * {@inheritDoc}
+ */
+@Description("Allows to download PDF report of SonarQube analysis")
+public final class PdfReportWidget extends AbstractRubyTemplate implements RubyRailsWidget {
 
-	private String metric;
-	private String value;
-	private List<Period> periods = null;
-	
-	public Measure(String metric, String value, List<Period> periods) {
-		super();
-		this.metric = metric;
-		this.value = value;
-		this.periods = periods;
-	}
+  protected String getTemplatePath() {
+    return "/com/cybage/sonar/report/pdf/dashboard_widget.erb";
+  }
 
-	public Measure() {
-		this.metric = "";
-		this.value = "";
-		this.periods = null;
-	}
+  public String getId() {
+    return "pdf-report-widget";
+  }
 
-	public String getMetric() {
-		return metric;
-	}
-
-	public void setMetric(String metric) {
-		this.metric = metric;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public List<Period> getPeriods() {
-		return periods;
-	}
-
-	public void setPeriods(List<Period> periods) {
-		this.periods = periods;
-	}
+  public String getTitle() {
+    return "PDF Report Widget";
+  }
 }

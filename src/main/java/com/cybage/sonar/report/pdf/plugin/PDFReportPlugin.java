@@ -39,5 +39,6 @@ public class PDFReportPlugin implements Plugin {
 	@Override
 	public void define(Context context) {
 		context.addExtension(PDFPostJob.class);
+		context.addExtension(PdfReportWidget.class);
 	}
 }
