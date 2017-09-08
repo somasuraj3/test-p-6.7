@@ -1268,34 +1268,39 @@ public class ExecutivePDFReporter extends PDFReporter {
 		violationsValue.setExtraParagraphSpace(10);
 		tableViolations.addCell(violationsValue);
 
-		PdfPCell violations = new PdfPCell(new Phrase(getTextProperty("metrics." + VIOLATIONS), Style.DASHBOARD_TITLE_FONT));
+		PdfPCell violations = new PdfPCell(
+				new Phrase(getTextProperty("metrics." + VIOLATIONS), Style.DASHBOARD_TITLE_FONT));
 		violations.setVerticalAlignment(Element.ALIGN_CENTER);
 		violations.setHorizontalAlignment(Element.ALIGN_CENTER);
 		violations.setExtraParagraphSpace(3);
 		tableViolations.addCell(violations);
 
 		tableIssues.addCell(tableViolations);
-		
+
 		// New Issues Table
-		PdfPTable tableNewViolations = new PdfPTable(1);
-		tableNewViolations.setSpacingAfter(5);
+		if (project.getMeasures().containsMeasure(NEW_VIOLATIONS)) {
 
-		PdfPCell newViolationsValue = new PdfPCell(
-				new Phrase(project.getMeasure(NEW_VIOLATIONS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
-		newViolationsValue.setVerticalAlignment(Element.ALIGN_CENTER);
-		newViolationsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
-		newViolationsValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
-		newViolationsValue.setExtraParagraphSpace(10);
-		tableNewViolations.addCell(newViolationsValue);
+			PdfPTable tableNewViolations = new PdfPTable(1);
+			tableNewViolations.setSpacingAfter(5);
 
-		PdfPCell newViolations = new PdfPCell(new Phrase(getTextProperty("metrics." + NEW_VIOLATIONS), Style.DASHBOARD_TITLE_FONT));
-		newViolations.setVerticalAlignment(Element.ALIGN_CENTER);
-		newViolations.setHorizontalAlignment(Element.ALIGN_CENTER);
-		newViolations.setExtraParagraphSpace(3);
-		tableNewViolations.addCell(newViolations);
+			PdfPCell newViolationsValue = new PdfPCell(new Phrase(
+					project.getMeasure(NEW_VIOLATIONS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+			newViolationsValue.setVerticalAlignment(Element.ALIGN_CENTER);
+			newViolationsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+			newViolationsValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
+			newViolationsValue.setExtraParagraphSpace(10);
+			tableNewViolations.addCell(newViolationsValue);
 
-		tableIssues.addCell(tableNewViolations);
+			PdfPCell newViolations = new PdfPCell(
+					new Phrase(getTextProperty("metrics." + NEW_VIOLATIONS), Style.DASHBOARD_TITLE_FONT));
+			newViolations.setVerticalAlignment(Element.ALIGN_CENTER);
+			newViolations.setHorizontalAlignment(Element.ALIGN_CENTER);
+			newViolations.setExtraParagraphSpace(3);
+			tableNewViolations.addCell(newViolations);
 
+			tableIssues.addCell(tableNewViolations);
+		}
+		
 		// Issues Other Metrics Table
 		PdfPTable tableIssuesOther = new PdfPTable(1);
 		tableIssuesOther.setWidthPercentage(93);
@@ -1308,7 +1313,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableOpenIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tableOpenIssues.setWidths(new int[] { 8, 2 });
 
-		PdfPCell openIssues = new PdfPCell(new Phrase(getTextProperty("metrics." + OPEN_ISSUES), Style.DASHBOARD_TITLE_FONT));
+		PdfPCell openIssues = new PdfPCell(
+				new Phrase(getTextProperty("metrics." + OPEN_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		openIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		openIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		openIssues.setExtraParagraphSpace(5);
@@ -1376,7 +1382,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableFalsePositiveIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tableFalsePositiveIssues.setWidths(new int[] { 8, 2 });
 
-		PdfPCell falsePositiveIssues = new PdfPCell(new Phrase(getTextProperty("metrics." + FALSE_POSITIVE_ISSUES), Style.DASHBOARD_TITLE_FONT));
+		PdfPCell falsePositiveIssues = new PdfPCell(
+				new Phrase(getTextProperty("metrics." + FALSE_POSITIVE_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		falsePositiveIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		falsePositiveIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		falsePositiveIssues.setExtraParagraphSpace(5);
@@ -1398,7 +1405,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableWontFixIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tableWontFixIssues.setWidths(new int[] { 8, 2 });
 
-		PdfPCell wontFixIssues = new PdfPCell(new Phrase(getTextProperty("metrics." + WONT_FIX_ISSUES), Style.DASHBOARD_TITLE_FONT));
+		PdfPCell wontFixIssues = new PdfPCell(
+				new Phrase(getTextProperty("metrics." + WONT_FIX_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		wontFixIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		wontFixIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		wontFixIssues.setExtraParagraphSpace(5);
