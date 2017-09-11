@@ -60,21 +60,24 @@ public class PDFPostJob implements PostJob {
 	public static final String SONAR_HOST_URL = "sonar.host.url";
 	public static final String SONAR_HOST_URL_DEFAULT_VALUE = "http://localhost:9000";
 
+	public static final String SONAR_PROJECT_VERSION = "sonar.projectVersion";
+	public static final String SONAR_PROJECT_VERSION_DEFAULT_VALUE = "1.0";
+
 	@Override
 	public void describe(PostJobDescriptor arg0) {
-		
+
 	}
 
 	@Override
 	public void execute(PostJobContext postJobContext) {
-		
+
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		String projectKey = postJobContext.settings().getString("sonar.projectKey");
-		
+
 		LOGGER.info("Executing decorator: PDF Report");
 		String sonarHostUrl = postJobContext.settings().hasKey(SONAR_HOST_URL)
 				? postJobContext.settings().getString(SONAR_HOST_URL) : SONAR_HOST_URL_DEFAULT_VALUE;
@@ -84,21 +87,25 @@ public class PDFPostJob implements PostJob {
 				: PASSWORD_DEFAULT_VALUE;
 		String reportType = postJobContext.settings().hasKey(REPORT_TYPE)
 				? postJobContext.settings().getString(REPORT_TYPE) : REPORT_TYPE_DEFAULT_VALUE;
+		String projectVersion = postJobContext.settings().hasKey(SONAR_PROJECT_VERSION) ? postJobContext.settings().getString(SONAR_PROJECT_VERSION)
+				: SONAR_PROJECT_VERSION_DEFAULT_VALUE;
 
-		PDFGenerator generator = new PDFGenerator(projectKey, fs, sonarHostUrl, username, password, reportType);
+		PDFGenerator generator = new PDFGenerator(projectKey, projectVersion, fs, sonarHostUrl, username, password,
+				reportType);
 
 		generator.execute();
 
-		/*String path = fs.workDir().getAbsolutePath() + "/" + projectKey.replace(':', '-') + ".pdf";
+		/*
+		 * String path = fs.workDir().getAbsolutePath() + "/" +
+		 * projectKey.replace(':', '-') + ".pdf";
+		 * 
+		 * File pdf = new File(path); if (pdf.exists()) {
+		 * FileUploader.upload(pdf, sonarHostUrl, username, password); } else {
+		 * LOGGER.
+		 * error("PDF file not found in local filesystem. Report could not be sent to server."
+		 * ); }
+		 */
 
-		File pdf = new File(path);
-		if (pdf.exists()) {
-			FileUploader.upload(pdf, sonarHostUrl, username, password);
-		} else {
-			LOGGER.error("PDF file not found in local filesystem. Report could not be sent to server.");
-		}*/
-		
 	}
-	
 
 }

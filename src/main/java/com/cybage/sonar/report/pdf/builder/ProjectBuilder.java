@@ -35,6 +35,7 @@ import org.sonarqube.ws.WsComponents.TreeWsResponse;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.component.ShowWsRequest;
 import org.sonarqube.ws.client.component.TreeWsRequest;
+import org.sonarqube.ws.client.qualityprofile.SearchWsRequest;
 
 import com.cybage.sonar.report.pdf.PDFReporter;
 import com.cybage.sonar.report.pdf.entity.Measures;
@@ -82,8 +83,8 @@ public class ProjectBuilder {
 	 * @throws DocumentException
 	 * @throws ReportException
 	 */
-	public Project initializeProject(final String key) throws IOException, ReportException {
-		Project project = new Project(key);
+	public Project initializeProject(final String key, final String version) throws IOException, ReportException {
+		Project project = new Project(key, version);
 
 		LOGGER.info("Retrieving project info for " + project.getKey());
 
@@ -98,7 +99,7 @@ public class ProjectBuilder {
 			//initMostViolatedFiles(project);
 			//initMostComplexElements(project);
 			//initMostDuplicatedFiles(project);
-			LOGGER.debug("Accessing Sonar: getting child projects");
+			/*LOGGER.debug("Accessing Sonar: getting child projects");
 
 			TreeWsRequest treeWsReq = new TreeWsRequest();
 			treeWsReq.setBaseComponentKey(project.getKey());
@@ -116,7 +117,8 @@ public class ProjectBuilder {
 				Component childNode = it.next();
 				Project childProject = initializeProject(childNode.getKey());
 				project.getSubprojects().add(childProject);
-			}
+			}*/
+			
 		} else {
 			LOGGER.info("Can't retrieve project info. Have you set username/password in Sonar settings?");
 			throw new ReportException("Can't retrieve project info. Parent project node is empty. Authentication?");

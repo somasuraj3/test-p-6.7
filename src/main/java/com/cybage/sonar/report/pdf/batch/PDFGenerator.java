@@ -29,11 +29,9 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.fs.InputModule;
 
 import com.cybage.sonar.report.pdf.ExecutivePDFReporter;
 import com.cybage.sonar.report.pdf.PDFReporter;
-import com.cybage.sonar.report.pdf.TeamWorkbookPDFReporter;
 import com.cybage.sonar.report.pdf.entity.exception.ReportException;
 import com.cybage.sonar.report.pdf.util.Credentials;
 import com.itextpdf.text.DocumentException;
@@ -48,11 +46,13 @@ public class PDFGenerator {
 	private String reportType;
 
 	private String projectKey;
+	private String projectVersion;
 	private FileSystem fs;
 
-	public PDFGenerator(final String projectKey, final FileSystem fs, final String sonarHostUrl,
-			final String username, final String password, final String reportType) {
+	public PDFGenerator(final String projectKey, final String projectVersion, final FileSystem fs,
+			final String sonarHostUrl, final String username, final String password, final String reportType) {
 		this.projectKey = projectKey;
+		this.projectVersion = projectVersion;
 		this.fs = fs;
 		this.sonarHostUrl = sonarHostUrl;
 		this.username = username;
@@ -79,23 +79,18 @@ public class PDFGenerator {
 			Credentials credentials = new Credentials(config.getProperty("sonar.base.url"), username, password);
 
 			String sonarProjectId = projectKey;
+			String sonarProjectVersion = projectVersion;
 			String path = fs.workDir().getAbsolutePath() + "/" + sonarProjectId.replace(':', '-') + ".pdf";
 
 			PDFReporter reporter = null;
 			if (reportType != null) {
-				if (reportType.equals("executive")) {
+				if (reportType.equals("pdf")) {
 					LOGGER.info("Executive report type selected");
 					reporter = new ExecutivePDFReporter(credentials, this.getClass().getResource("/sonar.png"),
-							sonarProjectId, config, configLang);
-				}/* else if (reportType.equals("workbook")) {
-					LOGGER.info("Team workbook report type selected");
-					reporter = new TeamWorkbookPDFReporter(credentials, this.getClass().getResource("/sonar.png"),
-							sonarProjectId, config, configLang);
-				}*/
+							sonarProjectId, sonarProjectVersion, config, configLang);
+				}
 			} else {
-				LOGGER.info("No report type provided. Default report selected (Team workbook)");
-				reporter = new TeamWorkbookPDFReporter(credentials, this.getClass().getResource("/sonar.png"),
-						sonarProjectId, config, configLang);
+				LOGGER.info("No report type provided. Default report selected (PDF)");
 			}
 
 			ByteArrayOutputStream baos = reporter.getReport();
@@ -115,7 +110,5 @@ public class PDFGenerator {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 }

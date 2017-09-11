@@ -143,7 +143,7 @@ public abstract class PDFReporter {
 					.credentials(credentials.getUsername(), credentials.getPassword()).build();
 			WsClient wsClient = WsClientFactories.getDefault().newClient(httpConnector);
 			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(credentials, wsClient, this);
-			project = projectBuilder.initializeProject(getProjectKey());
+			project = projectBuilder.initializeProject(getProjectKey(),getProjectVersion());
 			LOGGER.info("Collected Measures");
 			project.getMeasures().getMeasuresKeys().stream().forEach(k -> LOGGER.info(k));
 		}
@@ -229,6 +229,8 @@ public abstract class PDFReporter {
 	protected abstract URL getLogo();
 
 	protected abstract String getProjectKey();
+	
+	protected abstract String getProjectVersion();
 
 	protected abstract void printFrontPage(Document frontPageDocument, PdfWriter frontPageWriter)
 			throws ReportException;
