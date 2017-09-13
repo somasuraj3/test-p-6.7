@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -142,10 +143,11 @@ public abstract class PDFReporter {
 			HttpConnector httpConnector = HttpConnector.newBuilder().url(credentials.getUrl())
 					.credentials(credentials.getUsername(), credentials.getPassword()).build();
 			WsClient wsClient = WsClientFactories.getDefault().newClient(httpConnector);
-			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(credentials, wsClient, this);
-			project = projectBuilder.initializeProject(getProjectKey(),getProjectVersion());
+			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(wsClient);
+			project = projectBuilder.initializeProject(getProjectKey(),getProjectVersion(), getSonarLanguage());
 			LOGGER.info("Collected Measures");
 			project.getMeasures().getMeasuresKeys().stream().forEach(k -> LOGGER.info(k));
+			LOGGER.info("Project Status : " + project.getProjectStatus().getStatus());
 		}
 		return project;
 	}
@@ -231,6 +233,8 @@ public abstract class PDFReporter {
 	protected abstract String getProjectKey();
 	
 	protected abstract String getProjectVersion();
+	
+	protected abstract List<String> getSonarLanguage();
 
 	protected abstract void printFrontPage(Document frontPageDocument, PdfWriter frontPageWriter)
 			throws ReportException;

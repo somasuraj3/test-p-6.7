@@ -20,20 +20,17 @@
 
 package com.cybage.sonar.report.pdf.batch;
 
-import java.io.File;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.fs.InputModule;
 import org.sonar.api.batch.postjob.PostJob;
 import org.sonar.api.batch.postjob.PostJobContext;
 import org.sonar.api.batch.postjob.PostJobDescriptor;
-//import org.sonar.report.pdf.util.FileUploader;
 import org.sonar.api.config.Settings;
-import org.sonar.api.resources.Project;
 
-import com.cybage.sonar.report.pdf.util.FileUploader;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class PDFPostJob implements PostJob {
 
@@ -63,6 +60,8 @@ public class PDFPostJob implements PostJob {
 	public static final String SONAR_PROJECT_VERSION = "sonar.projectVersion";
 	public static final String SONAR_PROJECT_VERSION_DEFAULT_VALUE = "1.0";
 
+	public static final String SONAR_LANGUAGE = "sonar.language";
+
 	@Override
 	public void describe(PostJobDescriptor arg0) {
 
@@ -87,11 +86,13 @@ public class PDFPostJob implements PostJob {
 				: PASSWORD_DEFAULT_VALUE;
 		String reportType = postJobContext.settings().hasKey(REPORT_TYPE)
 				? postJobContext.settings().getString(REPORT_TYPE) : REPORT_TYPE_DEFAULT_VALUE;
-		String projectVersion = postJobContext.settings().hasKey(SONAR_PROJECT_VERSION) ? postJobContext.settings().getString(SONAR_PROJECT_VERSION)
-				: SONAR_PROJECT_VERSION_DEFAULT_VALUE;
+		String projectVersion = postJobContext.settings().hasKey(SONAR_PROJECT_VERSION)
+				? postJobContext.settings().getString(SONAR_PROJECT_VERSION) : SONAR_PROJECT_VERSION_DEFAULT_VALUE;
+		List<String> sonarLanguage = postJobContext.settings().hasKey(SONAR_LANGUAGE)
+				? Arrays.asList(postJobContext.settings().getStringArray(SONAR_LANGUAGE)) : null;
 
-		PDFGenerator generator = new PDFGenerator(projectKey, projectVersion, fs, sonarHostUrl, username, password,
-				reportType);
+		PDFGenerator generator = new PDFGenerator(projectKey, projectVersion, sonarLanguage, fs, sonarHostUrl, username,
+				password, reportType);
 
 		generator.execute();
 

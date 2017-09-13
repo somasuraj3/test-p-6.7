@@ -23,12 +23,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.utils.HttpDownloader.HttpException;
 import org.sonarqube.ws.WsMeasures.ComponentWsResponse;
 import org.sonarqube.ws.client.WsClient;
+import org.sonarqube.ws.client.WsClientFactories;
+import org.sonarqube.ws.client.WsClientFactory;
+import org.sonarqube.ws.client.WsConnector;
+import org.sonarqube.ws.client.WsRequest;
+import org.sonarqube.ws.client.WsRequest.Method;
 import org.sonarqube.ws.client.measure.ComponentWsRequest;
 
 import com.cybage.sonar.report.pdf.entity.Measure;
@@ -109,7 +115,7 @@ public class MeasuresBuilder {
 	 */
 	private void addMeasures(final Measures measures, final List<String> measuresAsString, final String projectKey)
 			throws HttpException, IOException {
-
+		 
 		/*
 		 * String[] measuresAsArray = measuresAsString .toArray(new
 		 * String[measuresAsString.size()]); ResourceQuery query =

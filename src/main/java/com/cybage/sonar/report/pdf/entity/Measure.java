@@ -19,7 +19,6 @@
  */
 package com.cybage.sonar.report.pdf.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Measure {

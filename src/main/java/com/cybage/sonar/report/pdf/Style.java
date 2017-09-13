@@ -101,6 +101,33 @@ public class Style {
 	 */
 	public static final Font DASHBOARD_DATA_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.DARK_GRAY);
 	
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font QUALITY_GATE_TITLE_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL, new BaseColor(6, 12, 76));
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font QUALITY_GATE_PASSED_FONT = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.DARK_GRAY);
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font QUALITY_GATE_PASSED_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.DARK_GRAY);
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font QUALITY_GATE_FAILED_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL,	BaseColor.WHITE);
+	
+	/**
+	 * Dashboard metric details font
+	 */
+	public static final Font QUALITY_GATE_FAILED_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.WHITE);
+	
+	
 	/**
 	 * Dashboard metric details font
 	 */
@@ -131,6 +158,9 @@ public class Style {
 	 */
 	public static final BaseColor DASHBOARD_NEW_METRIC_BACKGROUND_COLOR = new BaseColor(188, 226, 72);
 	
+	public static final BaseColor QUALITY_GATE_PASSED_COLOR = new BaseColor(188, 226, 72);
+	
+	public static final BaseColor QUALITY_GATE_FAILED_COLOR = new BaseColor(255, 0, 0);
 	
 	
 	/**

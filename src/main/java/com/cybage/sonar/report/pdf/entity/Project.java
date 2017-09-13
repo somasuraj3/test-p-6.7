@@ -2,6 +2,7 @@ package com.cybage.sonar.report.pdf.entity;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class Project {
 
@@ -10,8 +11,11 @@ public class Project {
 	private String key;
 	private String name;
 	private String version;
+	private List<String> languages;
 	private String description;
 	private List<String> links;
+	private ProjectStatus projectStatus;
+	private List<QualityProfile> qualityProfiles;
 
 	// Measures
 	private Measures measures;
@@ -35,9 +39,10 @@ public class Project {
 		this.key = key;
 	}
 
-	public Project(final String key, final String version) {
+	public Project(final String key, final String version, final List<String> sonarLanguage) {
 		this.key = key;
 		this.version = version;
+		this.languages = sonarLanguage;
 	}
 
 	public Measure getMeasure(final String measureKey) {
@@ -46,6 +51,10 @@ public class Project {
 		} else {
 			return new Measure();
 		}
+	}
+
+	public Optional<QualityProfile> getQualityProfileByLanguage(final String language) {
+		return qualityProfiles.stream().filter(qp -> qp.getLanguage().equals(language)).findFirst();
 	}
 
 	public Project getChildByKey(final String key) {
@@ -75,6 +84,10 @@ public class Project {
 		this.version = version;
 	}
 
+	public void setLanguages(List<String> languages) {
+		this.languages = languages;
+	}
+
 	public void setDescription(final String description) {
 		this.description = description;
 	}
@@ -87,6 +100,14 @@ public class Project {
 		return id;
 	}
 
+	public void setProjectStatus(final ProjectStatus projectStatus) {
+		this.projectStatus = projectStatus;
+	}
+
+	public void setQualityProfiles(List<QualityProfile> qualityProfiles) {
+		this.qualityProfiles = qualityProfiles;
+	}
+
 	public String getKey() {
 		return key;
 	}
@@ -97,6 +118,10 @@ public class Project {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public List<String> getLanguages() {
+		return languages;
 	}
 
 	public String getDescription() {
@@ -113,6 +138,14 @@ public class Project {
 
 	public void setSubprojects(final List<Project> subprojects) {
 		this.subprojects = subprojects;
+	}
+
+	public ProjectStatus getProjectStatus() {
+		return projectStatus;
+	}
+
+	public List<QualityProfile> getQualityProfiles() {
+		return qualityProfiles;
 	}
 
 	public Measures getMeasures() {

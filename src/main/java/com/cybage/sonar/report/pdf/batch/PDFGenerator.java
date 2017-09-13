@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -47,12 +48,14 @@ public class PDFGenerator {
 
 	private String projectKey;
 	private String projectVersion;
+	private List<String> sonarLanguage;
 	private FileSystem fs;
 
-	public PDFGenerator(final String projectKey, final String projectVersion, final FileSystem fs,
+	public PDFGenerator(final String projectKey, final String projectVersion, final List<String> sonarLanguage, final FileSystem fs,
 			final String sonarHostUrl, final String username, final String password, final String reportType) {
 		this.projectKey = projectKey;
 		this.projectVersion = projectVersion;
+		this.sonarLanguage = sonarLanguage;
 		this.fs = fs;
 		this.sonarHostUrl = sonarHostUrl;
 		this.username = username;
@@ -80,6 +83,7 @@ public class PDFGenerator {
 
 			String sonarProjectId = projectKey;
 			String sonarProjectVersion = projectVersion;
+			List<String> sonarLanguage = this.sonarLanguage;
 			String path = fs.workDir().getAbsolutePath() + "/" + sonarProjectId.replace(':', '-') + ".pdf";
 
 			PDFReporter reporter = null;
@@ -87,7 +91,7 @@ public class PDFGenerator {
 				if (reportType.equals("pdf")) {
 					LOGGER.info("Executive report type selected");
 					reporter = new ExecutivePDFReporter(credentials, this.getClass().getResource("/sonar.png"),
-							sonarProjectId, sonarProjectVersion, config, configLang);
+							sonarProjectId, sonarProjectVersion, sonarLanguage, config, configLang);
 				}
 			} else {
 				LOGGER.info("No report type provided. Default report selected (PDF)");
