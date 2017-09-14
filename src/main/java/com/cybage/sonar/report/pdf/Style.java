@@ -73,7 +73,7 @@ public class Style {
 	/**
 	 * Font used in front page (Project description)
 	 */
-	public static final Font FRONTPAGE_FONT_2 = new Font(Font.FontFamily.HELVETICA, 18, Font.ITALIC, BaseColor.BLACK);
+	public static final Font FRONTPAGE_FONT_2 = new Font(Font.FontFamily.HELVETICA, 18, Font.NORMAL, BaseColor.BLACK);
 
 	/**
 	 * Font used in front page (Project date)

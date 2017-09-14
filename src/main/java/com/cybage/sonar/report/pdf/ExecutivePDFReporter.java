@@ -573,7 +573,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableReliability = new PdfPTable(2);
 			tableReliability.setWidths(new int[] { 1, 1 });
 		}
-		tableReliability.setWidthPercentage(93);
+		tableReliability.setWidthPercentage(94);
 		tableReliability.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tableReliability.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 
@@ -641,23 +641,17 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableReliability.addCell(tableReliabilityRating);
 
 		// Reliability Other Metrics Table
-		PdfPTable tableReliabilityOther = new PdfPTable(1);
+		PdfPTable tableReliabilityOther = new PdfPTable(2);
 		tableReliabilityOther.setWidthPercentage(93);
-		tableReliabilityOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		tableReliabilityOther.setWidths(new int[] { 8, 2 });
 		tableReliabilityOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-
-		// Reliability Remediation Effort Table
-		PdfPTable tableReliabilityRemediationEffort = new PdfPTable(2);
-		tableReliabilityRemediationEffort.setWidthPercentage(100);
-		tableReliabilityRemediationEffort.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableReliabilityRemediationEffort.setWidths(new int[] { 8, 2 });
 
 		PdfPCell reliabilityRemediationEffort = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + RELIABILITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
 		reliabilityRemediationEffort.setVerticalAlignment(Element.ALIGN_CENTER);
 		reliabilityRemediationEffort.setHorizontalAlignment(Element.ALIGN_LEFT);
 		reliabilityRemediationEffort.setExtraParagraphSpace(5);
-		tableReliabilityRemediationEffort.addCell(reliabilityRemediationEffort);
+		tableReliabilityOther.addCell(reliabilityRemediationEffort);
 
 		PdfPCell reliabilityRemediationEffortValue = new PdfPCell(new Phrase(
 				SonarUtil
@@ -667,23 +661,16 @@ public class ExecutivePDFReporter extends PDFReporter {
 		reliabilityRemediationEffortValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		reliabilityRemediationEffortValue.setExtraParagraphSpace(5);
 		reliabilityRemediationEffortValue.setPaddingRight(2);
-		tableReliabilityRemediationEffort.addCell(reliabilityRemediationEffortValue);
-
-		tableReliabilityOther.addCell(tableReliabilityRemediationEffort);
+		tableReliabilityOther.addCell(reliabilityRemediationEffortValue);
 
 		// Reliability Remediation Effort On New Code Table
 		if (project.getMeasures().containsMeasure(NEW_RELIABILITY_REMEDIATION_EFFORT)) {
-			PdfPTable tableReliabilityRemediationEffortNew = new PdfPTable(2);
-			tableReliabilityRemediationEffortNew.setWidthPercentage(100);
-			tableReliabilityRemediationEffortNew.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableReliabilityRemediationEffortNew.setWidths(new int[] { 8, 2 });
-
 			PdfPCell reliabilityRemediationEffortNew = new PdfPCell(new Phrase(
 					getTextProperty("metrics." + NEW_RELIABILITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
 			reliabilityRemediationEffortNew.setVerticalAlignment(Element.ALIGN_CENTER);
 			reliabilityRemediationEffortNew.setHorizontalAlignment(Element.ALIGN_LEFT);
 			reliabilityRemediationEffortNew.setExtraParagraphSpace(5);
-			tableReliabilityRemediationEffortNew.addCell(reliabilityRemediationEffortNew);
+			tableReliabilityOther.addCell(reliabilityRemediationEffortNew);
 
 			PdfPCell reliabilityRemediationEffortNewValue = new PdfPCell(new Phrase(
 					SonarUtil.getConversion(Integer.parseInt(
@@ -694,9 +681,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			reliabilityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			reliabilityRemediationEffortNewValue.setExtraParagraphSpace(5);
 			reliabilityRemediationEffortNewValue.setPaddingRight(2);
-			tableReliabilityRemediationEffortNew.addCell(reliabilityRemediationEffortNewValue);
-
-			tableReliabilityOther.addCell(tableReliabilityRemediationEffortNew);
+			tableReliabilityOther.addCell(reliabilityRemediationEffortNewValue);
 		}
 
 		section.add(new Paragraph(" "));
@@ -722,7 +707,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableSecurity = new PdfPTable(2);
 			tableSecurity.setWidths(new int[] { 1, 1 });
 		}
-		tableSecurity.setWidthPercentage(93);
+		tableSecurity.setWidthPercentage(95);
 		tableSecurity.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tableSecurity.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 
@@ -792,23 +777,17 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableSecurity.addCell(tableSecurityRating);
 
 		// Security Other Metrics Table
-		PdfPTable tableSecurityOther = new PdfPTable(1);
+		PdfPTable tableSecurityOther = new PdfPTable(2);
 		tableSecurityOther.setWidthPercentage(93);
-		tableSecurityOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableSecurityOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-
-		// Security Remediation Effort Table
-		PdfPTable tableSecurityRemediationEffort = new PdfPTable(2);
-		tableSecurityRemediationEffort.setWidthPercentage(100);
-		tableSecurityRemediationEffort.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableSecurityRemediationEffort.setWidths(new int[] { 8, 2 });
+		tableSecurityOther.setWidths(new int[] { 8, 2 });
 
 		PdfPCell securityRemediationEffort = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + SECURITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
 		securityRemediationEffort.setVerticalAlignment(Element.ALIGN_CENTER);
 		securityRemediationEffort.setHorizontalAlignment(Element.ALIGN_LEFT);
 		securityRemediationEffort.setExtraParagraphSpace(5);
-		tableSecurityRemediationEffort.addCell(securityRemediationEffort);
+		tableSecurityOther.addCell(securityRemediationEffort);
 
 		PdfPCell securityRemediationEffortValue = new PdfPCell(new Phrase(
 				SonarUtil.getConversion(Integer.parseInt(project.getMeasure(SECURITY_REMEDIATION_EFFORT).getValue())),
@@ -817,23 +796,16 @@ public class ExecutivePDFReporter extends PDFReporter {
 		securityRemediationEffortValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		securityRemediationEffortValue.setExtraParagraphSpace(5);
 		securityRemediationEffortValue.setPaddingRight(2);
-		tableSecurityRemediationEffort.addCell(securityRemediationEffortValue);
-
-		tableSecurityOther.addCell(tableSecurityRemediationEffort);
+		tableSecurityOther.addCell(securityRemediationEffortValue);
 
 		// Security Remediation Effort on New Code Table
 		if (project.getMeasures().containsMeasure(NEW_SECURITY_REMEDIATION_EFFORT)) {
-			PdfPTable tableSecurityRemediationEffortNew = new PdfPTable(2);
-			tableSecurityRemediationEffortNew.setWidthPercentage(100);
-			tableSecurityRemediationEffortNew.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableSecurityRemediationEffortNew.setWidths(new int[] { 8, 2 });
-
 			PdfPCell securityRemediationEffortNew = new PdfPCell(new Phrase(
 					getTextProperty("metrics." + NEW_SECURITY_REMEDIATION_EFFORT), Style.DASHBOARD_TITLE_FONT));
 			securityRemediationEffortNew.setVerticalAlignment(Element.ALIGN_CENTER);
 			securityRemediationEffortNew.setHorizontalAlignment(Element.ALIGN_LEFT);
 			securityRemediationEffortNew.setExtraParagraphSpace(5);
-			tableSecurityRemediationEffortNew.addCell(securityRemediationEffortNew);
+			tableSecurityOther.addCell(securityRemediationEffortNew);
 
 			PdfPCell securityRemediationEffortNewValue = new PdfPCell(new Phrase(
 					SonarUtil.getConversion(Integer.parseInt(
@@ -844,9 +816,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			securityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			securityRemediationEffortNewValue.setExtraParagraphSpace(5);
 			securityRemediationEffortNewValue.setPaddingRight(2);
-			tableSecurityRemediationEffortNew.addCell(securityRemediationEffortNewValue);
-
-			tableSecurityOther.addCell(tableSecurityRemediationEffortNew);
+			tableSecurityOther.addCell(securityRemediationEffortNewValue);
 		}
 
 		section.add(new Paragraph(" "));
@@ -858,6 +828,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	}
 
 	protected void printMaintainabilityBoard(final Project project, final Section section) throws DocumentException {
+
 		// Maintainability
 		Paragraph maintainabilityTitle = new Paragraph(getTextProperty("metrics." + MAINTAINAILITY),
 				Style.UNDERLINED_FONT);
@@ -871,7 +842,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableMaintainability = new PdfPTable(2);
 			tableMaintainability.setWidths(new int[] { 1, 1 });
 		}
-		tableMaintainability.setWidthPercentage(93);
+		tableMaintainability.setWidthPercentage(96);
 		tableMaintainability.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tableMaintainability.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 
@@ -940,23 +911,18 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableMaintainability.addCell(tableMaintainabilityRating);
 
 		// Maintainability Other Metrics Table
-		PdfPTable tableMaintainabilityOther = new PdfPTable(1);
+		PdfPTable tableMaintainabilityOther = new PdfPTable(2);
 		tableMaintainabilityOther.setWidthPercentage(93);
-		tableMaintainabilityOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableMaintainabilityOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableMaintainabilityOther.setWidths(new int[] { 8, 2 });
 
-		// Technical Debt Table
-		PdfPTable tableTechnicalDebt = new PdfPTable(2);
-		tableTechnicalDebt.setWidthPercentage(100);
-		tableTechnicalDebt.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableTechnicalDebt.setWidths(new int[] { 8, 2 });
-
+		// Technical Debt
 		PdfPCell technicalDebt = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + SQALE_INDEX), Style.DASHBOARD_TITLE_FONT));
 		technicalDebt.setVerticalAlignment(Element.ALIGN_CENTER);
 		technicalDebt.setHorizontalAlignment(Element.ALIGN_LEFT);
 		technicalDebt.setExtraParagraphSpace(5);
-		tableTechnicalDebt.addCell(technicalDebt);
+		tableMaintainabilityOther.addCell(technicalDebt);
 
 		PdfPCell technicalDebtValue = new PdfPCell(
 				new Phrase(SonarUtil.getConversion(Integer.parseInt(project.getMeasure(SQALE_INDEX).getValue())),
@@ -966,23 +932,16 @@ public class ExecutivePDFReporter extends PDFReporter {
 		technicalDebtValue.setExtraParagraphSpace(5);
 		technicalDebtValue.setPaddingRight(2);
 
-		tableTechnicalDebt.addCell(technicalDebtValue);
-
-		tableMaintainabilityOther.addCell(tableTechnicalDebt);
+		tableMaintainabilityOther.addCell(technicalDebtValue);
 
 		// Added Technical Debt Table
 		if (project.getMeasures().containsMeasure(NEW_TECHNICAL_DEBT)) {
-			PdfPTable tableTechnicalDebtNew = new PdfPTable(2);
-			tableTechnicalDebtNew.setWidthPercentage(100);
-			tableTechnicalDebtNew.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableTechnicalDebtNew.setWidths(new int[] { 8, 2 });
-
 			PdfPCell technicalDebtNew = new PdfPCell(
 					new Phrase(getTextProperty("metrics." + NEW_TECHNICAL_DEBT), Style.DASHBOARD_TITLE_FONT));
 			technicalDebtNew.setVerticalAlignment(Element.ALIGN_CENTER);
 			technicalDebtNew.setHorizontalAlignment(Element.ALIGN_LEFT);
 			technicalDebtNew.setExtraParagraphSpace(5);
-			tableTechnicalDebtNew.addCell(technicalDebtNew);
+			tableMaintainabilityOther.addCell(technicalDebtNew);
 
 			PdfPCell technicalDebtNewValue = new PdfPCell(new Phrase(
 					SonarUtil.getConversion(
@@ -993,23 +952,16 @@ public class ExecutivePDFReporter extends PDFReporter {
 			technicalDebtNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			technicalDebtNewValue.setExtraParagraphSpace(5);
 			technicalDebtNewValue.setPaddingRight(2);
-			tableTechnicalDebtNew.addCell(technicalDebtNewValue);
-
-			tableMaintainabilityOther.addCell(tableTechnicalDebtNew);
+			tableMaintainabilityOther.addCell(technicalDebtNewValue);
 		}
 
 		// Technical Debt Ratio Table
-		PdfPTable tableTechnicalDebtRatio = new PdfPTable(2);
-		tableTechnicalDebtRatio.setWidthPercentage(100);
-		tableTechnicalDebtRatio.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableTechnicalDebtRatio.setWidths(new int[] { 8, 2 });
-
 		PdfPCell technicalDebtRatio = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + SQALE_DEBT_RATIO), Style.DASHBOARD_TITLE_FONT));
 		technicalDebtRatio.setVerticalAlignment(Element.ALIGN_CENTER);
 		technicalDebtRatio.setHorizontalAlignment(Element.ALIGN_LEFT);
 		technicalDebtRatio.setExtraParagraphSpace(5);
-		tableTechnicalDebtRatio.addCell(technicalDebtRatio);
+		tableMaintainabilityOther.addCell(technicalDebtRatio);
 
 		PdfPCell technicalDebtRatioValue = new PdfPCell(
 				new Phrase(project.getMeasure(SQALE_DEBT_RATIO).getValue() + "%", Style.DASHBOARD_DATA_FONT_2));
@@ -1018,23 +970,16 @@ public class ExecutivePDFReporter extends PDFReporter {
 		technicalDebtRatioValue.setExtraParagraphSpace(5);
 		technicalDebtRatioValue.setPaddingRight(2);
 
-		tableTechnicalDebtRatio.addCell(technicalDebtRatioValue);
-
-		tableMaintainabilityOther.addCell(tableTechnicalDebtRatio);
+		tableMaintainabilityOther.addCell(technicalDebtRatioValue);
 
 		// Technical Debt Ratio on New Code Table
 		if (project.getMeasures().containsMeasure(NEW_SQALE_DEBT_RATIO)) {
-			PdfPTable tableTechnicalDebtRatioNew = new PdfPTable(2);
-			tableTechnicalDebtRatioNew.setWidthPercentage(100);
-			tableTechnicalDebtRatioNew.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableTechnicalDebtRatioNew.setWidths(new int[] { 8, 2 });
-
 			PdfPCell technicalDebtRatioNew = new PdfPCell(
 					new Phrase(getTextProperty("metrics." + NEW_SQALE_DEBT_RATIO), Style.DASHBOARD_TITLE_FONT));
 			technicalDebtRatioNew.setVerticalAlignment(Element.ALIGN_CENTER);
 			technicalDebtRatioNew.setHorizontalAlignment(Element.ALIGN_LEFT);
 			technicalDebtRatioNew.setExtraParagraphSpace(5);
-			tableTechnicalDebtRatioNew.addCell(technicalDebtRatioNew);
+			tableMaintainabilityOther.addCell(technicalDebtRatioNew);
 
 			PdfPCell technicalDebtRatioNewValue = new PdfPCell(
 					new Phrase(project.getMeasure(NEW_SQALE_DEBT_RATIO).getPeriods().get(0).getValue() + "%",
@@ -1044,23 +989,16 @@ public class ExecutivePDFReporter extends PDFReporter {
 			technicalDebtRatioNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			technicalDebtRatioNewValue.setExtraParagraphSpace(5);
 			technicalDebtRatioNewValue.setPaddingRight(2);
-			tableTechnicalDebtRatioNew.addCell(technicalDebtRatioNewValue);
-
-			tableMaintainabilityOther.addCell(tableTechnicalDebtRatioNew);
+			tableMaintainabilityOther.addCell(technicalDebtRatioNewValue);
 		}
 
 		// Effort To Reach Maintainability Rating A Table
-		PdfPTable tableEffortToReachMaintainabilityRatingA = new PdfPTable(2);
-		tableEffortToReachMaintainabilityRatingA.setWidthPercentage(100);
-		tableEffortToReachMaintainabilityRatingA.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableEffortToReachMaintainabilityRatingA.setWidths(new int[] { 8, 2 });
-
 		PdfPCell effortToReachMaintainabilityRatingA = new PdfPCell(new Phrase(
 				getTextProperty("metrics." + EFFORT_TO_REACH_MAINTAINABILITY_RATING_A), Style.DASHBOARD_TITLE_FONT));
 		effortToReachMaintainabilityRatingA.setVerticalAlignment(Element.ALIGN_CENTER);
 		effortToReachMaintainabilityRatingA.setHorizontalAlignment(Element.ALIGN_LEFT);
 		effortToReachMaintainabilityRatingA.setExtraParagraphSpace(5);
-		tableEffortToReachMaintainabilityRatingA.addCell(effortToReachMaintainabilityRatingA);
+		tableMaintainabilityOther.addCell(effortToReachMaintainabilityRatingA);
 
 		PdfPCell effortToReachMaintainabilityRatingAValue = new PdfPCell(new Phrase(
 				SonarUtil.getConversion(
@@ -1070,10 +1008,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		effortToReachMaintainabilityRatingAValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		effortToReachMaintainabilityRatingAValue.setExtraParagraphSpace(5);
 		effortToReachMaintainabilityRatingAValue.setPaddingRight(2);
-
-		tableEffortToReachMaintainabilityRatingA.addCell(effortToReachMaintainabilityRatingAValue);
-
-		tableMaintainabilityOther.addCell(tableEffortToReachMaintainabilityRatingA);
+		tableMaintainabilityOther.addCell(effortToReachMaintainabilityRatingAValue);
 
 		section.add(new Paragraph(" "));
 		section.add(maintainabilityTitle);
@@ -1118,23 +1053,18 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableCoverage.addCell(tableCoverageDensity);
 
 			// Coverage Other Metrics Table
-			PdfPTable tableCoverageOther = new PdfPTable(1);
+			PdfPTable tableCoverageOther = new PdfPTable(2);
 			tableCoverageOther.setWidthPercentage(93);
-			tableCoverageOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 			tableCoverageOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+			tableCoverageOther.setWidths(new int[] { 8, 2 });
 
 			// Line Coverage Table
-			PdfPTable tableLineCoverage = new PdfPTable(2);
-			tableLineCoverage.setWidthPercentage(100);
-			tableLineCoverage.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableLineCoverage.setWidths(new int[] { 8, 2 });
-
 			PdfPCell lineCoverage = new PdfPCell(
 					new Phrase(getTextProperty("metrics." + LINE_COVERAGE), Style.DASHBOARD_TITLE_FONT));
 			lineCoverage.setVerticalAlignment(Element.ALIGN_CENTER);
 			lineCoverage.setHorizontalAlignment(Element.ALIGN_LEFT);
 			lineCoverage.setExtraParagraphSpace(5);
-			tableLineCoverage.addCell(lineCoverage);
+			tableCoverageOther.addCell(lineCoverage);
 
 			PdfPCell lineCoverageValue = new PdfPCell(
 					new Phrase(project.getMeasure(LINE_COVERAGE).getValue() + "%", Style.DASHBOARD_DATA_FONT_2));
@@ -1142,22 +1072,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 			lineCoverageValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			lineCoverageValue.setExtraParagraphSpace(5);
 			lineCoverageValue.setPaddingRight(2);
-
-			tableLineCoverage.addCell(lineCoverageValue);
-			tableCoverageOther.addCell(tableLineCoverage);
+			tableCoverageOther.addCell(lineCoverageValue);
 
 			// Branch Coverage Table
-			PdfPTable tableBranchCoverage = new PdfPTable(2);
-			tableBranchCoverage.setWidthPercentage(100);
-			tableBranchCoverage.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableBranchCoverage.setWidths(new int[] { 8, 2 });
-
 			PdfPCell branchCoverage = new PdfPCell(
 					new Phrase(getTextProperty("metrics." + BRANCH_COVERAGE), Style.DASHBOARD_TITLE_FONT));
 			branchCoverage.setVerticalAlignment(Element.ALIGN_CENTER);
 			branchCoverage.setHorizontalAlignment(Element.ALIGN_LEFT);
 			branchCoverage.setExtraParagraphSpace(5);
-			tableBranchCoverage.addCell(branchCoverage);
+			tableCoverageOther.addCell(branchCoverage);
 
 			PdfPCell branchCoverageValue = new PdfPCell(
 					new Phrase(project.getMeasure(BRANCH_COVERAGE).getValue() + "%", Style.DASHBOARD_DATA_FONT_2));
@@ -1165,22 +1088,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 			branchCoverageValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			branchCoverageValue.setExtraParagraphSpace(5);
 			branchCoverageValue.setPaddingRight(2);
-			tableBranchCoverage.addCell(branchCoverageValue);
-
-			tableCoverageOther.addCell(tableBranchCoverage);
+			tableCoverageOther.addCell(branchCoverageValue);
 
 			// Uncovered Lines Table
-			PdfPTable tableUncoveredLines = new PdfPTable(2);
-			tableUncoveredLines.setWidthPercentage(100);
-			tableUncoveredLines.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableUncoveredLines.setWidths(new int[] { 8, 2 });
-
 			PdfPCell uncoveredLines = new PdfPCell(
 					new Phrase(getTextProperty("metrics." + UNCOVERED_LINES), Style.DASHBOARD_TITLE_FONT));
 			uncoveredLines.setVerticalAlignment(Element.ALIGN_CENTER);
 			uncoveredLines.setHorizontalAlignment(Element.ALIGN_LEFT);
 			uncoveredLines.setExtraParagraphSpace(5);
-			tableUncoveredLines.addCell(uncoveredLines);
+			tableCoverageOther.addCell(uncoveredLines);
 
 			PdfPCell uncoveredLinesValue = new PdfPCell(
 					new Phrase(project.getMeasure(UNCOVERED_LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1188,22 +1104,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 			uncoveredLinesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			uncoveredLinesValue.setExtraParagraphSpace(5);
 			uncoveredLinesValue.setPaddingRight(2);
-			tableUncoveredLines.addCell(uncoveredLinesValue);
-
-			tableCoverageOther.addCell(tableUncoveredLines);
+			tableCoverageOther.addCell(uncoveredLinesValue);
 
 			// Uncovered Conditions Table
-			PdfPTable tableUncoveredConditions = new PdfPTable(2);
-			tableUncoveredConditions.setWidthPercentage(100);
-			tableUncoveredConditions.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableUncoveredConditions.setWidths(new int[] { 8, 2 });
-
 			PdfPCell uncoveredConditions = new PdfPCell(
 					new Phrase(getTextProperty("metrics." + UNCOVERED_CONDITIONS), Style.DASHBOARD_TITLE_FONT));
 			uncoveredConditions.setVerticalAlignment(Element.ALIGN_CENTER);
 			uncoveredConditions.setHorizontalAlignment(Element.ALIGN_LEFT);
 			uncoveredConditions.setExtraParagraphSpace(5);
-			tableUncoveredConditions.addCell(uncoveredConditions);
+			tableCoverageOther.addCell(uncoveredConditions);
 
 			PdfPCell uncoveredConditionsValue = new PdfPCell(
 					new Phrase(project.getMeasure(UNCOVERED_CONDITIONS).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1211,22 +1120,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 			uncoveredConditionsValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			uncoveredConditionsValue.setExtraParagraphSpace(5);
 			uncoveredConditionsValue.setPaddingRight(2);
-			tableUncoveredConditions.addCell(uncoveredConditionsValue);
-
-			tableCoverageOther.addCell(tableUncoveredConditions);
+			tableCoverageOther.addCell(uncoveredConditionsValue);
 
 			// Lines To Cover Table
-			PdfPTable tableLinesToCover = new PdfPTable(2);
-			tableLinesToCover.setWidthPercentage(100);
-			tableLinesToCover.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableLinesToCover.setWidths(new int[] { 8, 2 });
-
 			PdfPCell linesToCover = new PdfPCell(
 					new Phrase(getTextProperty("metrics." + LINES_TO_COVER), Style.DASHBOARD_TITLE_FONT));
 			linesToCover.setVerticalAlignment(Element.ALIGN_CENTER);
 			linesToCover.setHorizontalAlignment(Element.ALIGN_LEFT);
 			linesToCover.setExtraParagraphSpace(5);
-			tableLinesToCover.addCell(linesToCover);
+			tableCoverageOther.addCell(linesToCover);
 
 			PdfPCell linesToCoverValue = new PdfPCell(
 					new Phrase(project.getMeasure(LINES_TO_COVER).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1234,9 +1136,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			linesToCoverValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			linesToCoverValue.setExtraParagraphSpace(5);
 			linesToCoverValue.setPaddingRight(2);
-			tableLinesToCover.addCell(linesToCoverValue);
-
-			tableCoverageOther.addCell(tableLinesToCover);
+			tableCoverageOther.addCell(linesToCoverValue);
 
 			section.add(new Paragraph(" "));
 			section.add(coverageTitle);
@@ -1279,23 +1179,18 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableDuplications.addCell(tableDuplicatedLinesDensity);
 
 		// Duplications Other Metrics Table
-		PdfPTable tableDuplicationsOther = new PdfPTable(1);
+		PdfPTable tableDuplicationsOther = new PdfPTable(2);
 		tableDuplicationsOther.setWidthPercentage(93);
-		tableDuplicationsOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableDuplicationsOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableDuplicationsOther.setWidths(new int[] { 8, 2 });
 
 		// Duplicated Blocks Table
-		PdfPTable tableDuplicatedBlocks = new PdfPTable(2);
-		tableDuplicatedBlocks.setWidthPercentage(100);
-		tableDuplicatedBlocks.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableDuplicatedBlocks.setWidths(new int[] { 8, 2 });
-
 		PdfPCell duplicatedBlocks = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + DUPLICATED_BLOCKS), Style.DASHBOARD_TITLE_FONT));
 		duplicatedBlocks.setVerticalAlignment(Element.ALIGN_CENTER);
 		duplicatedBlocks.setHorizontalAlignment(Element.ALIGN_LEFT);
 		duplicatedBlocks.setExtraParagraphSpace(5);
-		tableDuplicatedBlocks.addCell(duplicatedBlocks);
+		tableDuplicationsOther.addCell(duplicatedBlocks);
 
 		PdfPCell duplicatedBlocksValue = new PdfPCell(
 				new Phrase(project.getMeasure(DUPLICATED_BLOCKS).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1303,22 +1198,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		duplicatedBlocksValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		duplicatedBlocksValue.setExtraParagraphSpace(5);
 		duplicatedBlocksValue.setPaddingRight(2);
-
-		tableDuplicatedBlocks.addCell(duplicatedBlocksValue);
-		tableDuplicationsOther.addCell(tableDuplicatedBlocks);
+		tableDuplicationsOther.addCell(duplicatedBlocksValue);
 
 		// Duplicated Lines Table
-		PdfPTable tableDuplicatedLines = new PdfPTable(2);
-		tableDuplicatedLines.setWidthPercentage(100);
-		tableDuplicatedLines.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableDuplicatedLines.setWidths(new int[] { 8, 2 });
-
 		PdfPCell duplicatedLines = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + DUPLICATED_LINES), Style.DASHBOARD_TITLE_FONT));
 		duplicatedLines.setVerticalAlignment(Element.ALIGN_CENTER);
 		duplicatedLines.setHorizontalAlignment(Element.ALIGN_LEFT);
 		duplicatedLines.setExtraParagraphSpace(5);
-		tableDuplicatedLines.addCell(duplicatedLines);
+		tableDuplicationsOther.addCell(duplicatedLines);
 
 		PdfPCell duplicatedLinesValue = new PdfPCell(
 				new Phrase(project.getMeasure(DUPLICATED_LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1326,22 +1214,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		duplicatedLinesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		duplicatedLinesValue.setExtraParagraphSpace(5);
 		duplicatedLinesValue.setPaddingRight(2);
-		tableDuplicatedLines.addCell(duplicatedLinesValue);
-
-		tableDuplicationsOther.addCell(tableDuplicatedLines);
+		tableDuplicationsOther.addCell(duplicatedLinesValue);
 
 		// Duplicated Files Table
-		PdfPTable tableDuplicatedFiles = new PdfPTable(2);
-		tableDuplicatedFiles.setWidthPercentage(100);
-		tableDuplicatedFiles.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableDuplicatedFiles.setWidths(new int[] { 8, 2 });
-
 		PdfPCell duplicatedFiles = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + DUPLICATED_FILES), Style.DASHBOARD_TITLE_FONT));
 		duplicatedFiles.setVerticalAlignment(Element.ALIGN_CENTER);
 		duplicatedFiles.setHorizontalAlignment(Element.ALIGN_LEFT);
 		duplicatedFiles.setExtraParagraphSpace(5);
-		tableDuplicatedFiles.addCell(duplicatedFiles);
+		tableDuplicationsOther.addCell(duplicatedFiles);
 
 		PdfPCell duplicatedFilesValue = new PdfPCell(
 				new Phrase(project.getMeasure(DUPLICATED_FILES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1349,9 +1230,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		duplicatedFilesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		duplicatedFilesValue.setExtraParagraphSpace(5);
 		duplicatedFilesValue.setPaddingRight(2);
-		tableDuplicatedFiles.addCell(duplicatedFilesValue);
-
-		tableDuplicationsOther.addCell(tableDuplicatedFiles);
+		tableDuplicationsOther.addCell(duplicatedFilesValue);
 
 		section.add(new Paragraph(" "));
 		section.add(duplicationsTitle);
@@ -1393,22 +1272,17 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableSize.addCell(tableLinesOfCode);
 
 		// Size Other Metrics Table
-		PdfPTable tableSizeOther = new PdfPTable(1);
+		PdfPTable tableSizeOther = new PdfPTable(2);
 		tableSizeOther.setWidthPercentage(93);
-		tableSizeOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableSizeOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableSizeOther.setWidths(new int[] { 8, 2 });
 
 		// Lines Table
-		PdfPTable tableLines = new PdfPTable(2);
-		tableLines.setWidthPercentage(100);
-		tableLines.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableLines.setWidths(new int[] { 8, 2 });
-
 		PdfPCell lines = new PdfPCell(new Phrase(getTextProperty("metrics." + LINES), Style.DASHBOARD_TITLE_FONT));
 		lines.setVerticalAlignment(Element.ALIGN_CENTER);
 		lines.setHorizontalAlignment(Element.ALIGN_LEFT);
 		lines.setExtraParagraphSpace(5);
-		tableLines.addCell(lines);
+		tableSizeOther.addCell(lines);
 
 		PdfPCell linesValue = new PdfPCell(
 				new Phrase(project.getMeasure(LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1416,22 +1290,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		linesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		linesValue.setExtraParagraphSpace(5);
 		linesValue.setPaddingRight(2);
-
-		tableLines.addCell(linesValue);
-		tableSizeOther.addCell(tableLines);
+		tableSizeOther.addCell(linesValue);
 
 		// Statements Table
-		PdfPTable tableStatements = new PdfPTable(2);
-		tableStatements.setWidthPercentage(100);
-		tableStatements.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableStatements.setWidths(new int[] { 8, 2 });
-
 		PdfPCell statements = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + STATEMENTS), Style.DASHBOARD_TITLE_FONT));
 		statements.setVerticalAlignment(Element.ALIGN_CENTER);
 		statements.setHorizontalAlignment(Element.ALIGN_LEFT);
 		statements.setExtraParagraphSpace(5);
-		tableStatements.addCell(statements);
+		tableSizeOther.addCell(statements);
 
 		PdfPCell statementsValue = new PdfPCell(
 				new Phrase(project.getMeasure(STATEMENTS).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1439,22 +1306,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		statementsValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		statementsValue.setExtraParagraphSpace(5);
 		statementsValue.setPaddingRight(2);
-		tableStatements.addCell(statementsValue);
-
-		tableSizeOther.addCell(tableStatements);
+		tableSizeOther.addCell(statementsValue);
 
 		// Functions Table
-		PdfPTable tableFunctions = new PdfPTable(2);
-		tableFunctions.setWidthPercentage(100);
-		tableFunctions.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableFunctions.setWidths(new int[] { 8, 2 });
-
 		PdfPCell functions = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + FUNCTIONS), Style.DASHBOARD_TITLE_FONT));
 		functions.setVerticalAlignment(Element.ALIGN_CENTER);
 		functions.setHorizontalAlignment(Element.ALIGN_LEFT);
 		functions.setExtraParagraphSpace(5);
-		tableFunctions.addCell(functions);
+		tableSizeOther.addCell(functions);
 
 		PdfPCell functionsValue = new PdfPCell(
 				new Phrase(project.getMeasure(FUNCTIONS).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1462,21 +1322,14 @@ public class ExecutivePDFReporter extends PDFReporter {
 		functionsValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		functionsValue.setExtraParagraphSpace(5);
 		functionsValue.setPaddingRight(2);
-		tableFunctions.addCell(functionsValue);
-
-		tableSizeOther.addCell(tableFunctions);
+		tableSizeOther.addCell(functionsValue);
 
 		// Classes Table
-		PdfPTable tableClasses = new PdfPTable(2);
-		tableClasses.setWidthPercentage(100);
-		tableClasses.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableClasses.setWidths(new int[] { 8, 2 });
-
 		PdfPCell classes = new PdfPCell(new Phrase(getTextProperty("metrics." + CLASSES), Style.DASHBOARD_TITLE_FONT));
 		classes.setVerticalAlignment(Element.ALIGN_CENTER);
 		classes.setHorizontalAlignment(Element.ALIGN_LEFT);
 		classes.setExtraParagraphSpace(5);
-		tableClasses.addCell(classes);
+		tableSizeOther.addCell(classes);
 
 		PdfPCell classesValue = new PdfPCell(
 				new Phrase(project.getMeasure(CLASSES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1484,21 +1337,14 @@ public class ExecutivePDFReporter extends PDFReporter {
 		classesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		classesValue.setExtraParagraphSpace(5);
 		classesValue.setPaddingRight(2);
-		tableClasses.addCell(classesValue);
-
-		tableSizeOther.addCell(tableClasses);
+		tableSizeOther.addCell(classesValue);
 
 		// Files Table
-		PdfPTable tableFiles = new PdfPTable(2);
-		tableFiles.setWidthPercentage(100);
-		tableFiles.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableFiles.setWidths(new int[] { 8, 2 });
-
 		PdfPCell files = new PdfPCell(new Phrase(getTextProperty("metrics." + FILES), Style.DASHBOARD_TITLE_FONT));
 		files.setVerticalAlignment(Element.ALIGN_CENTER);
 		files.setHorizontalAlignment(Element.ALIGN_LEFT);
 		files.setExtraParagraphSpace(5);
-		tableFiles.addCell(files);
+		tableSizeOther.addCell(files);
 
 		PdfPCell filesValue = new PdfPCell(
 				new Phrase(project.getMeasure(FILES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1506,22 +1352,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		filesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		filesValue.setExtraParagraphSpace(5);
 		filesValue.setPaddingRight(2);
-		tableFiles.addCell(filesValue);
-
-		tableSizeOther.addCell(tableFiles);
+		tableSizeOther.addCell(filesValue);
 
 		// Files Table
-		PdfPTable tableDirectories = new PdfPTable(2);
-		tableDirectories.setWidthPercentage(100);
-		tableDirectories.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableDirectories.setWidths(new int[] { 8, 2 });
-
 		PdfPCell directories = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + DIRECTORIES), Style.DASHBOARD_TITLE_FONT));
 		directories.setVerticalAlignment(Element.ALIGN_CENTER);
 		directories.setHorizontalAlignment(Element.ALIGN_LEFT);
 		directories.setExtraParagraphSpace(5);
-		tableDirectories.addCell(directories);
+		tableSizeOther.addCell(directories);
 
 		PdfPCell directoriesValue = new PdfPCell(
 				new Phrase(project.getMeasure(DIRECTORIES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1529,9 +1368,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		directoriesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		directoriesValue.setExtraParagraphSpace(5);
 		directoriesValue.setPaddingRight(2);
-		tableDirectories.addCell(directoriesValue);
-
-		tableSizeOther.addCell(tableDirectories);
+		tableSizeOther.addCell(directoriesValue);
 
 		section.add(new Paragraph(" "));
 		section.add(sizeTitle);
@@ -1574,23 +1411,18 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableComplexity.addCell(tableComplexityTotal);
 
 		// Complexity Other Metrics Table
-		PdfPTable tableComplexityOther = new PdfPTable(1);
+		PdfPTable tableComplexityOther = new PdfPTable(2);
 		tableComplexityOther.setWidthPercentage(93);
-		tableComplexityOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableComplexityOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableComplexityOther.setWidths(new int[] { 8, 2 });
 
 		// Function Complexity Table
-		PdfPTable tableFunctionComplexity = new PdfPTable(2);
-		tableFunctionComplexity.setWidthPercentage(100);
-		tableFunctionComplexity.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableFunctionComplexity.setWidths(new int[] { 8, 2 });
-
 		PdfPCell functionComplexity = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + FUNCTION_COMPLEXITY), Style.DASHBOARD_TITLE_FONT));
 		functionComplexity.setVerticalAlignment(Element.ALIGN_CENTER);
 		functionComplexity.setHorizontalAlignment(Element.ALIGN_LEFT);
 		functionComplexity.setExtraParagraphSpace(5);
-		tableFunctionComplexity.addCell(functionComplexity);
+		tableComplexityOther.addCell(functionComplexity);
 
 		PdfPCell duplicatedBlocksValue = new PdfPCell(
 				new Phrase(project.getMeasure(FUNCTION_COMPLEXITY).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1598,22 +1430,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		duplicatedBlocksValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		duplicatedBlocksValue.setExtraParagraphSpace(5);
 		duplicatedBlocksValue.setPaddingRight(2);
-		tableFunctionComplexity.addCell(duplicatedBlocksValue);
-
-		tableComplexityOther.addCell(tableFunctionComplexity);
+		tableComplexityOther.addCell(duplicatedBlocksValue);
 
 		// File Complexity Table
-		PdfPTable tableFileComplexity = new PdfPTable(2);
-		tableFileComplexity.setWidthPercentage(100);
-		tableFileComplexity.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableFileComplexity.setWidths(new int[] { 8, 2 });
-
 		PdfPCell fileComplexity = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + FILE_COMPLEXITY), Style.DASHBOARD_TITLE_FONT));
 		fileComplexity.setVerticalAlignment(Element.ALIGN_CENTER);
 		fileComplexity.setHorizontalAlignment(Element.ALIGN_LEFT);
 		fileComplexity.setExtraParagraphSpace(5);
-		tableFileComplexity.addCell(fileComplexity);
+		tableComplexityOther.addCell(fileComplexity);
 
 		PdfPCell fileComplexityValue = new PdfPCell(
 				new Phrase(project.getMeasure(FILE_COMPLEXITY).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1621,22 +1446,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		fileComplexityValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		fileComplexityValue.setExtraParagraphSpace(5);
 		fileComplexityValue.setPaddingRight(2);
-		tableFileComplexity.addCell(fileComplexityValue);
-
-		tableComplexityOther.addCell(tableFileComplexity);
+		tableComplexityOther.addCell(fileComplexityValue);
 
 		// Class Complexity Table
-		PdfPTable tableClassComplexity = new PdfPTable(2);
-		tableClassComplexity.setWidthPercentage(100);
-		tableClassComplexity.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableClassComplexity.setWidths(new int[] { 8, 2 });
-
 		PdfPCell classComplexity = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + CLASS_COMPLEXITY), Style.DASHBOARD_TITLE_FONT));
 		classComplexity.setVerticalAlignment(Element.ALIGN_CENTER);
 		classComplexity.setHorizontalAlignment(Element.ALIGN_LEFT);
 		classComplexity.setExtraParagraphSpace(5);
-		tableClassComplexity.addCell(classComplexity);
+		tableComplexityOther.addCell(classComplexity);
 
 		PdfPCell classComplexityValue = new PdfPCell(
 				new Phrase(project.getMeasure(CLASS_COMPLEXITY).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1644,9 +1462,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		classComplexityValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		classComplexityValue.setExtraParagraphSpace(5);
 		classComplexityValue.setPaddingRight(2);
-		tableClassComplexity.addCell(classComplexityValue);
-
-		tableComplexityOther.addCell(tableClassComplexity);
+		tableComplexityOther.addCell(classComplexityValue);
 
 		section.add(new Paragraph(" "));
 		section.add(complexityTitle);
@@ -1689,23 +1505,18 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableDocumentation.addCell(tableCommentLinesDensity);
 
 		// Documentaions Other Metrics Table
-		PdfPTable tableDocumentationOther = new PdfPTable(1);
+		PdfPTable tableDocumentationOther = new PdfPTable(2);
 		tableDocumentationOther.setWidthPercentage(93);
-		tableDocumentationOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableDocumentationOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableDocumentationOther.setWidths(new int[] { 8, 2 });
 
 		// Comment Lines Table
-		PdfPTable tableCommentLines = new PdfPTable(2);
-		tableCommentLines.setWidthPercentage(100);
-		tableCommentLines.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableCommentLines.setWidths(new int[] { 8, 2 });
-
 		PdfPCell commentLines = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + COMMENT_LINES), Style.DASHBOARD_TITLE_FONT));
 		commentLines.setVerticalAlignment(Element.ALIGN_CENTER);
 		commentLines.setHorizontalAlignment(Element.ALIGN_LEFT);
 		commentLines.setExtraParagraphSpace(5);
-		tableCommentLines.addCell(commentLines);
+		tableDocumentationOther.addCell(commentLines);
 
 		PdfPCell commentLinesValue = new PdfPCell(
 				new Phrase(project.getMeasure(COMMENT_LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1713,9 +1524,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		commentLinesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		commentLinesValue.setExtraParagraphSpace(5);
 		commentLinesValue.setPaddingRight(2);
-
-		tableCommentLines.addCell(commentLinesValue);
-		tableDocumentationOther.addCell(tableCommentLines);
+		tableDocumentationOther.addCell(commentLinesValue);
 
 		section.add(new Paragraph(" "));
 		section.add(documentationTitle);
@@ -1785,23 +1594,18 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableIssues.addCell(tableNewViolations);
 		}
 		// Issues Other Metrics Table
-		PdfPTable tableIssuesOther = new PdfPTable(1);
+		PdfPTable tableIssuesOther = new PdfPTable(2);
 		tableIssuesOther.setWidthPercentage(93);
-		tableIssuesOther.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		tableIssuesOther.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableIssuesOther.setWidths(new int[] { 8, 2 });
 
 		// Open Issues Table
-		PdfPTable tableOpenIssues = new PdfPTable(2);
-		tableOpenIssues.setWidthPercentage(100);
-		tableOpenIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableOpenIssues.setWidths(new int[] { 8, 2 });
-
 		PdfPCell openIssues = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + OPEN_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		openIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		openIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		openIssues.setExtraParagraphSpace(5);
-		tableOpenIssues.addCell(openIssues);
+		tableIssuesOther.addCell(openIssues);
 
 		PdfPCell openIssuesValue = new PdfPCell(
 				new Phrase(project.getMeasure(OPEN_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1809,22 +1613,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		openIssuesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		openIssuesValue.setExtraParagraphSpace(5);
 		openIssuesValue.setPaddingRight(2);
-
-		tableOpenIssues.addCell(openIssuesValue);
-		tableIssuesOther.addCell(tableOpenIssues);
+		tableIssuesOther.addCell(openIssuesValue);
 
 		// Reopened Issues Table
-		PdfPTable tableReopenedIssues = new PdfPTable(2);
-		tableReopenedIssues.setWidthPercentage(100);
-		tableReopenedIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableReopenedIssues.setWidths(new int[] { 8, 2 });
-
 		PdfPCell reopenedIssues = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + REOPENED_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		reopenedIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		reopenedIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		reopenedIssues.setExtraParagraphSpace(5);
-		tableReopenedIssues.addCell(reopenedIssues);
+		tableIssuesOther.addCell(reopenedIssues);
 
 		PdfPCell reopenedIssuesValue = new PdfPCell(
 				new Phrase(project.getMeasure(REOPENED_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1832,22 +1629,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		reopenedIssuesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		reopenedIssuesValue.setExtraParagraphSpace(5);
 		reopenedIssuesValue.setPaddingRight(2);
-		tableReopenedIssues.addCell(reopenedIssuesValue);
-
-		tableIssuesOther.addCell(tableReopenedIssues);
+		tableIssuesOther.addCell(reopenedIssuesValue);
 
 		// Confirmed Issues Table
-		PdfPTable tableConfirmedIssues = new PdfPTable(2);
-		tableConfirmedIssues.setWidthPercentage(100);
-		tableConfirmedIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableConfirmedIssues.setWidths(new int[] { 8, 2 });
-
 		PdfPCell confirmedIssues = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + CONFIRMED_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		confirmedIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		confirmedIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		confirmedIssues.setExtraParagraphSpace(5);
-		tableConfirmedIssues.addCell(confirmedIssues);
+		tableIssuesOther.addCell(confirmedIssues);
 
 		PdfPCell confirmedIssuesValue = new PdfPCell(
 				new Phrase(project.getMeasure(CONFIRMED_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1855,22 +1645,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		confirmedIssuesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		confirmedIssuesValue.setExtraParagraphSpace(5);
 		confirmedIssuesValue.setPaddingRight(2);
-		tableConfirmedIssues.addCell(confirmedIssuesValue);
-
-		tableIssuesOther.addCell(tableConfirmedIssues);
+		tableIssuesOther.addCell(confirmedIssuesValue);
 
 		// False Positive Issues Table
-		PdfPTable tableFalsePositiveIssues = new PdfPTable(2);
-		tableFalsePositiveIssues.setWidthPercentage(100);
-		tableFalsePositiveIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableFalsePositiveIssues.setWidths(new int[] { 8, 2 });
-
 		PdfPCell falsePositiveIssues = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + FALSE_POSITIVE_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		falsePositiveIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		falsePositiveIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		falsePositiveIssues.setExtraParagraphSpace(5);
-		tableFalsePositiveIssues.addCell(falsePositiveIssues);
+		tableIssuesOther.addCell(falsePositiveIssues);
 
 		PdfPCell falsePositiveIssuesValue = new PdfPCell(
 				new Phrase(project.getMeasure(FALSE_POSITIVE_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1878,22 +1661,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		falsePositiveIssuesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		falsePositiveIssuesValue.setExtraParagraphSpace(5);
 		falsePositiveIssuesValue.setPaddingRight(2);
-		tableFalsePositiveIssues.addCell(falsePositiveIssuesValue);
-
-		tableIssuesOther.addCell(tableFalsePositiveIssues);
+		tableIssuesOther.addCell(falsePositiveIssuesValue);
 
 		// Won't Fix Issues Table
-		PdfPTable tableWontFixIssues = new PdfPTable(2);
-		tableWontFixIssues.setWidthPercentage(100);
-		tableWontFixIssues.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableWontFixIssues.setWidths(new int[] { 8, 2 });
-
 		PdfPCell wontFixIssues = new PdfPCell(
 				new Phrase(getTextProperty("metrics." + WONT_FIX_ISSUES), Style.DASHBOARD_TITLE_FONT));
 		wontFixIssues.setVerticalAlignment(Element.ALIGN_CENTER);
 		wontFixIssues.setHorizontalAlignment(Element.ALIGN_LEFT);
 		wontFixIssues.setExtraParagraphSpace(5);
-		tableWontFixIssues.addCell(wontFixIssues);
+		tableIssuesOther.addCell(wontFixIssues);
 
 		PdfPCell wontFixIssuesValue = new PdfPCell(
 				new Phrase(project.getMeasure(WONT_FIX_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
@@ -1901,9 +1677,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		wontFixIssuesValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		wontFixIssuesValue.setExtraParagraphSpace(5);
 		wontFixIssuesValue.setPaddingRight(2);
-		tableWontFixIssues.addCell(wontFixIssuesValue);
-
-		tableIssuesOther.addCell(tableWontFixIssues);
+		tableIssuesOther.addCell(wontFixIssuesValue);
 
 		section.add(new Paragraph(" "));
 		section.add(issuesTitle);
