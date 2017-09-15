@@ -162,6 +162,11 @@ public class Style {
 	
 	public static final BaseColor QUALITY_GATE_FAILED_COLOR = new BaseColor(255, 0, 0);
 	
+	public static final Integer TABLE_WIDTH_PERCENTAGE_95 = 95;
+	
+	public static final Integer TABLE_WIDTH_PERCENTAGE_96 = 96;
+	
+	public static final Integer TABLE_WIDTH_PERCENTAGE_98 = 98;
 	
 	/**
 	 * Tendency icons height + 2 (used in tables style)
