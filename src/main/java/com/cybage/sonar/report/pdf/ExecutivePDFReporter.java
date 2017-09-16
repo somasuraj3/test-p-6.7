@@ -423,8 +423,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 				tableQualityProfiles.addCell(rulesCount);
 			}
 		}
-
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(new Paragraph(qualityProfileTitle));
 		section.add(new Paragraph(" "));
 		section.add(tableQualityProfiles);
@@ -490,11 +489,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 			}
 		}
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(new Paragraph(qualityGateTitle));
 		section.add(new Paragraph(" "));
 		section.add(tableQualityGatesStatus);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableQualityGates);
 	}
 
@@ -510,11 +509,9 @@ public class ExecutivePDFReporter extends PDFReporter {
 		CustomTable tableReliability = null;
 		if (project.getMeasures().containsMeasure(NEW_BUGS)) {
 			tableReliability = new CustomTable(3);
-			tableReliability.setWidthPercentage(Style.TABLE_WIDTH_PERCENTAGE_98);
 			tableReliability.setWidths(new int[] { 1, 1, 1 });
 		} else {
 			tableReliability = new CustomTable(2);
-			tableReliability.setWidthPercentage(100);
 			tableReliability.setWidths(new int[] { 1, 1 });
 		}
 
@@ -554,14 +551,14 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableReliability.addCell(newBugs);
 		}
 
-		mainTable.addCell(tableReliability);
-
 		// Reliability Rating Title
 		CustomCellTitle reliabilityRating = new CustomCellTitle(
 				new Phrase(getTextProperty("metrics." + RELIABILITY_RATING), Style.DASHBOARD_TITLE_FONT));
 		reliabilityRating.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tableReliability.addCell(reliabilityRating);
 
+		mainTable.addCell(tableReliability);
+		
 		// Reliability Other Metrics Table
 		CustomTable tableReliabilityOther = new CustomTable(2);
 		tableReliabilityOther.setWidths(new int[] { 8, 2 });
@@ -594,11 +591,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableReliabilityOther.addCell(reliabilityRemediationEffortNewValue);
 		}
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(reliabilityTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableReliabilityOther);
 
 	}
@@ -609,17 +606,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		Paragraph securityTitle = new Paragraph(getTextProperty("metrics." + SECURITY), Style.UNDERLINED_FONT);
 
 		// Security Main Table
-		CustomTable mainTable = new CustomTable(1);
+		CustomMainTable mainTable = new CustomMainTable(1);
 
 		// Security Metric Table
 		CustomTable tableSecurity = null;
 		if (project.getMeasures().containsMeasure(NEW_VULNERABILITIES)) {
 			tableSecurity = new CustomTable(3);
-			tableSecurity.setWidthPercentage(100);
 			tableSecurity.setWidths(new int[] { 2, 2, 2 });
 		} else {
 			tableSecurity = new CustomTable(2);
-			tableSecurity.setWidthPercentage(100);
 			tableSecurity.setWidths(new int[] { 1, 1 });
 		}
 
@@ -698,11 +693,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableSecurityOther.addCell(securityRemediationEffortNewValue);
 		}
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(securityTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableSecurityOther);
 	}
 
@@ -713,17 +708,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 				Style.UNDERLINED_FONT);
 
 		// Maintainability Main Table
-		CustomTable mainTable = new CustomTable(1);
+		CustomMainTable mainTable = new CustomMainTable(1);
 
 		// Maintainability Metric Table
 		CustomTable tableMaintainability = null;
 		if (project.getMeasures().containsMeasure(NEW_CODE_SMELLS)) {
 			tableMaintainability = new CustomTable(3);
-			tableMaintainability.setWidthPercentage(100);
 			tableMaintainability.setWidths(new int[] { 1, 1, 1 });
 		} else {
 			tableMaintainability = new CustomTable(2);
-			tableMaintainability.setWidthPercentage(100);
 			tableMaintainability.setWidths(new int[] { 1, 1 });
 		}
 
@@ -840,11 +833,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 				Style.DASHBOARD_DATA_FONT_2));
 		tableMaintainabilityOther.addCell(effortToReachMaintainabilityRatingAValue);
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(maintainabilityTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableMaintainabilityOther);
 
 	}
@@ -857,11 +850,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 					Style.UNDERLINED_FONT);
 
 			// Coverage Main Table
-			CustomTable mainTable = new CustomTable(1);
+			CustomMainTable mainTable = new CustomMainTable(1);
 
 			// Coverage Metric Table
 			CustomTable tableCoverage = new CustomTable(1);
-			tableCoverage.setWidthPercentage(100);
 
 			// Coverage Density Value
 			CustomCellValue coverageDensityValue = new CustomCellValue(
@@ -931,11 +923,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 					new Phrase(project.getMeasure(LINES_TO_COVER).getValue(), Style.DASHBOARD_DATA_FONT_2));
 			tableCoverageOther.addCell(linesToCoverValue);
 
-			section.add(new Paragraph(" "));
+			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 			section.add(coverageTitle);
 			section.add(new Paragraph(" "));
 			section.add(mainTable);
-			section.add(new Paragraph(" "));
+			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 			section.add(tableCoverageOther);
 		}
 	}
@@ -946,11 +938,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 		Paragraph duplicationsTitle = new Paragraph(getTextProperty("metrics." + DUPLICATIONS), Style.UNDERLINED_FONT);
 
 		// Duplications Main Table
-		CustomTable mainTable = new CustomTable(1);
+		CustomMainTable mainTable = new CustomMainTable(1);
 
 		// Duplications Metric Table
 		CustomTable tableDuplications = new CustomTable(1);
-		tableDuplications.setWidthPercentage(100);
 
 		// Duplicated Lines Density Value
 		CustomCellValue duplicatedLinesDensityValue = new CustomCellValue(
@@ -1000,11 +991,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(DUPLICATED_FILES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableDuplicationsOther.addCell(duplicatedFilesValue);
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(duplicationsTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableDuplicationsOther);
 	}
 
@@ -1014,11 +1005,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 		Paragraph sizeTitle = new Paragraph(getTextProperty("metrics." + SIZE), Style.UNDERLINED_FONT);
 
 		// Size Main Table
-		CustomTable mainTable = new CustomTable(1);
+		CustomMainTable mainTable = new CustomMainTable(1);
 
 		// Size Metric Table
 		CustomTable tableSize = new CustomTable(1);
-		tableSize.setWidthPercentage(100);
 
 		// Lines of Code Value
 		CustomCellValue linesOfCodeValue = new CustomCellValue(
@@ -1098,11 +1088,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(DIRECTORIES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableSizeOther.addCell(directoriesValue);
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(sizeTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableSizeOther);
 	}
 
@@ -1113,11 +1103,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				Style.UNDERLINED_FONT);
 
 		// Complexity Main Table
-		CustomTable mainTable = new CustomTable(1);
+		CustomMainTable mainTable = new CustomMainTable(1);
 
 		// Complexity Metric Table
 		CustomTable tableComplexity = new CustomTable(1);
-		tableComplexity.setWidthPercentage(100);
 
 		// Total Complexity Value
 		CustomCellValue complexityTotalValue = new CustomCellValue(
@@ -1167,11 +1156,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(CLASS_COMPLEXITY).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableComplexityOther.addCell(classComplexityValue);
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(complexityTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableComplexityOther);
 	}
 
@@ -1182,11 +1171,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				Style.UNDERLINED_FONT);
 
 		// Documentations Main Table
-		CustomTable mainTable = new CustomTable(1);
+		CustomMainTable mainTable = new CustomMainTable(1);
 
 		// Documentations Metric Table
 		CustomTable tableDocumentation = new CustomTable(1);
-		tableDocumentation.setWidthPercentage(100);
 
 		// Comment Lines Density Value
 		CustomCellValue commentLinesDensityValue = new CustomCellValue(
@@ -1216,11 +1204,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(COMMENT_LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableDocumentationOther.addCell(commentLinesValue);
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(documentationTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableDocumentationOther);
 	}
 
@@ -1230,17 +1218,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 		Paragraph issuesTitle = new Paragraph(getTextProperty("metrics." + ISSUES), Style.UNDERLINED_FONT);
 
 		// Issues Main Table
-		CustomTable mainTable = new CustomTable(1);
+		CustomMainTable mainTable = new CustomMainTable(1);
 		
 		// Issues Metric Table
 		CustomTable tableIssues = null;
 		if (project.getMeasures().containsMeasure(NEW_VIOLATIONS)) {
 			tableIssues = new CustomTable(2);
-			tableIssues.setWidthPercentage(100);
 			tableIssues.setWidths(new int[] { 1, 1 });
 		} else {
 			tableIssues = new CustomTable(1);
-			tableIssues.setWidthPercentage(100);
 		}
 
 		// Issues Value
@@ -1328,11 +1314,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(WONT_FIX_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableIssuesOther.addCell(wontFixIssuesValue);
 
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(issuesTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
-		section.add(new Paragraph(" "));
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableIssuesOther);
 	}
 

@@ -8,7 +8,7 @@ public class CustomTable extends PdfPTable{
 	
 	public CustomTable(Integer cols) {
 		super(cols);
-		this.setWidthPercentage(Style.TABLE_WIDTH_PERCENTAGE_95);
+		this.setWidthPercentage(Style.TABLE_SUBMETRIC_WIDTH_PERCENTAGE);
 		this.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
 		this.setSpacingAfter(5);
 	}

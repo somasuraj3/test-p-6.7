@@ -9,7 +9,7 @@ public class CustomMainTable extends PdfPTable {
 	
 	public CustomMainTable(Integer cols) {
 		super(cols);
-		this.setWidthPercentage(Style.TABLE_WIDTH_PERCENTAGE_96);
+		this.setWidthPercentage(Style.TABLE_MAINMETRIC_WIDTH_PERCENTAGE);
 		this.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
 		this.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		this.setSpacingAfter(5);
