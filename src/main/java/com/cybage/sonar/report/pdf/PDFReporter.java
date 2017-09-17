@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,11 +103,6 @@ public abstract class PDFReporter {
 			
 			tocDocument.getTocDocument().close();
 			frontPageDocument.close();
-		} catch (Exception e) {
-			LOGGER.error("In PDFReporter : Exception 1");
-			e.printStackTrace();
-		}
-		try {
 
 			// Get Readers
 			PdfReader mainDocumentReader = new PdfReader(mainDocumentBaos.toByteArray());
@@ -132,7 +128,7 @@ public abstract class PDFReporter {
 			return finalBaos;
 		} catch (Exception e) {
 			// TODO: handle exception
-			LOGGER.error("In PDFReport : Exception 2");
+			LOGGER.error("In PDFReport : Exception");
 			e.printStackTrace();
 		}
 		return null;
@@ -144,10 +140,8 @@ public abstract class PDFReporter {
 					.credentials(credentials.getUsername(), credentials.getPassword()).build();
 			WsClient wsClient = WsClientFactories.getDefault().newClient(httpConnector);
 			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(wsClient);
-			project = projectBuilder.initializeProject(getProjectKey(),getProjectVersion(), getSonarLanguage());
-			LOGGER.info("Collected Measures");
-			project.getMeasures().getMeasuresKeys().stream().forEach(k -> LOGGER.info(k));
-			LOGGER.info("Project Status : " + project.getProjectStatus().getStatus());
+			project = projectBuilder.initializeProject(getProjectKey(),getProjectVersion(), getSonarLanguage(), getOtherMetrics());
+			LOGGER.info("Project Information : " + project.toString());
 		}
 		return project;
 	}
@@ -235,6 +229,8 @@ public abstract class PDFReporter {
 	protected abstract String getProjectVersion();
 	
 	protected abstract List<String> getSonarLanguage();
+	
+	protected abstract Set<String> getOtherMetrics();
 
 	protected abstract void printFrontPage(Document frontPageDocument, PdfWriter frontPageWriter)
 			throws ReportException;

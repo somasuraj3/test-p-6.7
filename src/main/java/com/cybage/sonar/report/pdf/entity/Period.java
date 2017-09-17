@@ -32,4 +32,9 @@ public class Period {
 		this.value = value;
 	}
 
+	@Override
+	public String toString() {
+		return "Period [index=" + index + ", value=" + value + "]";
+	}
+
 }

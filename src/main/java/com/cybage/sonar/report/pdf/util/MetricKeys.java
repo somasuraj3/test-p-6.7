@@ -21,7 +21,9 @@ package com.cybage.sonar.report.pdf.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Joiner;
 
@@ -97,8 +99,8 @@ public class MetricKeys {
 	public static final String PROFILE = "profile";
 
 	// Get all metric keys as list
-	public static List<String> getAllMetricKeys() {
-		List<String> allMetricKeys = new ArrayList<String>();
+	public static Set<String> getAllMetricKeys() {
+		Set<String> allMetricKeys = new HashSet<>();
 		allMetricKeys.addAll(Arrays.asList(BUGS, NEW_BUGS, RELIABILITY_RATING, NEW_RELIABILITY_REMEDIATION_EFFORT,
 				RELIABILITY_REMEDIATION_EFFORT, VULNERABILITIES, NEW_VULNERABILITIES, SECURITY_RATING,
 				SECURITY_REMEDIATION_EFFORT, NEW_SECURITY_REMEDIATION_EFFORT, CODE_SMELLS, NEW_CODE_SMELLS,

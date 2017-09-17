@@ -56,4 +56,9 @@ public class StatusPeriod {
         this.parameter = parameter;
     }
 
+	@Override
+	public String toString() {
+		return "StatusPeriod [index=" + index + ", mode=" + mode + ", date=" + date + ", parameter=" + parameter + "]";
+	}
+
 }

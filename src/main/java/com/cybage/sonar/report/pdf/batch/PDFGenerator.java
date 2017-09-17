@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,17 +46,18 @@ public class PDFGenerator {
 	private String username;
 	private String password;
 	private String reportType;
-
 	private String projectKey;
 	private String projectVersion;
 	private List<String> sonarLanguage;
+	private Set<String> otherMetrics;
 	private FileSystem fs;
 
-	public PDFGenerator(final String projectKey, final String projectVersion, final List<String> sonarLanguage, final FileSystem fs,
+	public PDFGenerator(final String projectKey, final String projectVersion, final List<String> sonarLanguage, final Set<String> otherMetrics, final FileSystem fs,
 			final String sonarHostUrl, final String username, final String password, final String reportType) {
 		this.projectKey = projectKey;
 		this.projectVersion = projectVersion;
 		this.sonarLanguage = sonarLanguage;
+		this.otherMetrics = otherMetrics;
 		this.fs = fs;
 		this.sonarHostUrl = sonarHostUrl;
 		this.username = username;
@@ -84,14 +86,16 @@ public class PDFGenerator {
 			String sonarProjectId = projectKey;
 			String sonarProjectVersion = projectVersion;
 			List<String> sonarLanguage = this.sonarLanguage;
+			Set<String> otherMetrics = this.otherMetrics;
+			
 			String path = fs.workDir().getAbsolutePath() + "/" + sonarProjectId.replace(':', '-') + ".pdf";
 
 			PDFReporter reporter = null;
 			if (reportType != null) {
 				if (reportType.equals("pdf")) {
-					LOGGER.info("Executive report type selected");
+					LOGGER.info("PDF report type selected");
 					reporter = new ExecutivePDFReporter(credentials, this.getClass().getResource("/sonar.png"),
-							sonarProjectId, sonarProjectVersion, sonarLanguage, config, configLang);
+							sonarProjectId, sonarProjectVersion, sonarLanguage, otherMetrics, config, configLang);
 				}
 			} else {
 				LOGGER.info("No report type provided. Default report selected (PDF)");

@@ -84,7 +84,7 @@ public class Style {
 	/**
 	 * Underlined font
 	 */
-	public static final Font UNDERLINED_FONT = new Font(Font.FontFamily.HELVETICA, 14, Font.UNDERLINE, BaseColor.BLACK);
+	public static final Font UNDERLINED_FONT = new Font(Font.FontFamily.HELVETICA, 12, Font.UNDERLINE, BaseColor.BLACK);
 
 	/**
 	 * Dashboard metric title font

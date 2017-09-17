@@ -4,7 +4,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 
 public class CustomCellValue extends PdfPCell {
-	
+
 	public CustomCellValue(Phrase phrase) {
 		super(phrase);
 		this.setVerticalAlignment(ALIGN_CENTER);

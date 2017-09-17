@@ -10,7 +10,6 @@ public class CustomTable extends PdfPTable{
 		super(cols);
 		this.setWidthPercentage(Style.TABLE_SUBMETRIC_WIDTH_PERCENTAGE);
 		this.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-		this.setSpacingAfter(5);
 	}
 	
 }

@@ -21,20 +21,20 @@ package com.cybage.sonar.report.pdf.builder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.utils.HttpDownloader.HttpException;
+import org.sonarqube.ws.Common.Metric;
 import org.sonarqube.ws.WsMeasures.ComponentWsResponse;
+import org.sonarqube.ws.WsMeasures.Metrics;
 import org.sonarqube.ws.client.WsClient;
-import org.sonarqube.ws.client.WsClientFactories;
-import org.sonarqube.ws.client.WsClientFactory;
-import org.sonarqube.ws.client.WsConnector;
-import org.sonarqube.ws.client.WsRequest;
-import org.sonarqube.ws.client.WsRequest.Method;
 import org.sonarqube.ws.client.measure.ComponentWsRequest;
 
 import com.cybage.sonar.report.pdf.entity.Measure;
@@ -49,7 +49,7 @@ public class MeasuresBuilder {
 
 	private WsClient wsClient;
 
-	private static List<String> measuresKeys = null;
+	private static Set<String> measuresKeys = null;
 
 	private static Integer DEFAULT_SPLIT_LIMIT = 20;
 
@@ -65,12 +65,13 @@ public class MeasuresBuilder {
 		return builder;
 	}
 
-	public Measures initMeasuresByProjectKey(final String projectKey) throws HttpException, IOException {
+	public Measures initMeasuresByProjectKey(final String projectKey, final Set<String> otherMetrics)
+			throws HttpException, IOException {
 
 		Measures measures = new Measures();
-
 		if (measuresKeys == null) {
 			measuresKeys = MetricKeys.getAllMetricKeys();
+			measuresKeys.addAll(otherMetrics);
 		}
 
 		// Avoid "Post too large"
@@ -92,7 +93,7 @@ public class MeasuresBuilder {
 			throws HttpException, IOException {
 		Iterator<String> it = measuresKeys.iterator();
 		LOGGER.debug("Getting " + measuresKeys.size() + " metric measures from Sonar by splitting requests");
-		List<String> twentyMeasures = new ArrayList<String>(20);
+		Set<String> twentyMeasures = new HashSet<String>(20);
 		int i = 0;
 		while (it.hasNext()) {
 			twentyMeasures.add(it.next());
@@ -113,9 +114,9 @@ public class MeasuresBuilder {
 	/**
 	 * Add measures to this.
 	 */
-	private void addMeasures(final Measures measures, final List<String> measuresAsString, final String projectKey)
+	private void addMeasures(final Measures measures, final Set<String> measuresAsString, final String projectKey)
 			throws HttpException, IOException {
-		 
+
 		/*
 		 * String[] measuresAsArray = measuresAsString .toArray(new
 		 * String[measuresAsString.size()]); ResourceQuery query =
@@ -125,7 +126,8 @@ public class MeasuresBuilder {
 		 */
 		ComponentWsRequest compWsReq = new ComponentWsRequest();
 		compWsReq.setComponentKey(projectKey);
-		compWsReq.setMetricKeys(measuresAsString);
+		compWsReq.setAdditionalFields(Arrays.asList("metrics"));
+		compWsReq.setMetricKeys(new ArrayList<String>(measuresAsString));
 
 		ComponentWsResponse compWsRes = wsClient.measures().component(compWsReq);
 
@@ -138,14 +140,16 @@ public class MeasuresBuilder {
 
 	private void addAllMeasuresFromDocument(final Measures measures, final ComponentWsResponse compWsRes) {
 		List<org.sonarqube.ws.WsMeasures.Measure> allNodes = compWsRes.getComponent().getMeasuresList();
-		Iterator<org.sonarqube.ws.WsMeasures.Measure> it = allNodes.iterator();
-		while (it.hasNext()) {
-			addMeasureFromNode(measures, it.next());
+		Metrics metrics = compWsRes.getMetrics();
+		for (org.sonarqube.ws.WsMeasures.Measure measure : allNodes) {
+			addMeasureFromNode(measures, measure,
+					metrics.getMetricsList().stream().filter(m -> m.getKey().equals(measure.getMetric())).findFirst());
 		}
 	}
 
-	private void addMeasureFromNode(final Measures measures, final org.sonarqube.ws.WsMeasures.Measure measureNode) {
-		Measure measure = MeasureBuilder.initFromNode(measureNode);
+	private void addMeasureFromNode(final Measures measures, final org.sonarqube.ws.WsMeasures.Measure measureNode,
+			Optional<Metric> metric) {
+		Measure measure = MeasureBuilder.initFromNode(measureNode, metric);
 		measures.addMeasure(measure.getMetric(), measure);
 	}
 }

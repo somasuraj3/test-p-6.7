@@ -12,7 +12,6 @@ public class CustomMainTable extends PdfPTable {
 		this.setWidthPercentage(Style.TABLE_MAINMETRIC_WIDTH_PERCENTAGE);
 		this.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
 		this.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-		this.setSpacingAfter(5);
 	}
 	
 }

@@ -20,7 +20,10 @@
 
 package com.cybage.sonar.report.pdf.batch;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +65,8 @@ public class PDFPostJob implements PostJob {
 
 	public static final String SONAR_LANGUAGE = "sonar.language";
 
+	public static final String OTHER_METRICS = "sonar.pdf.othermetrics";
+
 	@Override
 	public void describe(PostJobDescriptor arg0) {
 
@@ -90,8 +95,10 @@ public class PDFPostJob implements PostJob {
 				? postJobContext.settings().getString(SONAR_PROJECT_VERSION) : SONAR_PROJECT_VERSION_DEFAULT_VALUE;
 		List<String> sonarLanguage = postJobContext.settings().hasKey(SONAR_LANGUAGE)
 				? Arrays.asList(postJobContext.settings().getStringArray(SONAR_LANGUAGE)) : null;
-
-		PDFGenerator generator = new PDFGenerator(projectKey, projectVersion, sonarLanguage, fs, sonarHostUrl, username,
+		Set<String> otherMetrics = postJobContext.settings().hasKey(OTHER_METRICS)
+				? new HashSet<String>(Arrays.asList(postJobContext.settings().getStringArray(OTHER_METRICS))) : null;
+		
+		PDFGenerator generator = new PDFGenerator(projectKey, projectVersion, sonarLanguage, otherMetrics, fs, sonarHostUrl, username,
 				password, reportType);
 
 		generator.execute();

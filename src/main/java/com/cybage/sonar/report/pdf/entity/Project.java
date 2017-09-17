@@ -187,4 +187,14 @@ public class Project {
 	public void setMostDuplicatedFiles(final List<FileInfo> mostDuplicatedFiles) {
 		this.mostDuplicatedFiles = mostDuplicatedFiles;
 	}
+
+	@Override
+	public String toString() {
+		return "Project [id=" + id + ", key=" + key + ", name=" + name + ", version=" + version + ", languages="
+				+ languages + ", description=" + description + ", links=" + links + ", projectStatus=" + projectStatus
+				+ ", qualityProfiles=" + qualityProfiles + ", measures=" + measures + ", subprojects=" + subprojects
+				+ ", mostViolatedRules=" + mostViolatedRules + ", mostComplexFiles=" + mostComplexFiles
+				+ ", mostViolatedFiles=" + mostViolatedFiles + ", mostDuplicatedFiles=" + mostDuplicatedFiles + "]";
+	}
+	
 }

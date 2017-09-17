@@ -80,4 +80,10 @@ public class Condition {
         this.warningThreshold = warningThreshold;
     }
 
+	@Override
+	public String toString() {
+		return "Condition [status=" + status + ", metricKey=" + metricKey + ", comparator=" + comparator
+				+ ", periodIndex=" + periodIndex + ", errorThreshold=" + errorThreshold + ", actualValue=" + actualValue
+				+ ", warningThreshold=" + warningThreshold + "]";
+	}
 }

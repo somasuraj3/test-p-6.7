@@ -81,6 +81,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -129,17 +130,19 @@ public class ExecutivePDFReporter extends PDFReporter {
 	private String projectKey;
 	private String projectVersion;
 	private List<String> sonarLanguage;
+	private Set<String> otherMetrics;
 	private Properties configProperties;
 	private Properties langProperties;
 
 	public ExecutivePDFReporter(final Credentials credentials, final URL logo, final String projectKey,
-			final String projectVersion, final List<String> sonarLanguage, final Properties configProperties,
-			final Properties langProperties) {
+			final String projectVersion, final List<String> sonarLanguage, final Set<String> otherMetrics,
+			final Properties configProperties, final Properties langProperties) {
 		super(credentials);
 		this.logo = logo;
 		this.projectKey = projectKey;
 		this.projectVersion = projectVersion;
 		this.sonarLanguage = sonarLanguage;
+		this.otherMetrics = otherMetrics;
 		this.configProperties = configProperties;
 		this.langProperties = langProperties;
 	}
@@ -152,6 +155,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 	@Override
 	protected List<String> getSonarLanguage() {
 		return this.sonarLanguage;
+	}
+
+	@Override
+	protected Set<String> getOtherMetrics() {
+		return this.otherMetrics;
 	}
 
 	@Override
@@ -293,6 +301,17 @@ public class ExecutivePDFReporter extends PDFReporter {
 		printComplexityBoard(project, section);
 		printDocumentationBoard(project, section);
 		printIssuesBoard(project, section);
+
+		Set<String> otherMetrics = this.otherMetrics; 
+		if(otherMetrics != null){
+			otherMetrics.removeAll(MetricKeys.getAllMetricKeys());
+			otherMetrics = otherMetrics.stream().filter(om -> project.getMeasures().containsMeasure(om)
+					&& !MetricDomains.getDomains().contains(project.getMeasure(om).getDomain())).collect(Collectors.toSet());
+			
+			if (otherMetrics.size() > 0) {
+					printOtherMetricBoard(project, section);
+			}
+		}
 	}
 
 	protected void printMostDuplicatedFiles(final Project project, final Section section) {
@@ -500,7 +519,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printReliabilityBoard(final Project project, final Section section) throws DocumentException {
 
 		// Reliability Title
-		Paragraph reliabilityTitle = new Paragraph(getTextProperty("metrics." + RELIABILITY), Style.UNDERLINED_FONT);
+		Paragraph reliabilityTitle = new Paragraph(getTextProperty("metrics." + RELIABILITY.toLowerCase()), Style.UNDERLINED_FONT);
 
 		// Reliability Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -558,7 +577,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		tableReliability.addCell(reliabilityRating);
 
 		mainTable.addCell(tableReliability);
-		
+
 		// Reliability Other Metrics Table
 		CustomTable tableReliabilityOther = new CustomTable(2);
 		tableReliabilityOther.setWidths(new int[] { 8, 2 });
@@ -570,8 +589,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		// Reliability Remediation Effort Value
 		CustomCellValue reliabilityRemediationEffortValue = new CustomCellValue(new Phrase(
-				SonarUtil
-						.getConversion(Integer.parseInt(project.getMeasure(RELIABILITY_REMEDIATION_EFFORT).getValue())),
+				SonarUtil.getWorkDurConversion(
+						Integer.parseInt(project.getMeasure(RELIABILITY_REMEDIATION_EFFORT).getValue())),
 				Style.DASHBOARD_DATA_FONT_2));
 		tableReliabilityOther.addCell(reliabilityRemediationEffortValue);
 
@@ -584,13 +603,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 			// Reliability Remediation Effort On New Code Value
 			CustomCellValue reliabilityRemediationEffortNewValue = new CustomCellValue(new Phrase(
-					SonarUtil.getConversion(Integer.parseInt(
+					SonarUtil.getWorkDurConversion(Integer.parseInt(
 							project.getMeasure(NEW_RELIABILITY_REMEDIATION_EFFORT).getPeriods().get(0).getValue())),
 					Style.DASHBOARD_DATA_FONT_2));
 			reliabilityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableReliabilityOther.addCell(reliabilityRemediationEffortNewValue);
 		}
 
+		printOtherMetricsOfDomain(project, MetricDomains.RELIABILITY, tableReliabilityOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(reliabilityTitle);
 		section.add(new Paragraph(" "));
@@ -603,7 +624,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printSecurityBoard(final Project project, final Section section) throws DocumentException {
 
 		// Security Title
-		Paragraph securityTitle = new Paragraph(getTextProperty("metrics." + SECURITY), Style.UNDERLINED_FONT);
+		Paragraph securityTitle = new Paragraph(getTextProperty("metrics." + SECURITY.toLowerCase()), Style.UNDERLINED_FONT);
 
 		// Security Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -673,7 +694,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		// Security Remediation Effort Value
 		CustomCellValue securityRemediationEffortValue = new CustomCellValue(new Phrase(
-				SonarUtil.getConversion(Integer.parseInt(project.getMeasure(SECURITY_REMEDIATION_EFFORT).getValue())),
+				SonarUtil.getWorkDurConversion(
+						Integer.parseInt(project.getMeasure(SECURITY_REMEDIATION_EFFORT).getValue())),
 				Style.DASHBOARD_DATA_FONT_2));
 		tableSecurityOther.addCell(securityRemediationEffortValue);
 
@@ -686,13 +708,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 			// Security Remediation Effort on New Code Value
 			CustomCellValue securityRemediationEffortNewValue = new CustomCellValue(new Phrase(
-					SonarUtil.getConversion(Integer.parseInt(
+					SonarUtil.getWorkDurConversion(Integer.parseInt(
 							project.getMeasure(NEW_SECURITY_REMEDIATION_EFFORT).getPeriods().get(0).getValue())),
 					Style.DASHBOARD_DATA_FONT_2));
 			securityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableSecurityOther.addCell(securityRemediationEffortNewValue);
 		}
 
+		printOtherMetricsOfDomain(project, MetricDomains.SECURITY, tableSecurityOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(securityTitle);
 		section.add(new Paragraph(" "));
@@ -704,7 +728,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printMaintainabilityBoard(final Project project, final Section section) throws DocumentException {
 
 		// Maintainability Title
-		Paragraph maintainabilityTitle = new Paragraph(getTextProperty("metrics." + MAINTAINAILITY),
+		Paragraph maintainabilityTitle = new Paragraph(getTextProperty("metrics." + MAINTAINAILITY.toLowerCase()),
 				Style.UNDERLINED_FONT);
 
 		// Maintainability Main Table
@@ -776,7 +800,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		// Technical Debt Value
 		CustomCellValue technicalDebtValue = new CustomCellValue(
-				new Phrase(SonarUtil.getConversion(Integer.parseInt(project.getMeasure(SQALE_INDEX).getValue())),
+				new Phrase(SonarUtil.getWorkDurConversion(Integer.parseInt(project.getMeasure(SQALE_INDEX).getValue())),
 						Style.DASHBOARD_DATA_FONT_2));
 		tableMaintainabilityOther.addCell(technicalDebtValue);
 
@@ -789,7 +813,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 			// Added Technical Debt Value
 			CustomCellValue technicalDebtNewValue = new CustomCellValue(new Phrase(
-					SonarUtil.getConversion(
+					SonarUtil.getWorkDurConversion(
 							Integer.parseInt(project.getMeasure(NEW_TECHNICAL_DEBT).getPeriods().get(0).getValue())),
 					Style.DASHBOARD_DATA_FONT_2));
 			technicalDebtNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
@@ -828,11 +852,13 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		// Effort To Reach Maintainability Rating A Value
 		CustomCellValue effortToReachMaintainabilityRatingAValue = new CustomCellValue(new Phrase(
-				SonarUtil.getConversion(
+				SonarUtil.getWorkDurConversion(
 						Integer.parseInt(project.getMeasure(EFFORT_TO_REACH_MAINTAINABILITY_RATING_A).getValue())),
 				Style.DASHBOARD_DATA_FONT_2));
 		tableMaintainabilityOther.addCell(effortToReachMaintainabilityRatingAValue);
 
+		printOtherMetricsOfDomain(project, MetricDomains.MAINTAINAILITY, tableMaintainabilityOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(maintainabilityTitle);
 		section.add(new Paragraph(" "));
@@ -846,7 +872,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		if (project.getMeasures().containsMeasure(MetricKeys.COVERAGE)) {
 
 			// Coverage Title
-			Paragraph coverageTitle = new Paragraph(getTextProperty("metrics." + MetricDomains.COVERAGE),
+			Paragraph coverageTitle = new Paragraph(getTextProperty("metrics." + MetricDomains.COVERAGE.toLowerCase()),
 					Style.UNDERLINED_FONT);
 
 			// Coverage Main Table
@@ -923,6 +949,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 					new Phrase(project.getMeasure(LINES_TO_COVER).getValue(), Style.DASHBOARD_DATA_FONT_2));
 			tableCoverageOther.addCell(linesToCoverValue);
 
+			printOtherMetricsOfDomain(project, MetricDomains.COVERAGE, tableCoverageOther);
+			
 			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 			section.add(coverageTitle);
 			section.add(new Paragraph(" "));
@@ -935,7 +963,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printDuplicationsBoard(final Project project, final Section section) throws DocumentException {
 
 		// Duplications Title
-		Paragraph duplicationsTitle = new Paragraph(getTextProperty("metrics." + DUPLICATIONS), Style.UNDERLINED_FONT);
+		Paragraph duplicationsTitle = new Paragraph(getTextProperty("metrics." + DUPLICATIONS.toLowerCase()), Style.UNDERLINED_FONT);
 
 		// Duplications Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -991,6 +1019,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(DUPLICATED_FILES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableDuplicationsOther.addCell(duplicatedFilesValue);
 
+		printOtherMetricsOfDomain(project, MetricDomains.DUPLICATIONS, tableDuplicationsOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(duplicationsTitle);
 		section.add(new Paragraph(" "));
@@ -1002,7 +1032,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printSizeBoard(final Project project, final Section section) throws DocumentException {
 
 		// Size Title
-		Paragraph sizeTitle = new Paragraph(getTextProperty("metrics." + SIZE), Style.UNDERLINED_FONT);
+		Paragraph sizeTitle = new Paragraph(getTextProperty("metrics." + SIZE.toLowerCase()), Style.UNDERLINED_FONT);
 
 		// Size Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -1088,6 +1118,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(DIRECTORIES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableSizeOther.addCell(directoriesValue);
 
+		printOtherMetricsOfDomain(project, MetricDomains.SIZE, tableSizeOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(sizeTitle);
 		section.add(new Paragraph(" "));
@@ -1099,7 +1131,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printComplexityBoard(final Project project, final Section section) throws DocumentException {
 
 		// Complexity Title
-		Paragraph complexityTitle = new Paragraph(getTextProperty("metrics." + MetricDomains.COMPLEXITY),
+		Paragraph complexityTitle = new Paragraph(getTextProperty("metrics." + MetricDomains.COMPLEXITY.toLowerCase()),
 				Style.UNDERLINED_FONT);
 
 		// Complexity Main Table
@@ -1156,6 +1188,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(CLASS_COMPLEXITY).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableComplexityOther.addCell(classComplexityValue);
 
+		printOtherMetricsOfDomain(project, MetricDomains.COMPLEXITY, tableComplexityOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(complexityTitle);
 		section.add(new Paragraph(" "));
@@ -1167,7 +1201,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printDocumentationBoard(final Project project, final Section section) throws DocumentException {
 
 		// Documentations Title
-		Paragraph documentationTitle = new Paragraph(getTextProperty("metrics." + DOCUMENTATION),
+		Paragraph documentationTitle = new Paragraph(getTextProperty("metrics." + DOCUMENTATION.toLowerCase()),
 				Style.UNDERLINED_FONT);
 
 		// Documentations Main Table
@@ -1204,6 +1238,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(COMMENT_LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableDocumentationOther.addCell(commentLinesValue);
 
+		printOtherMetricsOfDomain(project, MetricDomains.DOCUMENTATION, tableDocumentationOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(documentationTitle);
 		section.add(new Paragraph(" "));
@@ -1215,11 +1251,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printIssuesBoard(final Project project, final Section section) throws DocumentException {
 
 		// Issues Title
-		Paragraph issuesTitle = new Paragraph(getTextProperty("metrics." + ISSUES), Style.UNDERLINED_FONT);
+		Paragraph issuesTitle = new Paragraph(getTextProperty("metrics." + ISSUES.toLowerCase()), Style.UNDERLINED_FONT);
 
 		// Issues Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
-		
+
 		// Issues Metric Table
 		CustomTable tableIssues = null;
 		if (project.getMeasures().containsMeasure(NEW_VIOLATIONS)) {
@@ -1259,7 +1295,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 		}
 
 		mainTable.addCell(tableIssues);
-		
+
 		// Issues Other Metrics Table
 		CustomTable tableIssuesOther = new CustomTable(2);
 		tableIssuesOther.setWidths(new int[] { 8, 2 });
@@ -1314,12 +1350,101 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(WONT_FIX_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableIssuesOther.addCell(wontFixIssuesValue);
 
+		printOtherMetricsOfDomain(project, MetricDomains.ISSUES, tableIssuesOther);
+		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(issuesTitle);
 		section.add(new Paragraph(" "));
 		section.add(mainTable);
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 		section.add(tableIssuesOther);
+	}
+
+	protected void printOtherMetricBoard(final Project project, final Section section) throws DocumentException {
+
+		// Request Metric Title
+		Paragraph otherMetricsTitle = new Paragraph("Other Metrics", Style.UNDERLINED_FONT);
+
+		// Requested Metrics Table
+		CustomTable tableOtherMetrics = new CustomTable(2);
+		tableOtherMetrics.setWidths(new int[] { 8, 2 });
+
+		for (String metricName : otherMetrics) {
+			// Other Metric Title
+			CustomCellTitle otherMetric = new CustomCellTitle(
+					new Phrase(project.getMeasure(metricName).getMetricTitle(), Style.DASHBOARD_TITLE_FONT));
+			tableOtherMetrics.addCell(otherMetric);
+
+			// Other Metric Value
+			if (project.getMeasure(metricName).getValue() != null
+					&& project.getMeasure(metricName).getValue().trim().length() > 0) {
+				LOGGER.info("Metric have value : " + project.getMeasure(metricName).getValue());
+				LOGGER.info("Metric have value length: " + project.getMeasure(metricName).getValue().length());
+				CustomCellValue otherMetricValue = new CustomCellValue(
+						new Phrase(SonarUtil.getFormattedValue(project.getMeasure(metricName).getValue(),
+								project.getMeasure(metricName).getDataType()), Style.DASHBOARD_DATA_FONT_2));
+				if (metricName.contains("new")) {
+					otherMetricValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
+				}
+				tableOtherMetrics.addCell(otherMetricValue);
+			} else {
+				LOGGER.info(
+						"Metric have period value : " + project.getMeasure(metricName).getPeriods().get(0).getValue());
+				CustomCellValue otherMetricValue = new CustomCellValue(new Phrase(
+						SonarUtil.getFormattedValue(project.getMeasure(metricName).getPeriods().get(0).getValue(),
+								project.getMeasure(metricName).getDataType()),
+						Style.DASHBOARD_DATA_FONT_2));
+				if (metricName.contains("new")) {
+					otherMetricValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
+				}
+				tableOtherMetrics.addCell(otherMetricValue);
+			}
+
+		}
+
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
+		section.add(otherMetricsTitle);
+		section.add(new Paragraph(" "));
+		section.add(tableOtherMetrics);
+
+	}
+
+	protected void printOtherMetricsOfDomain(final Project project, final String domainName,
+			final CustomTable tableOtherMetrics) throws DocumentException {
+		Set<String> otherMetrics = this.otherMetrics;
+		otherMetrics.removeAll(MetricKeys.getAllMetricKeys());
+		otherMetrics = otherMetrics.stream().filter(om -> project.getMeasures().containsMeasure(om)
+				&& project.getMeasure(om).getDomain().equals(domainName)).collect(Collectors.toSet());
+
+		for (String metricName : otherMetrics) {
+
+			// Other Metric Title
+			CustomCellTitle otherMetric = new CustomCellTitle(
+					new Phrase(project.getMeasure(metricName).getMetricTitle(), Style.DASHBOARD_TITLE_FONT));
+			tableOtherMetrics.addCell(otherMetric);
+
+			// Other Metric Value
+			if (project.getMeasure(metricName).getValue() != null
+					&& project.getMeasure(metricName).getValue().trim().length() > 0) {
+				CustomCellValue otherMetricValue = new CustomCellValue(
+						new Phrase(SonarUtil.getFormattedValue(project.getMeasure(metricName).getValue(),
+								project.getMeasure(metricName).getDataType()), Style.DASHBOARD_DATA_FONT_2));
+				if (metricName.contains("new")) {
+					otherMetricValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
+				}
+				tableOtherMetrics.addCell(otherMetricValue);
+			} else {
+				CustomCellValue otherMetricValue = new CustomCellValue(new Phrase(
+						SonarUtil.getFormattedValue(project.getMeasure(metricName).getPeriods().get(0).getValue(),
+								project.getMeasure(metricName).getDataType()),
+						Style.DASHBOARD_DATA_FONT_2));
+				if (metricName.contains("new")) {
+					otherMetricValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
+				}
+				tableOtherMetrics.addCell(otherMetricValue);
+			}
+		}
+
 	}
 
 	@Override

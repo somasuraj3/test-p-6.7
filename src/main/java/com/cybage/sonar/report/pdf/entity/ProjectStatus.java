@@ -40,4 +40,9 @@ public class ProjectStatus {
         this.statusPeriods = statusPeriods;
     }
 
+	@Override
+	public String toString() {
+		return "ProjectStatus [status=" + status + ", conditions=" + conditions + ", statusPeriods=" + statusPeriods
+				+ "]";
+	}
 }

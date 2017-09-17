@@ -27,30 +27,35 @@ import java.util.Set;
  */
 public class Measures {
 
-  private Hashtable<String, Measure> measuresTable = new Hashtable<String, Measure>();
+	private Hashtable<String, Measure> measuresTable = new Hashtable<String, Measure>();
 
-  public Measures() {
-	  
-  }
+	public Measures() {
 
-  public int getMeasuresCount() {
-    return measuresTable.size();
-  }
+	}
 
-  public Set<String> getMeasuresKeys() {
-    return measuresTable.keySet();
-  }
+	public int getMeasuresCount() {
+		return measuresTable.size();
+	}
 
-  public Measure getMeasure(final String key) {
-    return measuresTable.get(key);
-  }
+	public Set<String> getMeasuresKeys() {
+		return measuresTable.keySet();
+	}
 
-  public void addMeasure(final String name, final Measure value) {
-    measuresTable.put(name, value);
-  }
+	public Measure getMeasure(final String key) {
+		return measuresTable.get(key);
+	}
 
-  public boolean containsMeasure(final String measureKey) {
-    return measuresTable.containsKey(measureKey);
-  }
+	public void addMeasure(final String name, final Measure value) {
+		measuresTable.put(name, value);
+	}
+
+	public boolean containsMeasure(final String measureKey) {
+		return measuresTable.containsKey(measureKey);
+	}
+
+	@Override
+	public String toString() {
+		return "Measures [measuresTable=" + measuresTable + "]";
+	}
 
 }

@@ -98,4 +98,11 @@ public class QualityProfile {
 		this.projectCount = projectCount;
 	}
 
+	@Override
+	public String toString() {
+		return "QualityProfile [key=" + key + ", name=" + name + ", language=" + language + ", languageName="
+				+ languageName + ", isInherited=" + isInherited + ", isDefault=" + isDefault + ", activeRuleCount="
+				+ activeRuleCount + ", rulesUpdatedAt=" + rulesUpdatedAt + ", projectCount=" + projectCount + "]";
+	}
+
 }

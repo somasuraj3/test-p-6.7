@@ -22,6 +22,7 @@ package com.cybage.sonar.report.pdf.builder;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class ProjectBuilder {
 	 * @throws DocumentException
 	 * @throws ReportException
 	 */
-	public Project initializeProject(final String key, final String version, final List<String> sonarLanguage) throws IOException, ReportException {
+	public Project initializeProject(final String key, final String version, final List<String> sonarLanguage, final Set<String> otherMetrics) throws IOException, ReportException {
 		Project project = new Project(key, version, sonarLanguage);
 
 		LOGGER.info("Retrieving project info for " + project.getKey());
@@ -87,7 +88,7 @@ public class ProjectBuilder {
 
 		if (showWsRes != null) {
 			initFromNode(project, showWsRes, projectStatusWsRes);
-			initMeasures(project);
+			initMeasures(project, otherMetrics);
 
 			// initMostViolatedRules(project);
 			// initMostViolatedFiles(project);
@@ -147,10 +148,10 @@ public class ProjectBuilder {
 		project.setMostViolatedFiles(new LinkedList<FileInfo>());
 	}
 
-	private void initMeasures(final Project project) throws IOException {
+	private void initMeasures(final Project project, final Set<String> otherMetrics) throws IOException {
 		LOGGER.info("Retrieving measures");
 		MeasuresBuilder measuresBuilder = MeasuresBuilder.getInstance(wsClient);
-		Measures measures = measuresBuilder.initMeasuresByProjectKey(project.getKey());
+		Measures measures = measuresBuilder.initMeasuresByProjectKey(project.getKey(), otherMetrics);
 		project.setMeasures(measures);
 	}
 
