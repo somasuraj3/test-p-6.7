@@ -26,7 +26,6 @@ import static com.cybage.sonar.report.pdf.util.MetricDomains.MAINTAINAILITY;
 import static com.cybage.sonar.report.pdf.util.MetricDomains.RELIABILITY;
 import static com.cybage.sonar.report.pdf.util.MetricDomains.SECURITY;
 import static com.cybage.sonar.report.pdf.util.MetricDomains.SIZE;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.BRANCH_COVERAGE;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.BUGS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.CLASSES;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.CLASS_COMPLEXITY;
@@ -46,8 +45,6 @@ import static com.cybage.sonar.report.pdf.util.MetricKeys.FILE_COMPLEXITY;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.FUNCTIONS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.FUNCTION_COMPLEXITY;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.LINES;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.LINES_TO_COVER;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.LINE_COVERAGE;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.NCLOC;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.NEW_BUGS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.NEW_CODE_SMELLS;
@@ -68,8 +65,6 @@ import static com.cybage.sonar.report.pdf.util.MetricKeys.SQALE_DEBT_RATIO;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.SQALE_INDEX;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.SQALE_RATING;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.STATEMENTS;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.UNCOVERED_CONDITIONS;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.UNCOVERED_LINES;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.VIOLATIONS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.VULNERABILITIES;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.WONT_FIX_ISSUES;
@@ -295,21 +290,22 @@ public class ExecutivePDFReporter extends PDFReporter {
 		printReliabilityBoard(project, section);
 		printSecurityBoard(project, section);
 		printMaintainabilityBoard(project, section);
-		printCoverageBoard(project, section);
+		// printCoverageBoard(project, section);
 		printDuplicationsBoard(project, section);
 		printSizeBoard(project, section);
 		printComplexityBoard(project, section);
 		printDocumentationBoard(project, section);
 		printIssuesBoard(project, section);
 
-		Set<String> otherMetrics = this.otherMetrics; 
-		if(otherMetrics != null){
-			otherMetrics.removeAll(MetricKeys.getAllMetricKeys());
-			otherMetrics = otherMetrics.stream().filter(om -> project.getMeasures().containsMeasure(om)
-					&& !MetricDomains.getDomains().contains(project.getMeasure(om).getDomain())).collect(Collectors.toSet());
-			
-			if (otherMetrics.size() > 0) {
-					printOtherMetricBoard(project, section);
+		if (otherMetrics != null) {
+			this.otherMetrics.removeAll(MetricKeys.getAllMetricKeys());
+			this.otherMetrics = this.otherMetrics.stream()
+					.filter(om -> project.getMeasures().containsMeasure(om)
+							&& !MetricDomains.getDomains().contains(project.getMeasure(om).getDomain()))
+					.collect(Collectors.toSet());
+
+			if (this.otherMetrics.size() > 0) {
+				printOtherMetricBoard(project, section);
 			}
 		}
 	}
@@ -519,7 +515,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printReliabilityBoard(final Project project, final Section section) throws DocumentException {
 
 		// Reliability Title
-		Paragraph reliabilityTitle = new Paragraph(getTextProperty("metrics." + RELIABILITY.toLowerCase()), Style.UNDERLINED_FONT);
+		Paragraph reliabilityTitle = new Paragraph(getTextProperty("metrics." + RELIABILITY.toLowerCase()),
+				Style.UNDERLINED_FONT);
 
 		// Reliability Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -609,8 +606,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 			reliabilityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableReliabilityOther.addCell(reliabilityRemediationEffortNewValue);
 		}
-
-		printOtherMetricsOfDomain(project, MetricDomains.RELIABILITY, tableReliabilityOther);
+		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.RELIABILITY, tableReliabilityOther);
+		}
 		
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(reliabilityTitle);
@@ -624,7 +623,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printSecurityBoard(final Project project, final Section section) throws DocumentException {
 
 		// Security Title
-		Paragraph securityTitle = new Paragraph(getTextProperty("metrics." + SECURITY.toLowerCase()), Style.UNDERLINED_FONT);
+		Paragraph securityTitle = new Paragraph(getTextProperty("metrics." + SECURITY.toLowerCase()),
+				Style.UNDERLINED_FONT);
 
 		// Security Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -715,8 +715,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableSecurityOther.addCell(securityRemediationEffortNewValue);
 		}
 
-		printOtherMetricsOfDomain(project, MetricDomains.SECURITY, tableSecurityOther);
-		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.SECURITY, tableSecurityOther);
+		}
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(securityTitle);
 		section.add(new Paragraph(" "));
@@ -857,8 +859,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				Style.DASHBOARD_DATA_FONT_2));
 		tableMaintainabilityOther.addCell(effortToReachMaintainabilityRatingAValue);
 
-		printOtherMetricsOfDomain(project, MetricDomains.MAINTAINAILITY, tableMaintainabilityOther);
-		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.MAINTAINAILITY, tableMaintainabilityOther);
+		}
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(maintainabilityTitle);
 		section.add(new Paragraph(" "));
@@ -868,7 +872,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 	}
 
-	protected void printCoverageBoard(final Project project, final Section section) throws DocumentException {
+	/*protected void printCoverageBoard(final Project project, final Section section) throws DocumentException {
 		if (project.getMeasures().containsMeasure(MetricKeys.COVERAGE)) {
 
 			// Coverage Title
@@ -878,6 +882,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 			// Coverage Main Table
 			CustomMainTable mainTable = new CustomMainTable(1);
 
+			CustomTable tableCoverage = null;
+			if (project.getMeasures().containsMeasure(MetricKeys.COVERAGE) && project.getMeasures().containsMeasure(MetricKeys.COVERAGE)) {
+				tableCoverage = new CustomTable(3);
+				tableCoverage.setWidths(new int[] { 1, 1, 1 });
+			} else {
+				tableCoverage = new CustomTable(2);
+				tableCoverage.setWidths(new int[] { 1, 1 });
+			}
+			
 			// Coverage Metric Table
 			CustomTable tableCoverage = new CustomTable(1);
 
@@ -949,8 +962,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 					new Phrase(project.getMeasure(LINES_TO_COVER).getValue(), Style.DASHBOARD_DATA_FONT_2));
 			tableCoverageOther.addCell(linesToCoverValue);
 
-			printOtherMetricsOfDomain(project, MetricDomains.COVERAGE, tableCoverageOther);
-			
+			if (this.otherMetrics != null) {
+				printOtherMetricsOfDomain(project, MetricDomains.COVERAGE, tableCoverageOther);
+			}
+
 			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 			section.add(coverageTitle);
 			section.add(new Paragraph(" "));
@@ -958,12 +973,13 @@ public class ExecutivePDFReporter extends PDFReporter {
 			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
 			section.add(tableCoverageOther);
 		}
-	}
+	}*/
 
 	protected void printDuplicationsBoard(final Project project, final Section section) throws DocumentException {
 
 		// Duplications Title
-		Paragraph duplicationsTitle = new Paragraph(getTextProperty("metrics." + DUPLICATIONS.toLowerCase()), Style.UNDERLINED_FONT);
+		Paragraph duplicationsTitle = new Paragraph(getTextProperty("metrics." + DUPLICATIONS.toLowerCase()),
+				Style.UNDERLINED_FONT);
 
 		// Duplications Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -1019,8 +1035,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(DUPLICATED_FILES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableDuplicationsOther.addCell(duplicatedFilesValue);
 
-		printOtherMetricsOfDomain(project, MetricDomains.DUPLICATIONS, tableDuplicationsOther);
-		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.DUPLICATIONS, tableDuplicationsOther);
+		}
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(duplicationsTitle);
 		section.add(new Paragraph(" "));
@@ -1118,8 +1136,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(DIRECTORIES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableSizeOther.addCell(directoriesValue);
 
-		printOtherMetricsOfDomain(project, MetricDomains.SIZE, tableSizeOther);
-		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.SIZE, tableSizeOther);
+		}
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(sizeTitle);
 		section.add(new Paragraph(" "));
@@ -1188,8 +1208,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(CLASS_COMPLEXITY).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableComplexityOther.addCell(classComplexityValue);
 
-		printOtherMetricsOfDomain(project, MetricDomains.COMPLEXITY, tableComplexityOther);
-		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.COMPLEXITY, tableComplexityOther);
+		}
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(complexityTitle);
 		section.add(new Paragraph(" "));
@@ -1238,8 +1260,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(COMMENT_LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableDocumentationOther.addCell(commentLinesValue);
 
-		printOtherMetricsOfDomain(project, MetricDomains.DOCUMENTATION, tableDocumentationOther);
-		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.DOCUMENTATION, tableDocumentationOther);
+		}
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(documentationTitle);
 		section.add(new Paragraph(" "));
@@ -1251,7 +1275,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printIssuesBoard(final Project project, final Section section) throws DocumentException {
 
 		// Issues Title
-		Paragraph issuesTitle = new Paragraph(getTextProperty("metrics." + ISSUES.toLowerCase()), Style.UNDERLINED_FONT);
+		Paragraph issuesTitle = new Paragraph(getTextProperty("metrics." + ISSUES.toLowerCase()),
+				Style.UNDERLINED_FONT);
 
 		// Issues Main Table
 		CustomMainTable mainTable = new CustomMainTable(1);
@@ -1350,8 +1375,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 				new Phrase(project.getMeasure(WONT_FIX_ISSUES).getValue(), Style.DASHBOARD_DATA_FONT_2));
 		tableIssuesOther.addCell(wontFixIssuesValue);
 
-		printOtherMetricsOfDomain(project, MetricDomains.ISSUES, tableIssuesOther);
-		
+		if (this.otherMetrics != null) {
+			printOtherMetricsOfDomain(project, MetricDomains.ISSUES, tableIssuesOther);
+		}
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(issuesTitle);
 		section.add(new Paragraph(" "));
@@ -1361,21 +1388,23 @@ public class ExecutivePDFReporter extends PDFReporter {
 	}
 
 	protected void printOtherMetricBoard(final Project project, final Section section) throws DocumentException {
-
+		LOGGER.info("In other metric board function");
 		// Request Metric Title
 		Paragraph otherMetricsTitle = new Paragraph("Other Metrics", Style.UNDERLINED_FONT);
 
 		// Requested Metrics Table
 		CustomTable tableOtherMetrics = new CustomTable(2);
 		tableOtherMetrics.setWidths(new int[] { 8, 2 });
-
+		LOGGER.info("Other Metrics List : " + otherMetrics);
 		for (String metricName : otherMetrics) {
 			// Other Metric Title
+			LOGGER.info("Metric Name : " + metricName);
 			CustomCellTitle otherMetric = new CustomCellTitle(
 					new Phrase(project.getMeasure(metricName).getMetricTitle(), Style.DASHBOARD_TITLE_FONT));
 			tableOtherMetrics.addCell(otherMetric);
 
 			// Other Metric Value
+			LOGGER.info("Metric Information : " + project.getMeasure(metricName).toString());
 			if (project.getMeasure(metricName).getValue() != null
 					&& project.getMeasure(metricName).getValue().trim().length() > 0) {
 				LOGGER.info("Metric have value : " + project.getMeasure(metricName).getValue());
@@ -1412,6 +1441,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 	protected void printOtherMetricsOfDomain(final Project project, final String domainName,
 			final CustomTable tableOtherMetrics) throws DocumentException {
 		Set<String> otherMetrics = this.otherMetrics;
+
 		otherMetrics.removeAll(MetricKeys.getAllMetricKeys());
 		otherMetrics = otherMetrics.stream().filter(om -> project.getMeasures().containsMeasure(om)
 				&& project.getMeasure(om).getDomain().equals(domainName)).collect(Collectors.toSet());

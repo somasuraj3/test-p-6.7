@@ -1,6 +1,5 @@
 package com.cybage.sonar.report.pdf.util;
 
-import static com.cybage.sonar.report.pdf.util.MetricKeys.BRANCH_COVERAGE;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.BUGS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.CLASSES;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.CLASS_COMPLEXITY;
@@ -20,8 +19,6 @@ import static com.cybage.sonar.report.pdf.util.MetricKeys.FILE_COMPLEXITY;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.FUNCTIONS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.FUNCTION_COMPLEXITY;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.LINES;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.LINES_TO_COVER;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.LINE_COVERAGE;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.NCLOC;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.NEW_BUGS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.NEW_CODE_SMELLS;
@@ -41,8 +38,6 @@ import static com.cybage.sonar.report.pdf.util.MetricKeys.SQALE_DEBT_RATIO;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.SQALE_INDEX;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.SQALE_RATING;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.STATEMENTS;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.UNCOVERED_CONDITIONS;
-import static com.cybage.sonar.report.pdf.util.MetricKeys.UNCOVERED_LINES;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.VIOLATIONS;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.VULNERABILITIES;
 import static com.cybage.sonar.report.pdf.util.MetricKeys.WONT_FIX_ISSUES;
@@ -59,7 +54,7 @@ public class MetricDomains {
 	public static final String RELIABILITY = "Reliability";
 	public static final String SECURITY = "Security";
 	public static final String MAINTAINAILITY = "Maintainability";
-	public static final String COVERAGE = "Coverage";
+	// public static final String COVERAGE = "Coverage";
 	public static final String DUPLICATIONS = "Duplications";
 	public static final String SIZE = "Size";
 	public static final String COMPLEXITY = "Complexity";
@@ -76,8 +71,8 @@ public class MetricDomains {
 				SECURITY_REMEDIATION_EFFORT, NEW_SECURITY_REMEDIATION_EFFORT));
 		metricMap.put(MAINTAINAILITY, Arrays.asList(CODE_SMELLS, NEW_CODE_SMELLS, SQALE_RATING, SQALE_INDEX,
 				NEW_TECHNICAL_DEBT, SQALE_DEBT_RATIO, NEW_SQALE_DEBT_RATIO, EFFORT_TO_REACH_MAINTAINABILITY_RATING_A));
-		metricMap.put(COVERAGE, Arrays.asList(MetricKeys.COVERAGE, LINE_COVERAGE, BRANCH_COVERAGE, UNCOVERED_LINES,
-				UNCOVERED_CONDITIONS, LINES_TO_COVER));
+		//metricMap.put(COVERAGE, Arrays.asList(MetricKeys.COVERAGE, LINE_COVERAGE, BRANCH_COVERAGE, UNCOVERED_LINES,
+		//		UNCOVERED_CONDITIONS, LINES_TO_COVER));
 		metricMap.put(DUPLICATIONS,
 				Arrays.asList(DUPLICATED_LINES_DENSITY, DUPLICATED_BLOCKS, DUPLICATED_LINES, DUPLICATED_FILES));
 		metricMap.put(SIZE, Arrays.asList(NCLOC, LINES, STATEMENTS, FUNCTIONS, CLASSES, FILES, DIRECTORIES));
@@ -92,7 +87,8 @@ public class MetricDomains {
 	}
 
 	public static Set<String> getDomains() {
-		return new HashSet<String>(Arrays.asList(RELIABILITY, SECURITY, MAINTAINAILITY, COVERAGE, DUPLICATIONS, SIZE,
+		// COVERAGE
+		return new HashSet<String>(Arrays.asList(RELIABILITY, SECURITY, MAINTAINAILITY, DUPLICATIONS, SIZE,
 				COMPLEXITY, DOCUMENTATION, ISSUES));
 	}
 

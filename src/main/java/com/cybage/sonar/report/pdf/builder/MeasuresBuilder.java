@@ -67,11 +67,13 @@ public class MeasuresBuilder {
 
 	public Measures initMeasuresByProjectKey(final String projectKey, final Set<String> otherMetrics)
 			throws HttpException, IOException {
-
+		
 		Measures measures = new Measures();
 		if (measuresKeys == null) {
 			measuresKeys = MetricKeys.getAllMetricKeys();
-			measuresKeys.addAll(otherMetrics);
+			if(otherMetrics !=null){
+				measuresKeys.addAll(otherMetrics);
+			}
 		}
 
 		// Avoid "Post too large"
