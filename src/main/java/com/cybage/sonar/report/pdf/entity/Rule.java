@@ -19,93 +19,85 @@
  */
 package com.cybage.sonar.report.pdf.entity;
 
-import java.util.List;
-
 public class Rule {
 
-  // Rule key
-  private String key;
+	// Rule key
+	private String key;
 
-  // Rule name
-  private String name;
+	// Rule name
+	private String name;
 
-  // Rule description
-  private String description;
+	// Rule count
+	private Long count;
 
-  // Violations of this rule: <resource key, violation line> (with limit 100)
-  private List<Violation> topViolatedResources;
+	// Language Name
+	private String languageName;
 
-  // Total vilations of this rule
-  private Double violationsNumber;
+	// Severity
+	private String severity;
 
-  // Total vilations of this rule
-  private String violationsNumberFormatted;
+	public Rule() {
+		super();
+		this.key = "";
+		this.name = "";
+		this.count = 0L;
+		this.languageName = "";
+		this.severity = "";
+	}
 
-  private String message;
+	public Rule(String key, String name, Long count, String languageName, String severity) {
+		super();
+		this.key = key;
+		this.name = name;
+		this.count = count;
+		this.languageName = languageName;
+		this.severity = severity;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getKey() {
+		return key;
+	}
 
-  public String getDescription() {
-    return description;
-  }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-  public List<Violation> getTopViolations() {
-    return topViolatedResources;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void setName(final String name) {
-    this.name = name;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  public void setDescription(final String description) {
-    this.description = description;
-  }
+	public Long getCount() {
+		return count;
+	}
 
-  public void setTopViolations(final List<Violation> violations) {
-    this.topViolatedResources = violations;
-  }
+	public void setCount(Long count) {
+		this.count = count;
+	}
 
-  public String getKey() {
-    return key;
-  }
+	public String getLanguageName() {
+		return languageName;
+	}
 
-  public void setKey(final String key) {
-    this.key = key;
-  }
+	public void setLanguageName(String languageName) {
+		this.languageName = languageName;
+	}
 
-  public Double getViolationsNumber() {
-    return violationsNumber;
-  }
+	public String getSeverity() {
+		return severity;
+	}
 
-  public void setViolationsNumber(final Double violationsNumber) {
-    this.violationsNumber = violationsNumber;
-  }
+	public void setSeverity(String severity) {
+		this.severity = severity;
+	}
 
-  public String getViolationsNumberFormatted() {
-    return violationsNumberFormatted;
-  }
-
-  public void setViolationsNumberFormatted(
-      final String violationsNumberFormatted) {
-    this.violationsNumberFormatted = violationsNumberFormatted;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(final String message) {
-    this.message = message;
-  }
-
-  public List<Violation> getTopViolatedResources() {
-    return topViolatedResources;
-  }
-
-  public void setTopViolatedResources(final List<Violation> topViolatedResources) {
-    this.topViolatedResources = topViolatedResources;
-  }
+	@Override
+	public String toString() {
+		return "Rule [key=" + key + ", name=" + name + ", count=" + count + ", languageName=" + languageName
+				+ ", severity=" + severity + "]";
+	}
 
 }

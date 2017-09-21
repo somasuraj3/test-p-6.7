@@ -73,7 +73,8 @@ public class ProjectBuilder {
 	 * @throws DocumentException
 	 * @throws ReportException
 	 */
-	public Project initializeProject(final String key, final String version, final List<String> sonarLanguage, final Set<String> otherMetrics) throws IOException, ReportException {
+	public Project initializeProject(final String key, final String version, final List<String> sonarLanguage,
+			final Set<String> otherMetrics) throws IOException, ReportException {
 		Project project = new Project(key, version, sonarLanguage);
 
 		LOGGER.info("Retrieving project info for " + project.getKey());
@@ -89,11 +90,10 @@ public class ProjectBuilder {
 		if (showWsRes != null) {
 			initFromNode(project, showWsRes, projectStatusWsRes);
 			initMeasures(project, otherMetrics);
-
-			// initMostViolatedRules(project);
-			// initMostViolatedFiles(project);
-			// initMostComplexElements(project);
-			// initMostDuplicatedFiles(project);
+			initMostViolatedRules(project);
+			initMostViolatedFiles(project);
+			initMostComplexFiles(project);
+			initMostDuplicatedFiles(project);
 			/*
 			 * LOGGER.debug("Accessing Sonar: getting child projects");
 			 * 
@@ -170,86 +170,31 @@ public class ProjectBuilder {
 		project.setQualityProfiles(qualityProfiles);
 	}
 
-	/*
-	 * private void initMostViolatedRules(final Project project) throws
-	 * IOException, ReportException {
-	 * LOGGER.info("    Retrieving most violated rules");
-	 * LOGGER.debug("Accessing Sonar: getting most violated rules"); String[]
-	 * priorities = Priority.getPrioritiesArray();
-	 * 
-	 * // Reverse iteration to get violations with upper level first int limit =
-	 * 10; for (int i = priorities.length - 1; i >= 0 && limit > 0; i--) {
-	 * 
-	 * ResourceQuery query = ResourceQuery.create(project.getKey());
-	 * query.setDepth(0); query.setLimit(limit);
-	 * query.setMetrics(UrlPath.getViolationsLevelPath(priorities[i]));
-	 * 
-	 * // "&filter_rules=false&filter_rules_cats=true" ??
-	 * query.setExcludeRules(false); // query.setExcludeRuleCategories(true);
-	 * 
-	 * InputComponent mostViolatedRulesByLevel = wsClient.find(query); if
-	 * (mostViolatedRulesByLevel != null) { int count =
-	 * initMostViolatedRulesFromNode(project, mostViolatedRulesByLevel);
-	 * LOGGER.debug("\t " + count + " " + priorities[i] + " violations"); limit
-	 * = limit - count; } else {
-	 * LOGGER.debug("There is not result on select //resources/resource");
-	 * LOGGER.debug("There are no violations with level " + priorities[i]); } }
-	 * }
-	 * 
-	 * private void initMostViolatedFiles(final Project project) throws
-	 * IOException { LOGGER.info("    Retrieving most violated files");
-	 * LOGGER.debug("Accessing Sonar: getting most violated files");
-	 * 
-	 * ResourceQuery resourceQuery =
-	 * ResourceQuery.createForMetrics(project.getKey(), MetricKeys.VIOLATIONS);
-	 * resourceQuery.setScopes("FIL"); resourceQuery.setDepth(-1);
-	 * resourceQuery.setLimit(5); List<InputComponent> resources =
-	 * wsClient.findAll(resourceQuery); List<FileInfo> fileInfoList =
-	 * FileInfoBuilder.initFromDocument(resources, FileInfo.VIOLATIONS_CONTENT);
-	 * project.setMostViolatedFiles(fileInfoList);
-	 * 
-	 * }
-	 * 
-	 * private void initMostComplexElements(final Project project) throws
-	 * IOException { LOGGER.info("    Retrieving most complex elements");
-	 * LOGGER.debug("Accessing Sonar: getting most complex elements");
-	 * 
-	 * ResourceQuery resourceQuery =
-	 * ResourceQuery.createForMetrics(project.getKey(), MetricKeys.COMPLEXITY);
-	 * resourceQuery.setScopes("FIL"); resourceQuery.setDepth(-1);
-	 * resourceQuery.setLimit(5); List<InputComponent> resources =
-	 * wsClient.findAll(resourceQuery);
-	 * project.setMostComplexFiles(FileInfoBuilder.initFromDocument(resources,
-	 * FileInfo.CCN_CONTENT)); }
-	 * 
-	 * private void initMostDuplicatedFiles(final Project project) throws
-	 * IOException { LOGGER.info("    Retrieving most duplicated files");
-	 * LOGGER.debug("Accessing Sonar: getting most duplicated files");
-	 * 
-	 * ResourceQuery resourceQuery =
-	 * ResourceQuery.createForMetrics(project.getKey(),
-	 * MetricKeys.DUPLICATED_LINES); resourceQuery.setScopes("FIL");
-	 * resourceQuery.setDepth(-1); resourceQuery.setLimit(5);
-	 * List<InputComponent> resources = wsClient.findAll(resourceQuery);
-	 * project.setMostDuplicatedFiles(FileInfoBuilder.initFromDocument(
-	 * resources, FileInfo.DUPLICATIONS_CONTENT)); }
-	 * 
-	 * private int initMostViolatedRulesFromNode(final Project project, final
-	 * InputComponent mostViolatedNode) throws ReportException, IOException {
-	 * 
-	 * RuleBuilder ruleBuilder = RuleBuilder.getInstance(credentials, wsClient);
-	 * 
-	 * List<org.sonar.wsclient.services.Measure> measuresNode =
-	 * mostViolatedNode.getMeasures();
-	 * Iterator<org.sonar.wsclient.services.Measure> it =
-	 * measuresNode.iterator(); if (!it.hasNext()) {
-	 * LOGGER.warn("There is not result on select //resources/resource/msr"); }
-	 * int count = 0; while (it.hasNext()) { org.sonar.wsclient.services.Measure
-	 * measureNode = it.next(); String formattedValueNode =
-	 * measureNode.getFormattedValue(); if (!formattedValueNode.equals("0")) {
-	 * Rule rule = ruleBuilder.initFromNode(measureNode); if
-	 * ("workbook".equals(pdfRefporter.getReportType())) {
-	 * ruleBuilder.loadViolatedResources(rule, rule.getKey(), project.getKey());
-	 * } project.getMostViolatedRules().add(rule); count++; } } return count; }
-	 */
+	private void initMostViolatedRules(final Project project) throws IOException, ReportException {
+		LOGGER.info("Retrieving most violated rules");
+		RuleBuilder ruleBuilder = RuleBuilder.getInstance(wsClient);
+		List<Rule> rules = ruleBuilder.initProjectMostViolatedRulesByProjectKey(project.getKey());
+		project.setMostViolatedRules(rules);
+	}
+
+	private void initMostViolatedFiles(final Project project) throws IOException, ReportException {
+		LOGGER.info("Retrieving most violated files");
+		FileInfoBuilder fileInfoBuilder = FileInfoBuilder.getInstance(wsClient);
+		List<FileInfo> fileInfo = fileInfoBuilder.initProjectMostViolatedFilesByProjectKey(project.getKey());
+		project.setMostViolatedFiles(fileInfo);
+	}
+
+	private void initMostComplexFiles(final Project project) throws IOException, ReportException {
+		LOGGER.info("Retrieving most complex files");
+		FileInfoBuilder fileInfoBuilder = FileInfoBuilder.getInstance(wsClient);
+		List<FileInfo> fileInfo = fileInfoBuilder.initProjectMostComplexFilesByProjectKey(project.getKey());
+		project.setMostComplexFiles(fileInfo);
+	}
+
+	private void initMostDuplicatedFiles(final Project project) throws IOException, ReportException {
+		LOGGER.info("Retrieving most duplicated files");
+		FileInfoBuilder fileInfoBuilder = FileInfoBuilder.getInstance(wsClient);
+		List<FileInfo> fileInfo = fileInfoBuilder.initProjectMostDuplicatedFilesByProjectKey(project.getKey());
+		project.setMostDuplicatedFiles(fileInfo);
+	}
 }

@@ -2,20 +2,14 @@ package com.cybage.sonar.report.pdf.builder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonarqube.ws.QualityProfiles.SearchWsResponse;
-import org.sonarqube.ws.WsQualityGates.ProjectStatusWsResponse;
 import org.sonarqube.ws.client.WsClient;
-import org.sonarqube.ws.client.qualitygate.ProjectStatusWsRequest;
 import org.sonarqube.ws.client.qualityprofile.SearchWsRequest;
 
-import com.cybage.sonar.report.pdf.entity.Condition;
-import com.cybage.sonar.report.pdf.entity.ProjectStatus;
 import com.cybage.sonar.report.pdf.entity.QualityProfile;
-import com.cybage.sonar.report.pdf.entity.StatusPeriod;
 
 public class QualityProfileBuilder {
 
