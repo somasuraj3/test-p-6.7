@@ -24,8 +24,8 @@ import java.util.List;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPTable;
 
 public class Style {
@@ -49,6 +49,12 @@ public class Style {
 	 * Font used in general plain text
 	 */
 	public static final Font NORMAL_FONT = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.NORMAL, BaseColor.BLACK);
+
+	/**
+	 * Font used in general plain text
+	 */
+	public static final Font NORMAL_HIGHLIGHTED_FONT = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.NORMAL,
+			BaseColor.RED);
 
 	/**
 	 * Font used in code text (bold)
@@ -89,7 +95,8 @@ public class Style {
 	/**
 	 * Dashboard metric title font
 	 */
-	public static final Font DASHBOARD_TITLE_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL, new BaseColor(6, 12, 76));
+	public static final Font DASHBOARD_TITLE_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL,
+			new BaseColor(6, 12, 76));
 
 	/**
 	 * Dashboard metric value font
@@ -99,73 +106,81 @@ public class Style {
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_DATA_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.DARK_GRAY);
-	
-	
+	public static final Font DASHBOARD_DATA_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL, BaseColor.DARK_GRAY);
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font QUALITY_GATE_TITLE_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL, new BaseColor(6, 12, 76));
-	
+	public static final Font QUALITY_GATE_TITLE_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL,
+			new BaseColor(6, 12, 76));
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font QUALITY_GATE_PASSED_FONT = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.DARK_GRAY);
-	
+	public static final Font QUALITY_GATE_PASSED_FONT = new Font(FontFamily.COURIER, 11, Font.NORMAL,
+			BaseColor.DARK_GRAY);
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font QUALITY_GATE_PASSED_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.DARK_GRAY);
-	
+	public static final Font QUALITY_GATE_PASSED_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,
+			BaseColor.DARK_GRAY);
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font QUALITY_GATE_FAILED_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL,	BaseColor.WHITE);
-	
+	public static final Font QUALITY_GATE_FAILED_FONT = new Font(FontFamily.TIMES_ROMAN, 11, Font.NORMAL,
+			BaseColor.WHITE);
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font QUALITY_GATE_FAILED_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,	BaseColor.WHITE);
-	
-	
+	public static final Font QUALITY_GATE_FAILED_FONT_2 = new Font(FontFamily.COURIER, 11, Font.NORMAL,
+			BaseColor.WHITE);
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_RATING_FONT_A = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(0, 153, 0));
-	
+	public static final Font DASHBOARD_RATING_FONT_A = new Font(FontFamily.COURIER, 28, Font.NORMAL,
+			new BaseColor(0, 153, 0));
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_RATING_FONT_B = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(156, 218, 12));
-	
+	public static final Font DASHBOARD_RATING_FONT_B = new Font(FontFamily.COURIER, 28, Font.NORMAL,
+			new BaseColor(156, 218, 12));
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_RATING_FONT_C = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(255, 255, 0));
-	
+	public static final Font DASHBOARD_RATING_FONT_C = new Font(FontFamily.COURIER, 28, Font.NORMAL,
+			new BaseColor(255, 255, 0));
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_RATING_FONT_D = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(255, 128, 0));
-	
+	public static final Font DASHBOARD_RATING_FONT_D = new Font(FontFamily.COURIER, 28, Font.NORMAL,
+			new BaseColor(255, 128, 0));
+
 	/**
 	 * Dashboard metric details font
 	 */
-	public static final Font DASHBOARD_RATING_FONT_E = new Font(FontFamily.COURIER, 28, Font.NORMAL, new BaseColor(255, 0, 0));
-	
+	public static final Font DASHBOARD_RATING_FONT_E = new Font(FontFamily.COURIER, 28, Font.NORMAL,
+			new BaseColor(255, 0, 0));
+
 	/**
 	 * Dashboard metric table background color
 	 */
 	public static final BaseColor DASHBOARD_NEW_METRIC_BACKGROUND_COLOR = new BaseColor(188, 226, 72);
-	
+
 	public static final BaseColor QUALITY_GATE_PASSED_COLOR = new BaseColor(188, 226, 72);
-	
+
 	public static final BaseColor QUALITY_GATE_FAILED_COLOR = new BaseColor(255, 0, 0);
-	
+
 	public static final Integer TABLE_SUBMETRIC_WIDTH_PERCENTAGE = 95;
-	
+
 	public static final Float TABLE_MAINMETRIC_WIDTH_PERCENTAGE = 95.5F;
-	
+
 	/**
 	 * Tendency icons height + 2 (used in tables style)
 	 */

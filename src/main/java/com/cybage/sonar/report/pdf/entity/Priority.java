@@ -23,7 +23,7 @@ package com.cybage.sonar.report.pdf.entity;
  * Priorities.
  */
 public class Priority {
-	
+
 	public static final String INFO = "INFO";
 	public static final String MINOR = "MINOR";
 	public static final String MAJOR = "MAJOR";
@@ -32,6 +32,14 @@ public class Priority {
 	public static final String ALL = "";
 
 	public static String[] getPrioritiesArray() {
-		return new String[] { INFO, MINOR, MAJOR, CRITICAL, BLOCKER, ALL };
+		return new String[] { ALL, INFO, MINOR, MAJOR, CRITICAL, BLOCKER };
+	}
+
+	public static String getPriority(String priority) {
+		if (priority.equals(Priority.ALL)) {
+			return "ALL";
+		} else {
+			return priority;
+		}
 	}
 }

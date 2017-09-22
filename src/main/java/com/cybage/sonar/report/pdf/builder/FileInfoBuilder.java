@@ -44,15 +44,16 @@ public class FileInfoBuilder {
 		List<FileInfo> files = new ArrayList<>();
 
 		// Reverse iteration to get violations with upper level first
-		int limit = 5;
+		
 		SearchWsRequest searchWsReq = new SearchWsRequest();
 		searchWsReq.setComponentKeys(Arrays.asList(key));
 		searchWsReq.setFacets(Arrays.asList("fileUuids"));
 		SearchWsResponse searchWsRes = wsClient.issues().search(searchWsReq);
 
 		if (searchWsRes.getFacets().getFacets(0) != null) {
+			int limit = 5;
 			limit = searchWsRes.getFacets().getFacets(0).getValuesCount() > limit ? limit
-					: searchWsRes.getFacets().getFacetsCount();
+					: searchWsRes.getFacets().getFacets(0).getValuesCount();
 			for (int j = 0; j < limit; j++) {
 				FacetValue facetValue = searchWsRes.getFacets().getFacets(0).getValues(j);
 				Optional<Component> component = searchWsRes.getComponentsList().stream()

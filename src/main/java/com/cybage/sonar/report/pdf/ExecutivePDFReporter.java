@@ -88,8 +88,11 @@ import com.cybage.sonar.report.pdf.design.CustomCellValue;
 import com.cybage.sonar.report.pdf.design.CustomMainTable;
 import com.cybage.sonar.report.pdf.design.CustomTable;
 import com.cybage.sonar.report.pdf.entity.Condition;
+import com.cybage.sonar.report.pdf.entity.FileInfo;
+import com.cybage.sonar.report.pdf.entity.Priority;
 import com.cybage.sonar.report.pdf.entity.Project;
 import com.cybage.sonar.report.pdf.entity.QualityProfile;
+import com.cybage.sonar.report.pdf.entity.Rule;
 import com.cybage.sonar.report.pdf.entity.StatusPeriod;
 import com.cybage.sonar.report.pdf.entity.exception.ReportException;
 import com.cybage.sonar.report.pdf.util.Credentials;
@@ -247,18 +250,15 @@ public class ExecutivePDFReporter extends PDFReporter {
 			Section section13 = chapter1
 					.addSection(new Paragraph(getTextProperty("general.metric_dashboard"), Style.TITLE_FONT));
 			printDashboard(project, section13);
-			/*
-			 * Section section12 = chapter1 .addSection(new
-			 * Paragraph(getTextProperty("general.report_overview"),
-			 * Style.TITLE_FONT)); printDashboard(project, section12);
-			 */
-			// Section section12 = chapter1.addSection(new Paragraph(
-			// getTextProperty("general.violations_analysis"),
-			// Style.TITLE_FONT));
-			// printMostViolatedRules(project, section12);
-			// printMostViolatedFiles(project, section12);
-			// printMostComplexFiles(project, section12);
-			// printMostDuplicatedFiles(project, section12);
+
+			chapter1.add(new Paragraph(" ", new Font(FontFamily.COURIER, 8)));
+			Section section14 = chapter1
+					.addSection(new Paragraph(getTextProperty("general.violations_analysis"), Style.TITLE_FONT));
+			printMostViolatedRules(project, section14);
+			printMostViolatedFiles(project, section14);
+			printMostComplexFiles(project, section14);
+			printMostDuplicatedFiles(project, section14);
+
 			document.add(chapter1);
 
 			/*
@@ -310,70 +310,266 @@ public class ExecutivePDFReporter extends PDFReporter {
 		}
 	}
 
-	protected void printMostDuplicatedFiles(final Project project, final Section section) {
-		/*
-		 * List<FileInfo> files = project.getMostDuplicatedFiles();
-		 * Iterator<FileInfo> it = files.iterator(); List<String> left = new
-		 * LinkedList<String>(); List<String> right = new LinkedList<String>();
-		 * 
-		 * while (it.hasNext()) { FileInfo file = it.next();
-		 * left.add(file.getName()); right.add(file.getDuplicatedLines()); }
-		 * 
-		 * PdfPTable mostDuplicatedFilesTable = Style.createSimpleTable(left,
-		 * right, getTextProperty("general.most_duplicated_files"),
-		 * getTextProperty("general.no_duplicated_files"));
-		 * section.add(mostDuplicatedFilesTable);
-		 */
+	protected void printMostDuplicatedFiles(final Project project, final Section section) throws DocumentException {
+
+		List<FileInfo> mostDuplicatedFiles = project.getMostDuplicatedFiles().stream()
+				.filter(f -> f.isContentSet(FileInfo.DUPLICATIONS_CONTENT)).collect(Collectors.toList());
+		LOGGER.info("Size of duplicated lines : " + String.valueOf(mostDuplicatedFiles.size()));
+
+		Paragraph mostDuplicatedFilesTitle = new Paragraph(getTextProperty("general.most_duplicated_files"),
+				Style.UNDERLINED_FONT);
+
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
+		section.add(new Paragraph(mostDuplicatedFilesTitle));
+
+		if (mostDuplicatedFiles.size() > 0) {
+			for (FileInfo fileInfo : mostDuplicatedFiles) {
+
+				CustomTable tableMostDuplicatedFiles = new CustomTable(2);
+				tableMostDuplicatedFiles.setWidths(new int[] { 3, 24 });
+
+				// File Name Header
+				CustomCellTitle fileNameHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("genaral.file_name"), Style.DASHBOARD_TITLE_FONT));
+				tableMostDuplicatedFiles.addCell(fileNameHeader);
+
+				// File Name Value
+				CustomCellTitle fileNameValue = new CustomCellTitle(
+						new Phrase(fileInfo.getName(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostDuplicatedFiles.addCell(fileNameValue);
+
+				// File Path Header
+				CustomCellTitle filePathHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_path"), Style.DASHBOARD_TITLE_FONT));
+				tableMostDuplicatedFiles.addCell(filePathHeader);
+
+				// File Path Value
+				CustomCellTitle filePathValue = new CustomCellTitle(
+						new Phrase(fileInfo.getPath(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostDuplicatedFiles.addCell(filePathValue);
+
+				// Violations Header
+				CustomCellTitle duplicationsHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_duplicated_lines"), Style.DASHBOARD_TITLE_FONT));
+				tableMostDuplicatedFiles.addCell(duplicationsHeader);
+
+				// Name Value
+				CustomCellTitle duplicationsValue = new CustomCellTitle(
+						new Phrase(fileInfo.getDuplicatedLines(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostDuplicatedFiles.addCell(duplicationsValue);
+
+				section.add(new Paragraph(" "));
+				section.add(tableMostDuplicatedFiles);
+			}
+
+		} else {
+			CustomTable tableMostDuplicatedFiles = new CustomTable(1);
+
+			CustomCellTitle noDuplicationsHeader = new CustomCellTitle(
+					new Phrase(getTextProperty("general.no_duplicated_files"), Style.DASHBOARD_TITLE_FONT));
+
+			tableMostDuplicatedFiles.addCell(noDuplicationsHeader);
+
+			section.add(new Paragraph(" "));
+			section.add(tableMostDuplicatedFiles);
+		}
 	}
 
-	protected void printMostComplexFiles(final Project project, final Section section) {
-		/*
-		 * List<FileInfo> files = project.getMostComplexFiles();
-		 * Iterator<FileInfo> it = files.iterator(); List<String> left = new
-		 * LinkedList<String>(); List<String> right = new LinkedList<String>();
-		 * 
-		 * while (it.hasNext()) { FileInfo file = it.next();
-		 * left.add(file.getName()); right.add(file.getComplexity()); }
-		 * 
-		 * PdfPTable mostComplexFilesTable = Style.createSimpleTable(left,
-		 * right, getTextProperty("general.most_complex_files"),
-		 * getTextProperty("general.no_complex_files"));
-		 * section.add(mostComplexFilesTable);
-		 */
+	protected void printMostComplexFiles(final Project project, final Section section) throws DocumentException {
+
+		List<FileInfo> mostComplexFiles = project.getMostComplexFiles().stream()
+				.filter(f -> f.isContentSet(FileInfo.CCN_CONTENT)).collect(Collectors.toList());
+		Paragraph mostComplexFilesTitle = new Paragraph(getTextProperty("general.most_complex_files"),
+				Style.UNDERLINED_FONT);
+
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
+		section.add(new Paragraph(mostComplexFilesTitle));
+
+		if (mostComplexFiles.size() > 0) {
+			for (FileInfo fileInfo : mostComplexFiles) {
+
+				CustomTable tableMostComplexFiles = new CustomTable(2);
+				tableMostComplexFiles.setWidths(new int[] { 4, 22 });
+
+				// File Name Header
+				CustomCellTitle fileNameHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("genaral.file_name"), Style.DASHBOARD_TITLE_FONT));
+				tableMostComplexFiles.addCell(fileNameHeader);
+
+				// File Name Value
+				CustomCellTitle fileNameValue = new CustomCellTitle(
+						new Phrase(fileInfo.getName(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostComplexFiles.addCell(fileNameValue);
+
+				// File Path Header
+				CustomCellTitle filePathHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_path"), Style.DASHBOARD_TITLE_FONT));
+				tableMostComplexFiles.addCell(filePathHeader);
+
+				// File Path Value
+				CustomCellTitle filePathValue = new CustomCellTitle(
+						new Phrase(fileInfo.getPath(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostComplexFiles.addCell(filePathValue);
+
+				// Violations Header
+				CustomCellTitle complexityHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_complexity"), Style.DASHBOARD_TITLE_FONT));
+				tableMostComplexFiles.addCell(complexityHeader);
+
+				// Name Value
+				CustomCellTitle complexityValue = new CustomCellTitle(
+						new Phrase(fileInfo.getComplexity(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostComplexFiles.addCell(complexityValue);
+
+				section.add(new Paragraph(" "));
+				section.add(tableMostComplexFiles);
+			}
+
+		} else {
+			CustomTable tableMostComplexFiles = new CustomTable(1);
+
+			CustomCellTitle noComplexityHeader = new CustomCellTitle(
+					new Phrase(getTextProperty("general.no_complex_files"), Style.DASHBOARD_TITLE_FONT));
+
+			tableMostComplexFiles.addCell(noComplexityHeader);
+
+			section.add(new Paragraph(" "));
+			section.add(tableMostComplexFiles);
+		}
 	}
 
-	protected void printMostViolatedRules(final Project project, final Section section) {
-		/*
-		 * List<Rule> mostViolatedRules = project.getMostViolatedRules();
-		 * Iterator<Rule> it = mostViolatedRules.iterator();
-		 * 
-		 * List<String> left = new LinkedList<String>(); List<String> right =
-		 * new LinkedList<String>(); int limit = 0; while (it.hasNext() && limit
-		 * < 5) { Rule rule = it.next(); left.add(rule.getName());
-		 * right.add(String.valueOf(rule.getViolationsNumberFormatted()));
-		 * limit++; }
-		 * 
-		 * PdfPTable mostViolatedRulesTable = Style.createSimpleTable(left,
-		 * right, getTextProperty("general.most_violated_rules"),
-		 * getTextProperty("general.no_violated_rules"));
-		 * section.add(mostViolatedRulesTable);
-		 */
+	protected void printMostViolatedRules(final Project project, final Section section) throws DocumentException {
+
+		List<Rule> mostViolatedRules = project.getMostViolatedRules();
+		Paragraph mostViolatedRulesTitle = new Paragraph(getTextProperty("general.most_violated_rules"),
+				Style.UNDERLINED_FONT);
+
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
+		section.add(new Paragraph(mostViolatedRulesTitle));
+
+		String[] priorities = Priority.getPrioritiesArray();
+		for (String priority : priorities) {
+			if (mostViolatedRules.stream().filter(r -> r.getSeverity().equals(Priority.getPriority(priority)))
+					.count() > 0) {
+				// Most Violated Rules Table
+				CustomTable tableMostViolatesRules = new CustomTable(3);
+				tableMostViolatesRules.setWidths(new int[] { 30, 4, 3 });
+
+				// Most Violated Rules Header
+				CustomCellTitle ruleNameHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("genaral.rule_name"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesRules.addCell(ruleNameHeader);
+
+				CustomCellTitle languageNameHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.language_name"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesRules.addCell(languageNameHeader);
+				
+				CustomCellTitle ruleCountHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.rule_count"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesRules.addCell(ruleCountHeader);
+
+				// Most Violated Rules Values
+				for (Rule rule : mostViolatedRules.stream()
+						.filter(r -> r.getSeverity().equals(Priority.getPriority(priority)))
+						.collect(Collectors.toList())) {
+					CustomCellTitle ruleNameValue = new CustomCellTitle(
+							new Phrase(rule.getName(), Style.DASHBOARD_DATA_FONT_2));
+					tableMostViolatesRules.addCell(ruleNameValue);
+
+					CustomCellTitle languageNameValue = new CustomCellTitle(
+							new Phrase(rule.getLanguageName(), Style.DASHBOARD_DATA_FONT_2));
+					tableMostViolatesRules.addCell(languageNameValue);
+					
+					CustomCellValue ruleCountValue = new CustomCellValue(
+							new Phrase(rule.getCount().toString(), Style.DASHBOARD_DATA_FONT_2));
+					tableMostViolatesRules.addCell(ruleCountValue);
+				}
+
+				section.add(new Paragraph(" "));
+				section.add(
+						new Paragraph("SEVERITY : " + Priority.getPriority(priority), Style.NORMAL_HIGHLIGHTED_FONT));
+				section.add(new Paragraph(" "));
+				section.add(tableMostViolatesRules);
+			} else {
+				CustomTable tableMostViolatesRules = new CustomTable(1);
+
+				CustomCellTitle noViolatedRulesHeader = new CustomCellTitle(new Phrase(
+						getTextProperty("general.no_violated_rules") + "of Severity " + Priority.getPriority(priority),
+						Style.DASHBOARD_TITLE_FONT));
+
+				tableMostViolatesRules.addCell(noViolatedRulesHeader);
+
+				section.add(new Paragraph(" "));
+				section.add(
+						new Paragraph("SEVERITY : " + Priority.getPriority(priority), Style.NORMAL_HIGHLIGHTED_FONT));
+				section.add(new Paragraph(" "));
+				section.add(tableMostViolatesRules);
+			}
+		}
+
 	}
 
-	protected void printMostViolatedFiles(final Project project, final Section section) {
-		/*
-		 * List<FileInfo> files = project.getMostViolatedFiles();
-		 * Iterator<FileInfo> it = files.iterator(); List<String> left = new
-		 * LinkedList<String>(); List<String> right = new LinkedList<String>();
-		 * 
-		 * while (it.hasNext()) { FileInfo file = it.next();
-		 * left.add(file.getName()); right.add(file.getViolations()); }
-		 * 
-		 * PdfPTable mostViolatedFilesTable = Style.createSimpleTable(left,
-		 * right, getTextProperty("general.most_violated_files"),
-		 * getTextProperty("general.no_violated_files"));
-		 * section.add(mostViolatedFilesTable);
-		 */
+	protected void printMostViolatedFiles(final Project project, final Section section) throws DocumentException {
+
+		List<FileInfo> mostViolatedFiles = project.getMostViolatedFiles().stream()
+				.filter(f -> f.isContentSet(FileInfo.VIOLATIONS_CONTENT)).collect(Collectors.toList());
+		Paragraph mostViolatedFilesTitle = new Paragraph(getTextProperty("general.most_violated_files"),
+				Style.UNDERLINED_FONT);
+
+		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
+		section.add(new Paragraph(mostViolatedFilesTitle));
+
+		if (mostViolatedFiles.size() > 0) {
+			for (FileInfo fileInfo : mostViolatedFiles) {
+
+				CustomTable tableMostViolatesFiles = new CustomTable(2);
+				tableMostViolatesFiles.setWidths(new int[] { 4, 22 });
+
+				// File Name Header
+				CustomCellTitle fileNameHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("genaral.file_name"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesFiles.addCell(fileNameHeader);
+
+				// File Name Value
+				CustomCellTitle fileNameValue = new CustomCellTitle(
+						new Phrase(fileInfo.getName(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostViolatesFiles.addCell(fileNameValue);
+
+				// File Path Header
+				CustomCellTitle filePathHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_path"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesFiles.addCell(filePathHeader);
+
+				// File Path Value
+				CustomCellTitle filePathValue = new CustomCellTitle(
+						new Phrase(fileInfo.getPath(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostViolatesFiles.addCell(filePathValue);
+
+				// Violations Header
+				CustomCellTitle violationsHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_violations"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesFiles.addCell(violationsHeader);
+
+				// Name Value
+				CustomCellTitle violationsValue = new CustomCellTitle(
+						new Phrase(fileInfo.getViolations(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostViolatesFiles.addCell(violationsValue);
+
+				section.add(new Paragraph(" "));
+				section.add(tableMostViolatesFiles);
+			}
+
+		} else {
+			CustomTable tableMostViolatesFiles = new CustomTable(1);
+
+			CustomCellTitle noViolatedFilesHeader = new CustomCellTitle(
+					new Phrase(getTextProperty("general.no_violated_files"), Style.DASHBOARD_TITLE_FONT));
+
+			tableMostViolatesFiles.addCell(noViolatedFilesHeader);
+
+			section.add(new Paragraph(" "));
+			section.add(tableMostViolatesFiles);
+		}
 	}
 
 	@Override
@@ -606,11 +802,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 			reliabilityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableReliabilityOther.addCell(reliabilityRemediationEffortNewValue);
 		}
-		
+
 		if (this.otherMetrics != null) {
 			printOtherMetricsOfDomain(project, MetricDomains.RELIABILITY, tableReliabilityOther);
 		}
-		
+
 		section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 		section.add(reliabilityTitle);
 		section.add(new Paragraph(" "));
@@ -872,108 +1068,105 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 	}
 
-	/*protected void printCoverageBoard(final Project project, final Section section) throws DocumentException {
-		if (project.getMeasures().containsMeasure(MetricKeys.COVERAGE)) {
-
-			// Coverage Title
-			Paragraph coverageTitle = new Paragraph(getTextProperty("metrics." + MetricDomains.COVERAGE.toLowerCase()),
-					Style.UNDERLINED_FONT);
-
-			// Coverage Main Table
-			CustomMainTable mainTable = new CustomMainTable(1);
-
-			CustomTable tableCoverage = null;
-			if (project.getMeasures().containsMeasure(MetricKeys.COVERAGE) && project.getMeasures().containsMeasure(MetricKeys.COVERAGE)) {
-				tableCoverage = new CustomTable(3);
-				tableCoverage.setWidths(new int[] { 1, 1, 1 });
-			} else {
-				tableCoverage = new CustomTable(2);
-				tableCoverage.setWidths(new int[] { 1, 1 });
-			}
-			
-			// Coverage Metric Table
-			CustomTable tableCoverage = new CustomTable(1);
-
-			// Coverage Density Value
-			CustomCellValue coverageDensityValue = new CustomCellValue(
-					new Phrase(project.getMeasure(MetricKeys.COVERAGE).getValue() + "%", Style.DASHBOARD_DATA_FONT));
-			coverageDensityValue.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableCoverage.addCell(coverageDensityValue);
-
-			// Coverage Density Title
-			CustomCellTitle coverageDensity = new CustomCellTitle(
-					new Phrase(getTextProperty("metrics." + MetricKeys.COVERAGE), Style.DASHBOARD_TITLE_FONT));
-			coverageDensity.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableCoverage.addCell(coverageDensity);
-
-			mainTable.addCell(tableCoverage);
-
-			// Coverage Other Metrics Table
-			CustomTable tableCoverageOther = new CustomTable(2);
-			tableCoverageOther.setWidths(new int[] { 8, 2 });
-
-			// Line Coverage Title
-			CustomCellTitle lineCoverage = new CustomCellTitle(
-					new Phrase(getTextProperty("metrics." + LINE_COVERAGE), Style.DASHBOARD_TITLE_FONT));
-			tableCoverageOther.addCell(lineCoverage);
-
-			// Line Coverage Value
-			CustomCellValue lineCoverageValue = new CustomCellValue(
-					new Phrase(project.getMeasure(LINE_COVERAGE).getValue() + "%", Style.DASHBOARD_DATA_FONT_2));
-			tableCoverageOther.addCell(lineCoverageValue);
-
-			// Branch Coverage Title
-			CustomCellTitle branchCoverage = new CustomCellTitle(
-					new Phrase(getTextProperty("metrics." + BRANCH_COVERAGE), Style.DASHBOARD_TITLE_FONT));
-			tableCoverageOther.addCell(branchCoverage);
-
-			// Branch Coverage Value
-			CustomCellValue branchCoverageValue = new CustomCellValue(
-					new Phrase(project.getMeasure(BRANCH_COVERAGE).getValue() + "%", Style.DASHBOARD_DATA_FONT_2));
-			tableCoverageOther.addCell(branchCoverageValue);
-
-			// Uncovered Lines Title
-			CustomCellTitle uncoveredLines = new CustomCellTitle(
-					new Phrase(getTextProperty("metrics." + UNCOVERED_LINES), Style.DASHBOARD_TITLE_FONT));
-			tableCoverageOther.addCell(uncoveredLines);
-
-			// Uncovered Lines Value
-			CustomCellValue uncoveredLinesValue = new CustomCellValue(
-					new Phrase(project.getMeasure(UNCOVERED_LINES).getValue(), Style.DASHBOARD_DATA_FONT_2));
-			tableCoverageOther.addCell(uncoveredLinesValue);
-
-			// Uncovered Conditions Title
-			CustomCellTitle uncoveredConditions = new CustomCellTitle(
-					new Phrase(getTextProperty("metrics." + UNCOVERED_CONDITIONS), Style.DASHBOARD_TITLE_FONT));
-			tableCoverageOther.addCell(uncoveredConditions);
-
-			// Uncovered Conditions Value
-			CustomCellValue uncoveredConditionsValue = new CustomCellValue(
-					new Phrase(project.getMeasure(UNCOVERED_CONDITIONS).getValue(), Style.DASHBOARD_DATA_FONT_2));
-			tableCoverageOther.addCell(uncoveredConditionsValue);
-
-			// Lines To Cover Title
-			CustomCellTitle linesToCover = new CustomCellTitle(
-					new Phrase(getTextProperty("metrics." + LINES_TO_COVER), Style.DASHBOARD_TITLE_FONT));
-			tableCoverageOther.addCell(linesToCover);
-
-			// Lines To Cover Value
-			CustomCellValue linesToCoverValue = new CustomCellValue(
-					new Phrase(project.getMeasure(LINES_TO_COVER).getValue(), Style.DASHBOARD_DATA_FONT_2));
-			tableCoverageOther.addCell(linesToCoverValue);
-
-			if (this.otherMetrics != null) {
-				printOtherMetricsOfDomain(project, MetricDomains.COVERAGE, tableCoverageOther);
-			}
-
-			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
-			section.add(coverageTitle);
-			section.add(new Paragraph(" "));
-			section.add(mainTable);
-			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 3)));
-			section.add(tableCoverageOther);
-		}
-	}*/
+	/*
+	 * protected void printCoverageBoard(final Project project, final Section
+	 * section) throws DocumentException { if
+	 * (project.getMeasures().containsMeasure(MetricKeys.COVERAGE)) {
+	 * 
+	 * // Coverage Title Paragraph coverageTitle = new
+	 * Paragraph(getTextProperty("metrics." +
+	 * MetricDomains.COVERAGE.toLowerCase()), Style.UNDERLINED_FONT);
+	 * 
+	 * // Coverage Main Table CustomMainTable mainTable = new
+	 * CustomMainTable(1);
+	 * 
+	 * CustomTable tableCoverage = null; if
+	 * (project.getMeasures().containsMeasure(MetricKeys.COVERAGE) &&
+	 * project.getMeasures().containsMeasure(MetricKeys.COVERAGE)) {
+	 * tableCoverage = new CustomTable(3); tableCoverage.setWidths(new int[] {
+	 * 1, 1, 1 }); } else { tableCoverage = new CustomTable(2);
+	 * tableCoverage.setWidths(new int[] { 1, 1 }); }
+	 * 
+	 * // Coverage Metric Table CustomTable tableCoverage = new CustomTable(1);
+	 * 
+	 * // Coverage Density Value CustomCellValue coverageDensityValue = new
+	 * CustomCellValue( new
+	 * Phrase(project.getMeasure(MetricKeys.COVERAGE).getValue() + "%",
+	 * Style.DASHBOARD_DATA_FONT));
+	 * coverageDensityValue.setHorizontalAlignment(Element.ALIGN_CENTER);
+	 * tableCoverage.addCell(coverageDensityValue);
+	 * 
+	 * // Coverage Density Title CustomCellTitle coverageDensity = new
+	 * CustomCellTitle( new Phrase(getTextProperty("metrics." +
+	 * MetricKeys.COVERAGE), Style.DASHBOARD_TITLE_FONT));
+	 * coverageDensity.setHorizontalAlignment(Element.ALIGN_CENTER);
+	 * tableCoverage.addCell(coverageDensity);
+	 * 
+	 * mainTable.addCell(tableCoverage);
+	 * 
+	 * // Coverage Other Metrics Table CustomTable tableCoverageOther = new
+	 * CustomTable(2); tableCoverageOther.setWidths(new int[] { 8, 2 });
+	 * 
+	 * // Line Coverage Title CustomCellTitle lineCoverage = new
+	 * CustomCellTitle( new Phrase(getTextProperty("metrics." + LINE_COVERAGE),
+	 * Style.DASHBOARD_TITLE_FONT)); tableCoverageOther.addCell(lineCoverage);
+	 * 
+	 * // Line Coverage Value CustomCellValue lineCoverageValue = new
+	 * CustomCellValue( new Phrase(project.getMeasure(LINE_COVERAGE).getValue()
+	 * + "%", Style.DASHBOARD_DATA_FONT_2));
+	 * tableCoverageOther.addCell(lineCoverageValue);
+	 * 
+	 * // Branch Coverage Title CustomCellTitle branchCoverage = new
+	 * CustomCellTitle( new Phrase(getTextProperty("metrics." +
+	 * BRANCH_COVERAGE), Style.DASHBOARD_TITLE_FONT));
+	 * tableCoverageOther.addCell(branchCoverage);
+	 * 
+	 * // Branch Coverage Value CustomCellValue branchCoverageValue = new
+	 * CustomCellValue( new
+	 * Phrase(project.getMeasure(BRANCH_COVERAGE).getValue() + "%",
+	 * Style.DASHBOARD_DATA_FONT_2));
+	 * tableCoverageOther.addCell(branchCoverageValue);
+	 * 
+	 * // Uncovered Lines Title CustomCellTitle uncoveredLines = new
+	 * CustomCellTitle( new Phrase(getTextProperty("metrics." +
+	 * UNCOVERED_LINES), Style.DASHBOARD_TITLE_FONT));
+	 * tableCoverageOther.addCell(uncoveredLines);
+	 * 
+	 * // Uncovered Lines Value CustomCellValue uncoveredLinesValue = new
+	 * CustomCellValue( new
+	 * Phrase(project.getMeasure(UNCOVERED_LINES).getValue(),
+	 * Style.DASHBOARD_DATA_FONT_2));
+	 * tableCoverageOther.addCell(uncoveredLinesValue);
+	 * 
+	 * // Uncovered Conditions Title CustomCellTitle uncoveredConditions = new
+	 * CustomCellTitle( new Phrase(getTextProperty("metrics." +
+	 * UNCOVERED_CONDITIONS), Style.DASHBOARD_TITLE_FONT));
+	 * tableCoverageOther.addCell(uncoveredConditions);
+	 * 
+	 * // Uncovered Conditions Value CustomCellValue uncoveredConditionsValue =
+	 * new CustomCellValue( new
+	 * Phrase(project.getMeasure(UNCOVERED_CONDITIONS).getValue(),
+	 * Style.DASHBOARD_DATA_FONT_2));
+	 * tableCoverageOther.addCell(uncoveredConditionsValue);
+	 * 
+	 * // Lines To Cover Title CustomCellTitle linesToCover = new
+	 * CustomCellTitle( new Phrase(getTextProperty("metrics." + LINES_TO_COVER),
+	 * Style.DASHBOARD_TITLE_FONT)); tableCoverageOther.addCell(linesToCover);
+	 * 
+	 * // Lines To Cover Value CustomCellValue linesToCoverValue = new
+	 * CustomCellValue( new
+	 * Phrase(project.getMeasure(LINES_TO_COVER).getValue(),
+	 * Style.DASHBOARD_DATA_FONT_2));
+	 * tableCoverageOther.addCell(linesToCoverValue);
+	 * 
+	 * if (this.otherMetrics != null) { printOtherMetricsOfDomain(project,
+	 * MetricDomains.COVERAGE, tableCoverageOther); }
+	 * 
+	 * section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
+	 * section.add(coverageTitle); section.add(new Paragraph(" "));
+	 * section.add(mainTable); section.add(new Paragraph(" ", new
+	 * Font(FontFamily.COURIER, 3))); section.add(tableCoverageOther); } }
+	 */
 
 	protected void printDuplicationsBoard(final Project project, final Section section) throws DocumentException {
 

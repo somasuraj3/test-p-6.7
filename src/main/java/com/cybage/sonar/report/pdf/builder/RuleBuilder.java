@@ -44,7 +44,7 @@ public class RuleBuilder {
 		List<Rule> rules = new ArrayList<>();
 
 		// Reverse iteration to get violations with upper level first
-		int limit = 5;
+
 		for (int i = priorities.length - 1; i >= 0; i--) {
 			SearchWsRequest searchWsReq = new SearchWsRequest();
 			searchWsReq.setComponentKeys(Arrays.asList(key));
@@ -54,14 +54,18 @@ public class RuleBuilder {
 			SearchWsResponse searchWsRes = wsClient.issues().search(searchWsReq);
 
 			if (searchWsRes.getFacets().getFacets(0) != null) {
+				int limit = 5;
 				limit = searchWsRes.getFacets().getFacets(0).getValuesCount() > limit ? limit
-						: searchWsRes.getFacets().getFacetsCount();
+						: searchWsRes.getFacets().getFacets(0).getValuesCount();
+				LOGGER.info("Priority : " + priorities[i]);
+				LOGGER.info("Limit : " + limit);
+				searchWsRes.getFacets().getFacets(0).getValuesList().stream().forEach(v -> LOGGER.info(v.getVal()));
 				for (int j = 0; j < limit; j++) {
 					FacetValue facetValue = searchWsRes.getFacets().getFacets(0).getValues(j);
 					Optional<Common.Rule> rule = searchWsRes.getRules().getRulesList().stream()
 							.filter(r -> r.getKey().equals(facetValue.getVal())).findFirst();
 					rules.add(new Rule(facetValue.getVal(), rule.get().getName(), facetValue.getCount(),
-							rule.get().getLangName(), priorities[i]));
+							rule.get().getLangName(), Priority.getPriority(priorities[i])));
 				}
 			} else {
 				LOGGER.debug("There are no violations with level " + priorities[i]);
