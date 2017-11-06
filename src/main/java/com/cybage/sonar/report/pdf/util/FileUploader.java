@@ -1,23 +1,3 @@
-/*
- * SonarQube PDF Report
- * Copyright (C) 2010 klicap - ingenieria del puzle
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
-
 package com.cybage.sonar.report.pdf.util;
 
 import java.io.File;
@@ -42,16 +22,17 @@ public class FileUploader {
 
 	public static void upload(final File report, final String url, String username, String password) {
 
-		PostMethod filePost = new PostMethod(url + "/api/ce/submit?projectKey=ALMMaturity_JenkinsService_API_Feature:feature&projectName=ALMMaturity_JenkinsService_API_Feature");
+		PostMethod filePost = new PostMethod(url
+				+ "/api/ce/submit?projectKey=ALMMaturity_JenkinsService_API_Feature:feature&projectName=ALMMaturity_JenkinsService_API_Feature");
 
 		try {
 			LOGGER.info("Uploading PDF to server...");
 			LOGGER.info("Upload URL : " + url);
-			
-			Part[] parts = { new FilePart("upload", report)};
+
+			Part[] parts = { new FilePart("upload", report) };
 
 			filePost.setRequestEntity(new MultipartRequestEntity(parts, filePost.getParams()));
-			
+
 			HttpClient client = new HttpClient();
 			if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
 				client.getParams().setAuthenticationPreemptive(true);
@@ -59,7 +40,7 @@ public class FileUploader {
 				client.getState().setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), credentials);
 			}
 			client.getHttpConnectionManager().getParams().setConnectionTimeout(10000);
-			
+
 			int status = client.executeMethod(filePost);
 			if (status == HttpStatus.SC_OK) {
 				LOGGER.info("PDF uploaded.");

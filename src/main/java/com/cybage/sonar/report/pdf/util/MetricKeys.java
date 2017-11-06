@@ -1,22 +1,3 @@
-/*
- * SonarQube PDF Report
- * Copyright (C) 2010 klicap - ingenieria del puzle
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package com.cybage.sonar.report.pdf.util;
 
 import java.util.Arrays;
@@ -52,19 +33,16 @@ public class MetricKeys {
 	public static final String NEW_SQALE_DEBT_RATIO = "new_sqale_debt_ratio";
 	public static final String EFFORT_TO_REACH_MAINTAINABILITY_RATING_A = "effort_to_reach_maintainability_rating_a";
 
-/*	// Coverage
-	public static final String COVERAGE = "coverage";
-	public static final String UNITTESTS = "tests";
-	public static final String LINE_COVERAGE = "line_coverage";
-	public static final String BRANCH_COVERAGE = "branch_coverage";
-	public static final String UNCOVERED_LINES = "uncovered_lines";
-	public static final String UNCOVERED_CONDITIONS = "uncovered_conditions";
-	public static final String LINES_TO_COVER = "lines_to_cover";
-test_errors
-test_failures
-skipped_tests
-test_success_density
-*/
+	/*
+	 * // Coverage public static final String COVERAGE = "coverage"; public
+	 * static final String UNITTESTS = "tests"; public static final String
+	 * LINE_COVERAGE = "line_coverage"; public static final String
+	 * BRANCH_COVERAGE = "branch_coverage"; public static final String
+	 * UNCOVERED_LINES = "uncovered_lines"; public static final String
+	 * UNCOVERED_CONDITIONS = "uncovered_conditions"; public static final String
+	 * LINES_TO_COVER = "lines_to_cover"; test_errors test_failures
+	 * skipped_tests test_success_density
+	 */
 	// Duplications
 	public static final String DUPLICATED_LINES_DENSITY = "duplicated_lines_density";
 	public static final String DUPLICATED_BLOCKS = "duplicated_blocks";
@@ -114,7 +92,8 @@ test_success_density
 				FUNCTION_COMPLEXITY, FILE_COMPLEXITY, CLASS_COMPLEXITY, COMMENT_LINES_DENSITY, COMMENT_LINES,
 				VIOLATIONS, NEW_VIOLATIONS, OPEN_ISSUES, REOPENED_ISSUES, CONFIRMED_ISSUES, FALSE_POSITIVE_ISSUES,
 				WONT_FIX_ISSUES));
-				// COVERAGE, LINE_COVERAGE, BRANCH_COVERAGE, UNCOVERED_LINES, UNCOVERED_CONDITIONS, LINES_TO_COVER, 
+		// COVERAGE, LINE_COVERAGE, BRANCH_COVERAGE, UNCOVERED_LINES,
+		// UNCOVERED_CONDITIONS, LINES_TO_COVER,
 		return allMetricKeys;
 	}
 

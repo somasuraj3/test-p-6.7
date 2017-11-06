@@ -1,29 +1,11 @@
-/*
- * SonarQube PDF Report
- * Copyright (C) 2010 klicap - ingenieria del puzle
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
-
 package com.cybage.sonar.report.pdf.batch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -50,14 +32,17 @@ public class PDFGenerator {
 	private String projectVersion;
 	private List<String> sonarLanguage;
 	private Set<String> otherMetrics;
+	private String leakPeriod;
 	private FileSystem fs;
 
-	public PDFGenerator(final String projectKey, final String projectVersion, final List<String> sonarLanguage, final Set<String> otherMetrics, final FileSystem fs,
-			final String sonarHostUrl, final String username, final String password, final String reportType) {
+	public PDFGenerator(final String projectKey, final String projectVersion, final List<String> sonarLanguage,
+			final Set<String> otherMetrics, final String leakPeriod, final FileSystem fs, final String sonarHostUrl,
+			final String username, final String password, final String reportType) {
 		this.projectKey = projectKey;
 		this.projectVersion = projectVersion;
 		this.sonarLanguage = sonarLanguage;
 		this.otherMetrics = otherMetrics;
+		this.leakPeriod = leakPeriod;
 		this.fs = fs;
 		this.sonarHostUrl = sonarHostUrl;
 		this.username = username;
@@ -87,18 +72,23 @@ public class PDFGenerator {
 			String sonarProjectVersion = projectVersion;
 			List<String> sonarLanguage = this.sonarLanguage;
 			Set<String> otherMetrics = this.otherMetrics;
-			
-			String path = fs.workDir().getAbsolutePath() + "/" + sonarProjectId.replace(':', '-') + ".pdf";
+			String leakPeriod = this.leakPeriod;
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+
+			String path = fs.workDir().getAbsolutePath() + "/" + sonarProjectId.replace(':', '-') + "-"
+					+ sdf.format(new Timestamp(System.currentTimeMillis())) + ".pdf";
 
 			PDFReporter reporter = null;
 			if (reportType != null) {
 				if (reportType.equals("pdf")) {
 					LOGGER.info("PDF report type selected");
 					reporter = new ExecutivePDFReporter(credentials, this.getClass().getResource("/sonar.png"),
-							sonarProjectId, sonarProjectVersion, sonarLanguage, otherMetrics, config, configLang);
+							sonarProjectId, sonarProjectVersion, sonarLanguage, otherMetrics, leakPeriod, config,
+							configLang);
 				}
 			} else {
-				LOGGER.info("No report type provided. Default report selected (PDF)");
+				LOGGER.info("No report type provided. Default report type selected (PDF)");
 			}
 
 			ByteArrayOutputStream baos = reporter.getReport();
@@ -106,8 +96,8 @@ public class PDFGenerator {
 			baos.writeTo(fos);
 			fos.flush();
 			fos.close();
-			LOGGER.info("PDF report generated (see " + sonarProjectId.replace(':', '-')
-					+ ".pdf on build output directory)");
+			LOGGER.info("PDF report generated (see " + sonarProjectId.replace(':', '-') + "-"
+					+ sdf.format(new Timestamp(System.currentTimeMillis())) + ".pdf on build output directory)");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (DocumentException e) {

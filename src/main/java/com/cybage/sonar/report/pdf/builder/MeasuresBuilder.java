@@ -1,22 +1,3 @@
-/*
- * SonarQube PDF Report
- * Copyright (C) 2010 klicap - ingenieria del puzle
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package com.cybage.sonar.report.pdf.builder;
 
 import java.io.IOException;
@@ -27,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +21,7 @@ import org.sonarqube.ws.client.measure.ComponentWsRequest;
 
 import com.cybage.sonar.report.pdf.entity.Measure;
 import com.cybage.sonar.report.pdf.entity.Measures;
+import com.cybage.sonar.report.pdf.entity.Period_;
 import com.cybage.sonar.report.pdf.util.MetricKeys;
 
 public class MeasuresBuilder {
@@ -67,11 +50,11 @@ public class MeasuresBuilder {
 
 	public Measures initMeasuresByProjectKey(final String projectKey, final Set<String> otherMetrics)
 			throws HttpException, IOException {
-		
+
 		Measures measures = new Measures();
 		if (measuresKeys == null) {
 			measuresKeys = MetricKeys.getAllMetricKeys();
-			if(otherMetrics !=null){
+			if (otherMetrics != null) {
 				measuresKeys.addAll(otherMetrics);
 			}
 		}
@@ -94,21 +77,21 @@ public class MeasuresBuilder {
 	private void initMeasuresSplittingRequests(final Measures measures, final String projectKey)
 			throws HttpException, IOException {
 		Iterator<String> it = measuresKeys.iterator();
-		LOGGER.debug("Getting " + measuresKeys.size() + " metric measures from Sonar by splitting requests");
+		// LOGGER.debug("Getting " + measuresKeys.size() + " metric measures from Sonar by splitting requests");
 		Set<String> twentyMeasures = new HashSet<String>(20);
 		int i = 0;
 		while (it.hasNext()) {
 			twentyMeasures.add(it.next());
 			i++;
 			if (i % DEFAULT_SPLIT_LIMIT == 0) {
-				LOGGER.debug("Split request for: " + twentyMeasures);
+				// LOGGER.debug("Split request for: " + twentyMeasures);
 				addMeasures(measures, twentyMeasures, projectKey);
 				i = 0;
 				twentyMeasures.clear();
 			}
 		}
 		if (i != 0) {
-			LOGGER.debug("Split request for remain metric measures: " + twentyMeasures);
+			// LOGGER.debug("Split request for remain metric measures: " + twentyMeasures);
 			addMeasures(measures, twentyMeasures, projectKey);
 		}
 	}
@@ -128,7 +111,7 @@ public class MeasuresBuilder {
 		 */
 		ComponentWsRequest compWsReq = new ComponentWsRequest();
 		compWsReq.setComponentKey(projectKey);
-		compWsReq.setAdditionalFields(Arrays.asList("metrics"));
+		compWsReq.setAdditionalFields(Arrays.asList("metrics", "periods"));
 		compWsReq.setMetricKeys(new ArrayList<String>(measuresAsString));
 
 		ComponentWsResponse compWsRes = wsClient.measures().component(compWsReq);
@@ -143,6 +126,10 @@ public class MeasuresBuilder {
 	private void addAllMeasuresFromDocument(final Measures measures, final ComponentWsResponse compWsRes) {
 		List<org.sonarqube.ws.WsMeasures.Measure> allNodes = compWsRes.getComponent().getMeasuresList();
 		Metrics metrics = compWsRes.getMetrics();
+		List<org.sonarqube.ws.WsMeasures.Period> periods = compWsRes.getPeriods().getPeriodsList();
+		measures.setPeriods(
+				periods.stream().map(p -> new Period_(p.getIndex(), p.getMode(), p.getDate(), p.getParameter()))
+						.collect(Collectors.toList()));
 		for (org.sonarqube.ws.WsMeasures.Measure measure : allNodes) {
 			addMeasureFromNode(measures, measure,
 					metrics.getMetricsList().stream().filter(m -> m.getKey().equals(measure.getMetric())).findFirst());

@@ -1,25 +1,8 @@
-/*
- * SonarQube PDF Report
- * Copyright (C) 2010 klicap - ingenieria del puzle
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package com.cybage.sonar.report.pdf.entity;
 
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -28,6 +11,7 @@ import java.util.Set;
 public class Measures {
 
 	private Hashtable<String, Measure> measuresTable = new Hashtable<String, Measure>();
+	private List<Period_> periods;
 
 	public Measures() {
 
@@ -53,9 +37,21 @@ public class Measures {
 		return measuresTable.containsKey(measureKey);
 	}
 
+	public Optional<Period_> getPeriod_(Integer index) {
+		return periods.stream().filter(p -> p.getIndex() == index).findFirst();
+	}
+
+	public Optional<Period_> getPeriod_(String mode) {
+		return periods.stream().filter(p -> p.getMode().equals(mode)).findFirst();
+	}
+
+	public void setPeriods(List<Period_> periods) {
+		this.periods = periods;
+	}
+
 	@Override
 	public String toString() {
-		return "Measures [measuresTable=" + measuresTable + "]";
+		return "Measures [measuresTable=" + measuresTable + ", periods=" + periods + "]";
 	}
 
 }

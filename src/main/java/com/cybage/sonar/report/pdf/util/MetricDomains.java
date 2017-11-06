@@ -60,7 +60,7 @@ public class MetricDomains {
 	public static final String COMPLEXITY = "Complexity";
 	public static final String DOCUMENTATION = "Documentation";
 	public static final String ISSUES = "Issues";
-	
+
 	private static final Map<String, List<String>> metricMap;
 
 	static {
@@ -71,8 +71,9 @@ public class MetricDomains {
 				SECURITY_REMEDIATION_EFFORT, NEW_SECURITY_REMEDIATION_EFFORT));
 		metricMap.put(MAINTAINAILITY, Arrays.asList(CODE_SMELLS, NEW_CODE_SMELLS, SQALE_RATING, SQALE_INDEX,
 				NEW_TECHNICAL_DEBT, SQALE_DEBT_RATIO, NEW_SQALE_DEBT_RATIO, EFFORT_TO_REACH_MAINTAINABILITY_RATING_A));
-		//metricMap.put(COVERAGE, Arrays.asList(MetricKeys.COVERAGE, LINE_COVERAGE, BRANCH_COVERAGE, UNCOVERED_LINES,
-		//		UNCOVERED_CONDITIONS, LINES_TO_COVER));
+		// metricMap.put(COVERAGE, Arrays.asList(MetricKeys.COVERAGE,
+		// LINE_COVERAGE, BRANCH_COVERAGE, UNCOVERED_LINES,
+		// UNCOVERED_CONDITIONS, LINES_TO_COVER));
 		metricMap.put(DUPLICATIONS,
 				Arrays.asList(DUPLICATED_LINES_DENSITY, DUPLICATED_BLOCKS, DUPLICATED_LINES, DUPLICATED_FILES));
 		metricMap.put(SIZE, Arrays.asList(NCLOC, LINES, STATEMENTS, FUNCTIONS, CLASSES, FILES, DIRECTORIES));
@@ -88,8 +89,8 @@ public class MetricDomains {
 
 	public static Set<String> getDomains() {
 		// COVERAGE
-		return new HashSet<String>(Arrays.asList(RELIABILITY, SECURITY, MAINTAINAILITY, DUPLICATIONS, SIZE,
-				COMPLEXITY, DOCUMENTATION, ISSUES));
+		return new HashSet<String>(Arrays.asList(RELIABILITY, SECURITY, MAINTAINAILITY, DUPLICATIONS, SIZE, COMPLEXITY,
+				DOCUMENTATION, ISSUES));
 	}
 
 }

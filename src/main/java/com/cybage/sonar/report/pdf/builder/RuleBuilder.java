@@ -38,7 +38,7 @@ public class RuleBuilder {
 
 	public List<Rule> initProjectMostViolatedRulesByProjectKey(final String key) {
 
-		LOGGER.info("Retrieving most violated rules info for " + key);
+		// LOGGER.info("Retrieving most violated rules info for " + key);
 
 		String[] priorities = Priority.getPrioritiesArray();
 		List<Rule> rules = new ArrayList<>();
@@ -57,8 +57,8 @@ public class RuleBuilder {
 				int limit = 5;
 				limit = searchWsRes.getFacets().getFacets(0).getValuesCount() > limit ? limit
 						: searchWsRes.getFacets().getFacets(0).getValuesCount();
-				LOGGER.info("Priority : " + priorities[i]);
-				LOGGER.info("Limit : " + limit);
+				// LOGGER.info("Priority : " + priorities[i]);
+				// LOGGER.info("Limit : " + limit);
 				searchWsRes.getFacets().getFacets(0).getValuesList().stream().forEach(v -> LOGGER.info(v.getVal()));
 				for (int j = 0; j < limit; j++) {
 					FacetValue facetValue = searchWsRes.getFacets().getFacets(0).getValues(j);

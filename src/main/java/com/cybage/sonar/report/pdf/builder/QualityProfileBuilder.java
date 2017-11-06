@@ -30,22 +30,24 @@ public class QualityProfileBuilder {
 
 		return builder;
 	}
-	
+
 	public List<QualityProfile> initProjectQualityProfilesByProjectKey(final String key) {
-		
-		LOGGER.info("Retrieving quality profile info for " + key);
-		
+
+		// LOGGER.info("Retrieving quality profile info for " + key);
+
 		SearchWsRequest searchWsReq = new SearchWsRequest();
 		searchWsReq.setProjectKey(key);
 		SearchWsResponse searchWsRes = wsClient.qualityProfiles().search(searchWsReq);
-		
-		List<QualityProfile> profiles = new ArrayList<>(); 
-		
-		for(org.sonarqube.ws.QualityProfiles.SearchWsResponse.QualityProfile profile : searchWsRes.getProfilesList()){
-			profiles.add(new QualityProfile(profile.getKey(), profile.getName(), profile.getLanguage(), profile.getLanguageName(), profile.getIsInherited(), profile.getIsDefault(), profile.getActiveRuleCount(), profile.getRulesUpdatedAt(), profile.getProjectCount()));
+
+		List<QualityProfile> profiles = new ArrayList<>();
+
+		for (org.sonarqube.ws.QualityProfiles.SearchWsResponse.QualityProfile profile : searchWsRes.getProfilesList()) {
+			profiles.add(new QualityProfile(profile.getKey(), profile.getName(), profile.getLanguage(),
+					profile.getLanguageName(), profile.getIsInherited(), profile.getIsDefault(),
+					profile.getActiveRuleCount(), profile.getRulesUpdatedAt(), profile.getProjectCount()));
 		}
-		
+
 		return profiles;
-				
+
 	}
 }

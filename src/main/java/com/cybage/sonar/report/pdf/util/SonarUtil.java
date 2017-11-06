@@ -6,17 +6,18 @@ public class SonarUtil {
 		Integer hours = null;
 		Integer days = null;
 
-		if (minutes >= 60 && minutes < 1140) {
+		// 1140
+		if (minutes >= 60 && minutes < 480) {
 			hours = minutes / 60;
 			minutes = minutes % 60;
 			return hours + "h " + minutes + "min";
-		} else if (minutes >= 1140) {
+		} else if (minutes >= 480) {
 			days = (minutes / 60) / 8;
 			// minutes = minutes - (minutes * days);
-			minutes = minutes % 1140;
+			minutes = minutes % 480;
 			hours = minutes / 60;
 			minutes = minutes % 60;
-			return days + "d "; // + hours + "h " + minutes + "min";
+			return days + "d " + hours + "h " + minutes + "min";
 		} else {
 			return minutes + "min";
 		}

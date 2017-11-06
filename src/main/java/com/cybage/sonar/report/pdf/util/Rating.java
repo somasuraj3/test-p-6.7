@@ -7,7 +7,7 @@ import com.cybage.sonar.report.pdf.Style;
 import com.itextpdf.text.Font;
 
 public class Rating {
-	
+
 	private static Map<String, String> ratings;
 
 	static {
@@ -19,20 +19,20 @@ public class Rating {
 		ratings.put("5.0", "E");
 	}
 
-	public static String getRating(String rating){
+	public static String getRating(String rating) {
 		return ratings.get(rating);
 	}
 
-	public static Font getRatingStyle(String rating){
-		if(rating.equals("1.0")){
+	public static Font getRatingStyle(String rating) {
+		if (rating.equals("1.0")) {
 			return Style.DASHBOARD_RATING_FONT_A;
-		}else if(rating.equals("2.0")){
+		} else if (rating.equals("2.0")) {
 			return Style.DASHBOARD_RATING_FONT_B;
-		}else if(rating.equals("3.0")){
+		} else if (rating.equals("3.0")) {
 			return Style.DASHBOARD_RATING_FONT_C;
-		}else if(rating.equals("4.0")){
+		} else if (rating.equals("4.0")) {
 			return Style.DASHBOARD_RATING_FONT_D;
-		}else if(rating.equals("5.0")){
+		} else if (rating.equals("5.0")) {
 			return Style.DASHBOARD_RATING_FONT_E;
 		}
 		return null;

@@ -32,15 +32,15 @@ public class ProjectStatusBuilder {
 
 		return builder;
 	}
-	
+
 	public ProjectStatus initProjectStatusByProjectKey(final String key) {
-		
-		LOGGER.info("Retrieving project status info for " + key);
-		
+
+		// LOGGER.info("Retrieving project status info for " + key);
+
 		ProjectStatusWsRequest projectStatusWsReq = new ProjectStatusWsRequest();
 		projectStatusWsReq.setProjectKey(key);
 		ProjectStatusWsResponse projectStatusWsRes = wsClient.qualityGates().projectStatus(projectStatusWsReq);
-		
+
 		List<Condition> conditions = new ArrayList<>();
 		for (org.sonarqube.ws.WsQualityGates.ProjectStatusWsResponse.Condition condition : projectStatusWsRes
 				.getProjectStatus().getConditionsList()) {
@@ -65,9 +65,9 @@ public class ProjectStatusBuilder {
 			}
 			statusPeriods.add(statusPeriod);
 		}
-		
-		
-		return new ProjectStatus(projectStatusWsRes.getProjectStatus().getStatus().toString(), conditions, statusPeriods);
-		
+
+		return new ProjectStatus(projectStatusWsRes.getProjectStatus().getStatus().toString(), conditions,
+				statusPeriods);
+
 	}
 }

@@ -1,22 +1,3 @@
-/*
- * SonarQube PDF Report
- * Copyright (C) 2010 klicap - ingenieria del puzle
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package com.cybage.sonar.report.pdf;
 
 import static com.cybage.sonar.report.pdf.util.MetricDomains.DOCUMENTATION;
@@ -129,18 +110,20 @@ public class ExecutivePDFReporter extends PDFReporter {
 	private String projectVersion;
 	private List<String> sonarLanguage;
 	private Set<String> otherMetrics;
+	private String leakPeriod;
 	private Properties configProperties;
 	private Properties langProperties;
 
 	public ExecutivePDFReporter(final Credentials credentials, final URL logo, final String projectKey,
 			final String projectVersion, final List<String> sonarLanguage, final Set<String> otherMetrics,
-			final Properties configProperties, final Properties langProperties) {
+			final String leakPeriod, final Properties configProperties, final Properties langProperties) {
 		super(credentials);
 		this.logo = logo;
 		this.projectKey = projectKey;
 		this.projectVersion = projectVersion;
 		this.sonarLanguage = sonarLanguage;
 		this.otherMetrics = otherMetrics;
+		this.leakPeriod = leakPeriod;
 		this.configProperties = configProperties;
 		this.langProperties = langProperties;
 	}
@@ -158,6 +141,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 	@Override
 	protected Set<String> getOtherMetrics() {
 		return this.otherMetrics;
+	}
+
+	@Override
+	protected String getLeakPeriod() {
+		return this.leakPeriod;
 	}
 
 	@Override
@@ -287,6 +275,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 	}
 
 	protected void printDashboard(final Project project, final Section section) throws DocumentException {
+		section.add(new Phrase("", new Font(FontFamily.COURIER, 6)));
+		section.add(new Phrase(
+				"Leak Period : " + getTextProperty(
+						"general.period." + project.getMeasures().getPeriod_(this.getLeakPeriod()).get().getMode()),
+				Style.NORMAL_HIGHLIGHTED_FONT));
 		printReliabilityBoard(project, section);
 		printSecurityBoard(project, section);
 		printMaintainabilityBoard(project, section);
@@ -314,7 +307,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		List<FileInfo> mostDuplicatedFiles = project.getMostDuplicatedFiles().stream()
 				.filter(f -> f.isContentSet(FileInfo.DUPLICATIONS_CONTENT)).collect(Collectors.toList());
-		LOGGER.info("Size of duplicated lines : " + String.valueOf(mostDuplicatedFiles.size()));
+		// LOGGER.info("Size of duplicated lines : " +
+		// String.valueOf(mostDuplicatedFiles.size()));
 
 		Paragraph mostDuplicatedFilesTitle = new Paragraph(getTextProperty("general.most_duplicated_files"),
 				Style.UNDERLINED_FONT);
@@ -326,7 +320,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			for (FileInfo fileInfo : mostDuplicatedFiles) {
 
 				CustomTable tableMostDuplicatedFiles = new CustomTable(2);
-				tableMostDuplicatedFiles.setWidths(new int[] { 3, 24 });
+				tableMostDuplicatedFiles.setWidths(new int[] { 4, 25 });
 
 				// File Name Header
 				CustomCellTitle fileNameHeader = new CustomCellTitle(
@@ -389,7 +383,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			for (FileInfo fileInfo : mostComplexFiles) {
 
 				CustomTable tableMostComplexFiles = new CustomTable(2);
-				tableMostComplexFiles.setWidths(new int[] { 4, 22 });
+				tableMostComplexFiles.setWidths(new int[] { 4, 25 });
 
 				// File Name Header
 				CustomCellTitle fileNameHeader = new CustomCellTitle(
@@ -463,7 +457,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 				CustomCellTitle languageNameHeader = new CustomCellTitle(
 						new Phrase(getTextProperty("general.language_name"), Style.DASHBOARD_TITLE_FONT));
 				tableMostViolatesRules.addCell(languageNameHeader);
-				
+
 				CustomCellTitle ruleCountHeader = new CustomCellTitle(
 						new Phrase(getTextProperty("general.rule_count"), Style.DASHBOARD_TITLE_FONT));
 				tableMostViolatesRules.addCell(ruleCountHeader);
@@ -479,7 +473,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 					CustomCellTitle languageNameValue = new CustomCellTitle(
 							new Phrase(rule.getLanguageName(), Style.DASHBOARD_DATA_FONT_2));
 					tableMostViolatesRules.addCell(languageNameValue);
-					
+
 					CustomCellValue ruleCountValue = new CustomCellValue(
 							new Phrase(rule.getCount().toString(), Style.DASHBOARD_DATA_FONT_2));
 					tableMostViolatesRules.addCell(ruleCountValue);
@@ -523,7 +517,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			for (FileInfo fileInfo : mostViolatedFiles) {
 
 				CustomTable tableMostViolatesFiles = new CustomTable(2);
-				tableMostViolatesFiles.setWidths(new int[] { 4, 22 });
+				tableMostViolatesFiles.setWidths(new int[] { 4, 25 });
 
 				// File Name Header
 				CustomCellTitle fileNameHeader = new CustomCellTitle(
@@ -736,7 +730,12 @@ public class ExecutivePDFReporter extends PDFReporter {
 		// New Bugs Value
 		if (project.getMeasures().containsMeasure(NEW_BUGS)) {
 			CustomCellValue newBugsValue = new CustomCellValue(
-					new Phrase(project.getMeasure(NEW_BUGS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+					new Phrase(
+							project.getMeasure(NEW_BUGS).getPeriods()
+									.stream().filter(p -> p.getIndex() == project.getMeasures()
+											.getPeriod_(this.leakPeriod).get().getIndex())
+									.findFirst().get().getValue(),
+							Style.DASHBOARD_DATA_FONT));
 			newBugsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
 			newBugsValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableReliability.addCell(newBugsValue);
@@ -795,9 +794,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 			tableReliabilityOther.addCell(reliabilityRemediationEffortNew);
 
 			// Reliability Remediation Effort On New Code Value
-			CustomCellValue reliabilityRemediationEffortNewValue = new CustomCellValue(new Phrase(
-					SonarUtil.getWorkDurConversion(Integer.parseInt(
-							project.getMeasure(NEW_RELIABILITY_REMEDIATION_EFFORT).getPeriods().get(0).getValue())),
+			CustomCellValue reliabilityRemediationEffortNewValue = new CustomCellValue(new Phrase(SonarUtil
+					.getWorkDurConversion(Integer.parseInt(project.getMeasure(NEW_RELIABILITY_REMEDIATION_EFFORT)
+							.getPeriods().stream().filter(p -> p.getIndex() == project.getMeasures()
+									.getPeriod_(this.leakPeriod).get().getIndex())
+							.findFirst().get().getValue())),
 					Style.DASHBOARD_DATA_FONT_2));
 			reliabilityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableReliabilityOther.addCell(reliabilityRemediationEffortNewValue);
@@ -843,8 +844,13 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		// New Vulnerabilities Value
 		if (project.getMeasures().containsMeasure(NEW_VULNERABILITIES)) {
-			CustomCellValue newVulnerabilitiesValue = new CustomCellValue(new Phrase(
-					project.getMeasure(NEW_VULNERABILITIES).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+			CustomCellValue newVulnerabilitiesValue = new CustomCellValue(
+					new Phrase(
+							project.getMeasure(NEW_VULNERABILITIES).getPeriods()
+									.stream().filter(p -> p.getIndex() == project.getMeasures()
+											.getPeriod_(this.leakPeriod).get().getIndex())
+									.findFirst().get().getValue(),
+							Style.DASHBOARD_DATA_FONT));
 			newVulnerabilitiesValue.setHorizontalAlignment(Element.ALIGN_CENTER);
 			newVulnerabilitiesValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableSecurity.addCell(newVulnerabilitiesValue);
@@ -904,8 +910,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 			// Security Remediation Effort on New Code Value
 			CustomCellValue securityRemediationEffortNewValue = new CustomCellValue(new Phrase(
-					SonarUtil.getWorkDurConversion(Integer.parseInt(
-							project.getMeasure(NEW_SECURITY_REMEDIATION_EFFORT).getPeriods().get(0).getValue())),
+					SonarUtil.getWorkDurConversion(Integer.parseInt(project.getMeasure(NEW_SECURITY_REMEDIATION_EFFORT)
+							.getPeriods().stream().filter(p -> p.getIndex() == project.getMeasures()
+									.getPeriod_(this.leakPeriod).get().getIndex())
+							.findFirst().get().getValue())),
 					Style.DASHBOARD_DATA_FONT_2));
 			securityRemediationEffortNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableSecurityOther.addCell(securityRemediationEffortNewValue);
@@ -950,8 +958,13 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		// New Code Smells Value
 		if (project.getMeasures().containsMeasure(NEW_CODE_SMELLS)) {
-			CustomCellValue newCodeSmellsValue = new CustomCellValue(new Phrase(
-					project.getMeasure(NEW_CODE_SMELLS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+			CustomCellValue newCodeSmellsValue = new CustomCellValue(
+					new Phrase(
+							project.getMeasure(NEW_CODE_SMELLS).getPeriods()
+									.stream().filter(p -> p.getIndex() == project.getMeasures()
+											.getPeriod_(this.leakPeriod).get().getIndex())
+									.findFirst().get().getValue(),
+							Style.DASHBOARD_DATA_FONT));
 			newCodeSmellsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
 			newCodeSmellsValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableMaintainability.addCell(newCodeSmellsValue);
@@ -1011,8 +1024,10 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 			// Added Technical Debt Value
 			CustomCellValue technicalDebtNewValue = new CustomCellValue(new Phrase(
-					SonarUtil.getWorkDurConversion(
-							Integer.parseInt(project.getMeasure(NEW_TECHNICAL_DEBT).getPeriods().get(0).getValue())),
+					SonarUtil.getWorkDurConversion(Integer.parseInt(project.getMeasure(NEW_TECHNICAL_DEBT)
+							.getPeriods().stream().filter(p -> p.getIndex() == project.getMeasures()
+									.getPeriod_(this.leakPeriod).get().getIndex())
+							.findFirst().get().getValue())),
 					Style.DASHBOARD_DATA_FONT_2));
 			technicalDebtNewValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableMaintainabilityOther.addCell(technicalDebtNewValue);
@@ -1491,8 +1506,13 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 		// New Issues Value
 		if (project.getMeasures().containsMeasure(NEW_VIOLATIONS)) {
-			CustomCellValue newViolationsValue = new CustomCellValue(new Phrase(
-					project.getMeasure(NEW_VIOLATIONS).getPeriods().get(0).getValue(), Style.DASHBOARD_DATA_FONT));
+			CustomCellValue newViolationsValue = new CustomCellValue(
+					new Phrase(
+							project.getMeasure(NEW_VIOLATIONS).getPeriods()
+									.stream().filter(p -> p.getIndex() == project.getMeasures()
+											.getPeriod_(this.leakPeriod).get().getIndex())
+									.findFirst().get().getValue(),
+							Style.DASHBOARD_DATA_FONT));
 			newViolationsValue.setHorizontalAlignment(Element.ALIGN_CENTER);
 			newViolationsValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 			tableIssues.addCell(newViolationsValue);
@@ -1581,27 +1601,30 @@ public class ExecutivePDFReporter extends PDFReporter {
 	}
 
 	protected void printOtherMetricBoard(final Project project, final Section section) throws DocumentException {
-		LOGGER.info("In other metric board function");
+		// LOGGER.info("In other metric board function");
 		// Request Metric Title
 		Paragraph otherMetricsTitle = new Paragraph("Other Metrics", Style.UNDERLINED_FONT);
 
 		// Requested Metrics Table
 		CustomTable tableOtherMetrics = new CustomTable(2);
 		tableOtherMetrics.setWidths(new int[] { 8, 2 });
-		LOGGER.info("Other Metrics List : " + otherMetrics);
+		// LOGGER.info("Other Metrics List : " + otherMetrics);
 		for (String metricName : otherMetrics) {
 			// Other Metric Title
-			LOGGER.info("Metric Name : " + metricName);
+			// LOGGER.info("Metric Name : " + metricName);
 			CustomCellTitle otherMetric = new CustomCellTitle(
 					new Phrase(project.getMeasure(metricName).getMetricTitle(), Style.DASHBOARD_TITLE_FONT));
 			tableOtherMetrics.addCell(otherMetric);
 
 			// Other Metric Value
-			LOGGER.info("Metric Information : " + project.getMeasure(metricName).toString());
+			// LOGGER.info("Metric Information : " +
+			// project.getMeasure(metricName).toString());
 			if (project.getMeasure(metricName).getValue() != null
 					&& project.getMeasure(metricName).getValue().trim().length() > 0) {
-				LOGGER.info("Metric have value : " + project.getMeasure(metricName).getValue());
-				LOGGER.info("Metric have value length: " + project.getMeasure(metricName).getValue().length());
+				// LOGGER.info("Metric have value : " +
+				// project.getMeasure(metricName).getValue());
+				// LOGGER.info("Metric have value length: " +
+				// project.getMeasure(metricName).getValue().length());
 				CustomCellValue otherMetricValue = new CustomCellValue(
 						new Phrase(SonarUtil.getFormattedValue(project.getMeasure(metricName).getValue(),
 								project.getMeasure(metricName).getDataType()), Style.DASHBOARD_DATA_FONT_2));
@@ -1610,12 +1633,21 @@ public class ExecutivePDFReporter extends PDFReporter {
 				}
 				tableOtherMetrics.addCell(otherMetricValue);
 			} else {
-				LOGGER.info(
-						"Metric have period value : " + project.getMeasure(metricName).getPeriods().get(0).getValue());
-				CustomCellValue otherMetricValue = new CustomCellValue(new Phrase(
-						SonarUtil.getFormattedValue(project.getMeasure(metricName).getPeriods().get(0).getValue(),
-								project.getMeasure(metricName).getDataType()),
-						Style.DASHBOARD_DATA_FONT_2));
+				// LOGGER.info("Metric have period value : " +
+				// project.getMeasure(metricName).getPeriods().stream()
+				// .filter(p -> p.getIndex() ==
+				// project.getMeasures().getPeriod_(this.leakPeriod).get().getIndex())
+				// .findFirst().get().getValue());
+				CustomCellValue otherMetricValue = new CustomCellValue(
+						new Phrase(
+								SonarUtil
+										.getFormattedValue(
+												project.getMeasure(metricName).getPeriods().stream()
+														.filter(p -> p.getIndex() == project.getMeasures()
+																.getPeriod_(this.leakPeriod).get().getIndex())
+														.findFirst().get().getValue(),
+												project.getMeasure(metricName).getDataType()),
+								Style.DASHBOARD_DATA_FONT_2));
 				if (metricName.contains("new")) {
 					otherMetricValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 				}
@@ -1657,10 +1689,16 @@ public class ExecutivePDFReporter extends PDFReporter {
 				}
 				tableOtherMetrics.addCell(otherMetricValue);
 			} else {
-				CustomCellValue otherMetricValue = new CustomCellValue(new Phrase(
-						SonarUtil.getFormattedValue(project.getMeasure(metricName).getPeriods().get(0).getValue(),
-								project.getMeasure(metricName).getDataType()),
-						Style.DASHBOARD_DATA_FONT_2));
+				CustomCellValue otherMetricValue = new CustomCellValue(
+						new Phrase(
+								SonarUtil
+										.getFormattedValue(
+												project.getMeasure(metricName).getPeriods().stream()
+														.filter(p -> p.getIndex() == project.getMeasures()
+																.getPeriod_(this.leakPeriod).get().getIndex())
+														.findFirst().get().getValue(),
+												project.getMeasure(metricName).getDataType()),
+								Style.DASHBOARD_DATA_FONT_2));
 				if (metricName.contains("new")) {
 					otherMetricValue.setBackgroundColor(Style.DASHBOARD_NEW_METRIC_BACKGROUND_COLOR);
 				}

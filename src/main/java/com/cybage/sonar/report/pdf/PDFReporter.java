@@ -1,22 +1,3 @@
-/*
- * SonarQube PDF Report
- * Copyright (C) 2010 klicap - ingenieria del puzle
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package com.cybage.sonar.report.pdf;
 
 import java.io.ByteArrayOutputStream;
@@ -93,14 +74,13 @@ public abstract class PDFReporter {
 			printFrontPage(frontPageDocument, frontPageDocumentWriter);
 			printTocTitle(tocDocument);
 			printPdfBody(mainDocument);
-			try{	
+			try {
 				mainDocument.close();
-			}catch (Exception e) {
-				// TODO: handle exception
-				LOGGER.error("In PDFReporter : Exception 1.1");
+			} catch (Exception e) {
+				LOGGER.error("Exception in PDFReporter");
 				e.printStackTrace();
 			}
-			
+
 			tocDocument.getTocDocument().close();
 			frontPageDocument.close();
 
@@ -128,7 +108,7 @@ public abstract class PDFReporter {
 			return finalBaos;
 		} catch (Exception e) {
 			// TODO: handle exception
-			LOGGER.error("In PDFReport : Exception");
+			LOGGER.error("Exception in PDFReport");
 			e.printStackTrace();
 		}
 		return null;
@@ -140,8 +120,9 @@ public abstract class PDFReporter {
 					.credentials(credentials.getUsername(), credentials.getPassword()).build();
 			WsClient wsClient = WsClientFactories.getDefault().newClient(httpConnector);
 			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(wsClient);
-			project = projectBuilder.initializeProject(getProjectKey(),getProjectVersion(), getSonarLanguage(), getOtherMetrics());
-			LOGGER.info("Project Information : " + project.toString());
+			project = projectBuilder.initializeProject(getProjectKey(), getProjectVersion(), getSonarLanguage(),
+					getOtherMetrics());
+			// LOGGER.info("Project Information : " + project.toString());
 		}
 		return project;
 	}
@@ -225,12 +206,14 @@ public abstract class PDFReporter {
 	protected abstract URL getLogo();
 
 	protected abstract String getProjectKey();
-	
+
 	protected abstract String getProjectVersion();
-	
+
 	protected abstract List<String> getSonarLanguage();
-	
+
 	protected abstract Set<String> getOtherMetrics();
+
+	protected abstract String getLeakPeriod();
 
 	protected abstract void printFrontPage(Document frontPageDocument, PdfWriter frontPageWriter)
 			throws ReportException;

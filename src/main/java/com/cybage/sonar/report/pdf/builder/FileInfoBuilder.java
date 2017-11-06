@@ -40,11 +40,11 @@ public class FileInfoBuilder {
 
 	public List<FileInfo> initProjectMostViolatedFilesByProjectKey(final String key) {
 
-		LOGGER.info("Retrieving most violated files info for " + key);
+		// LOGGER.info("Retrieving most violated files info for " + key);
 		List<FileInfo> files = new ArrayList<>();
 
 		// Reverse iteration to get violations with upper level first
-		
+
 		SearchWsRequest searchWsReq = new SearchWsRequest();
 		searchWsReq.setComponentKeys(Arrays.asList(key));
 		searchWsReq.setFacets(Arrays.asList("fileUuids"));
@@ -76,7 +76,7 @@ public class FileInfoBuilder {
 
 	public List<FileInfo> initProjectMostComplexFilesByProjectKey(final String key) {
 
-		LOGGER.info("Retrieving most complex files info for " + key);
+		// LOGGER.info("Retrieving most complex files info for " + key);
 
 		List<FileInfo> files = new ArrayList<>();
 
@@ -112,7 +112,7 @@ public class FileInfoBuilder {
 
 	public List<FileInfo> initProjectMostDuplicatedFilesByProjectKey(final String key) {
 
-		LOGGER.info("Retrieving most duplicated files info for " + key);
+		// LOGGER.info("Retrieving most duplicated files info for " + key);
 
 		List<FileInfo> files = new ArrayList<>();
 

@@ -196,5 +196,5 @@ public class Project {
 				+ ", mostViolatedRules=" + mostViolatedRules + ", mostComplexFiles=" + mostComplexFiles
 				+ ", mostViolatedFiles=" + mostViolatedFiles + ", mostDuplicatedFiles=" + mostDuplicatedFiles + "]";
 	}
-	
+
 }

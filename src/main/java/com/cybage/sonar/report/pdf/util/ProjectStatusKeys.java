@@ -35,7 +35,7 @@ public class ProjectStatusKeys {
 		}
 		return null;
 	}
-	
+
 	public static final BaseColor getStatusBaseColor(String status) {
 		if (status.equals(STATUS_OK)) {
 			return Style.QUALITY_GATE_PASSED_COLOR;
