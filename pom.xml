@@ -4,10 +4,10 @@
 
 	<groupId>com.cybage.sonar.report</groupId>
 	<artifactId>sonar-analysis-pdf-report-plugin</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>sonar-plugin</packaging>
 
-	<url>https://github.com/SonarCommunity/sonar-pdf-report</url>
+	<!-- <url>https://github.com/SonarCommunity/sonar-pdf-report</url> -->
 	<name>SonarQube Analysis PDF Report</name>
 	<description>SonarQube plugin for PDF reporting</description>
 	<inceptionYear>2017</inceptionYear>

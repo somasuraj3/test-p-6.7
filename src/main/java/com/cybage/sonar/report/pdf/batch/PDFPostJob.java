@@ -58,7 +58,6 @@ public class PDFPostJob implements PostJob {
 
 	@Override
 	public void execute(PostJobContext postJobContext) {
-
 		if (postJobContext.settings().hasKey(SKIP_PDF_KEY)
 				&& postJobContext.settings().getBoolean(SKIP_PDF_KEY) == true) {
 			LOGGER.info("Skipping generation of PDF Report..");
