@@ -54,20 +54,41 @@ public class FileInfoBuilder {
 			int limit = 5;
 			limit = searchWsRes.getFacets().getFacets(0).getValuesCount() > limit ? limit
 					: searchWsRes.getFacets().getFacets(0).getValuesCount();
-			for (int j = 0; j < limit; j++) {
+
+			int j = 0;
+			while (j < limit) {
 				FacetValue facetValue = searchWsRes.getFacets().getFacets(0).getValues(j);
 				Optional<Component> component = searchWsRes.getComponentsList().stream()
-						.filter(c -> c.getUuid().equals(facetValue.getVal())).findFirst();
-
-				FileInfo fileInfo = new FileInfo();
-				fileInfo.setKey(facetValue.getVal());
-				fileInfo.setName(component.get().getName());
-				fileInfo.setPath(component.get().getPath());
-				fileInfo.setViolations(String.valueOf(facetValue.getCount()));
-				fileInfo.setComplexity("0");
-				fileInfo.setDuplicatedLines("0");
-				files.add(fileInfo);
+						.filter(c -> c.getUuid().equals(facetValue.getVal()) && c.getQualifier().equals("FIL"))
+						.findFirst();
+				if (component.isPresent()) {
+					FileInfo fileInfo = new FileInfo();
+					fileInfo.setKey(facetValue.getVal());
+					fileInfo.setName(component.get().getName());
+					fileInfo.setPath(component.get().getPath());
+					fileInfo.setViolations(String.valueOf(facetValue.getCount()));
+					fileInfo.setComplexity("0");
+					fileInfo.setDuplicatedLines("0");
+					files.add(fileInfo);
+					j++;
+				}
 			}
+			/*
+			 * for (int j = 0; j < limit; j++) { FacetValue facetValue =
+			 * searchWsRes.getFacets().getFacets(0).getValues(j);
+			 * Optional<Component> component =
+			 * searchWsRes.getComponentsList().stream() .filter(c ->
+			 * c.getUuid().equals(facetValue.getVal())).findFirst();
+			 * 
+			 * FileInfo fileInfo = new FileInfo();
+			 * fileInfo.setKey(facetValue.getVal());
+			 * fileInfo.setName(component.get().getName());
+			 * fileInfo.setPath(component.get().getPath());
+			 * fileInfo.setViolations(String.valueOf(facetValue.getCount()));
+			 * fileInfo.setComplexity("0"); fileInfo.setDuplicatedLines("0");
+			 * files.add(fileInfo); }
+			 */
+
 		} else {
 			LOGGER.debug("There are no violated files");
 		}
@@ -86,6 +107,7 @@ public class FileInfoBuilder {
 		compTreeWsReq.setMetricKeys(Arrays.asList(MetricKeys.COMPLEXITY));
 		compTreeWsReq.setMetricSort(MetricKeys.COMPLEXITY);
 		compTreeWsReq.setSort(Arrays.asList("metric"));
+		compTreeWsReq.setMetricSortFilter("withMeasuresOnly");
 		compTreeWsReq.setQualifiers(Arrays.asList("FIL"));
 		ComponentTreeWsResponse componentTreeWsRes = wsClient.measures().componentTree(compTreeWsReq);
 
@@ -94,6 +116,14 @@ public class FileInfoBuilder {
 			for (int j = componentTreeWsRes.getComponentsCount() - 1; j >= componentTreeWsRes.getComponentsCount()
 					- limit; j--) {
 				org.sonarqube.ws.WsMeasures.Component component = componentTreeWsRes.getComponents(j);
+
+				/*
+				 * LOGGER.info("File Info : Measures Count : " +
+				 * String.valueOf(component.getMeasuresCount()));
+				 * LOGGER.info("Measure Values List : "); for (Measure measure :
+				 * component.getMeasuresList()) {
+				 * LOGGER.info(measure.toString()); }
+				 */
 
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setKey(component.getId());
@@ -122,6 +152,7 @@ public class FileInfoBuilder {
 		compTreeWsReq.setMetricKeys(Arrays.asList(MetricKeys.DUPLICATED_LINES));
 		compTreeWsReq.setMetricSort(MetricKeys.DUPLICATED_LINES);
 		compTreeWsReq.setSort(Arrays.asList("metric"));
+		compTreeWsReq.setMetricSortFilter("withMeasuresOnly");
 		compTreeWsReq.setQualifiers(Arrays.asList("FIL"));
 		ComponentTreeWsResponse componentTreeWsRes = wsClient.measures().componentTree(compTreeWsReq);
 

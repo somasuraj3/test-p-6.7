@@ -59,7 +59,7 @@ public class RuleBuilder {
 						: searchWsRes.getFacets().getFacets(0).getValuesCount();
 				// LOGGER.info("Priority : " + priorities[i]);
 				// LOGGER.info("Limit : " + limit);
-				searchWsRes.getFacets().getFacets(0).getValuesList().stream().forEach(v -> LOGGER.info(v.getVal()));
+				// searchWsRes.getFacets().getFacets(0).getValuesList().stream().forEach(v -> LOGGER.info(v.getVal()));
 				for (int j = 0; j < limit; j++) {
 					FacetValue facetValue = searchWsRes.getFacets().getFacets(0).getValues(j);
 					Optional<Common.Rule> rule = searchWsRes.getRules().getRulesList().stream()
