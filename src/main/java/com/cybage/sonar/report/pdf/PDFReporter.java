@@ -121,7 +121,7 @@ public abstract class PDFReporter {
 			WsClient wsClient = WsClientFactories.getDefault().newClient(httpConnector);
 			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(wsClient);
 			project = projectBuilder.initializeProject(getProjectKey(), getProjectVersion(), getSonarLanguage(),
-					getOtherMetrics());
+					getOtherMetrics(), getTypesOfIssue());
 			// LOGGER.info("Project Information : " + project.toString());
 		}
 		return project;
@@ -212,6 +212,8 @@ public abstract class PDFReporter {
 	protected abstract List<String> getSonarLanguage();
 
 	protected abstract Set<String> getOtherMetrics();
+	
+	protected abstract Set<String> getTypesOfIssue();
 
 	protected abstract String getLeakPeriod();
 

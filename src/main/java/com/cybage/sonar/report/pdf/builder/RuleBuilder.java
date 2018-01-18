@@ -18,7 +18,7 @@ import com.cybage.sonar.report.pdf.entity.Rule;
 
 public class RuleBuilder {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectStatusBuilder.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RuleBuilder.class);
 
 	private static RuleBuilder builder;
 

@@ -48,6 +48,7 @@ public class FileInfoBuilder {
 		SearchWsRequest searchWsReq = new SearchWsRequest();
 		searchWsReq.setComponentKeys(Arrays.asList(key));
 		searchWsReq.setFacets(Arrays.asList("fileUuids"));
+		searchWsReq.setPageSize(500);
 		SearchWsResponse searchWsRes = wsClient.issues().search(searchWsReq);
 
 		if (searchWsRes.getFacets().getFacets(0) != null) {
@@ -73,22 +74,6 @@ public class FileInfoBuilder {
 					j++;
 				}
 			}
-			/*
-			 * for (int j = 0; j < limit; j++) { FacetValue facetValue =
-			 * searchWsRes.getFacets().getFacets(0).getValues(j);
-			 * Optional<Component> component =
-			 * searchWsRes.getComponentsList().stream() .filter(c ->
-			 * c.getUuid().equals(facetValue.getVal())).findFirst();
-			 * 
-			 * FileInfo fileInfo = new FileInfo();
-			 * fileInfo.setKey(facetValue.getVal());
-			 * fileInfo.setName(component.get().getName());
-			 * fileInfo.setPath(component.get().getPath());
-			 * fileInfo.setViolations(String.valueOf(facetValue.getCount()));
-			 * fileInfo.setComplexity("0"); fileInfo.setDuplicatedLines("0");
-			 * files.add(fileInfo); }
-			 */
-
 		} else {
 			LOGGER.debug("There are no violated files");
 		}

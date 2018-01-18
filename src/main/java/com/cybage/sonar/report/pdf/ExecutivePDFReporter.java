@@ -53,6 +53,7 @@ import static com.cybage.sonar.report.pdf.util.MetricKeys.WONT_FIX_ISSUES;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,7 @@ import com.cybage.sonar.report.pdf.design.CustomMainTable;
 import com.cybage.sonar.report.pdf.design.CustomTable;
 import com.cybage.sonar.report.pdf.entity.Condition;
 import com.cybage.sonar.report.pdf.entity.FileInfo;
+import com.cybage.sonar.report.pdf.entity.Issue;
 import com.cybage.sonar.report.pdf.entity.Priority;
 import com.cybage.sonar.report.pdf.entity.Project;
 import com.cybage.sonar.report.pdf.entity.QualityProfile;
@@ -110,19 +112,22 @@ public class ExecutivePDFReporter extends PDFReporter {
 	private String projectVersion;
 	private List<String> sonarLanguage;
 	private Set<String> otherMetrics;
+	private Set<String> typesOfIssue;
 	private String leakPeriod;
 	private Properties configProperties;
 	private Properties langProperties;
 
 	public ExecutivePDFReporter(final Credentials credentials, final URL logo, final String projectKey,
 			final String projectVersion, final List<String> sonarLanguage, final Set<String> otherMetrics,
-			final String leakPeriod, final Properties configProperties, final Properties langProperties) {
+			final Set<String> typesOfIssue, final String leakPeriod, final Properties configProperties,
+			final Properties langProperties) {
 		super(credentials);
 		this.logo = logo;
 		this.projectKey = projectKey;
 		this.projectVersion = projectVersion;
 		this.sonarLanguage = sonarLanguage;
 		this.otherMetrics = otherMetrics;
+		this.typesOfIssue = typesOfIssue;
 		this.leakPeriod = leakPeriod;
 		this.configProperties = configProperties;
 		this.langProperties = langProperties;
@@ -141,6 +146,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 	@Override
 	protected Set<String> getOtherMetrics() {
 		return this.otherMetrics;
+	}
+
+	@Override
+	protected Set<String> getTypesOfIssue() {
+		return this.typesOfIssue;
 	}
 
 	@Override
@@ -166,6 +176,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 	@Override
 	protected Properties getReportProperties() {
 		return configProperties;
+	}
+
+	@Override
+	public String getReportType() {
+		return REPORT_TYPE_PDF;
 	}
 
 	@Override
@@ -246,6 +261,11 @@ public class ExecutivePDFReporter extends PDFReporter {
 			printMostViolatedFiles(project, section14);
 			printMostComplexFiles(project, section14);
 			printMostDuplicatedFiles(project, section14);
+
+			chapter1.add(new Paragraph(" ", new Font(FontFamily.COURIER, 8)));
+			Section section15 = chapter1
+					.addSection(new Paragraph(getTextProperty("general.violations_details"), Style.TITLE_FONT));
+			printIssueDetails(project, section15);
 
 			document.add(chapter1);
 
@@ -1705,11 +1725,81 @@ public class ExecutivePDFReporter extends PDFReporter {
 				tableOtherMetrics.addCell(otherMetricValue);
 			}
 		}
-
 	}
 
-	@Override
-	public String getReportType() {
-		return REPORT_TYPE_PDF;
+	protected void printIssueDetails(final Project project, final Section section) throws DocumentException {
+
+		List<Issue> issues;
+
+		List<String> typesTitlesList = new ArrayList<>();
+		typesTitlesList.add(getTextProperty("metrics.code_smells"));
+		typesTitlesList.add(getTextProperty("metrics.vulnerabilities"));
+		typesTitlesList.add(getTextProperty("metrics.bugs"));
+
+		for (String typeOfIssue : this.typesOfIssue) {
+			issues = project.getIssues().stream().filter(i -> i.getType().equals(typeOfIssue))
+					.collect(Collectors.toList());
+
+			Paragraph typesOfIssuesTitle = new Paragraph(typesTitlesList.stream()
+					.filter(t -> t.toUpperCase().contains(typeOfIssue.toUpperCase())).findFirst().get(),
+					Style.UNDERLINED_FONT);
+			
+			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
+			section.add(new Paragraph(typesOfIssuesTitle));
+				
+		}
+
+		
+		if (mostViolatedFiles.size() > 0) {
+			for (FileInfo fileInfo : mostViolatedFiles) {
+
+				CustomTable tableMostViolatesFiles = new CustomTable(2);
+				tableMostViolatesFiles.setWidths(new int[] { 4, 25 });
+
+				// File Name Header
+				CustomCellTitle fileNameHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("genaral.file_name"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesFiles.addCell(fileNameHeader);
+
+				// File Name Value
+				CustomCellTitle fileNameValue = new CustomCellTitle(
+						new Phrase(fileInfo.getName(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostViolatesFiles.addCell(fileNameValue);
+
+				// File Path Header
+				CustomCellTitle filePathHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_path"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesFiles.addCell(filePathHeader);
+
+				// File Path Value
+				CustomCellTitle filePathValue = new CustomCellTitle(
+						new Phrase(fileInfo.getPath(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostViolatesFiles.addCell(filePathValue);
+
+				// Violations Header
+				CustomCellTitle violationsHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.file_violations"), Style.DASHBOARD_TITLE_FONT));
+				tableMostViolatesFiles.addCell(violationsHeader);
+
+				// Name Value
+				CustomCellTitle violationsValue = new CustomCellTitle(
+						new Phrase(fileInfo.getViolations(), Style.DASHBOARD_DATA_FONT_2));
+				tableMostViolatesFiles.addCell(violationsValue);
+
+				section.add(new Paragraph(" "));
+				section.add(tableMostViolatesFiles);
+			}
+
+		} else {
+			CustomTable tableMostViolatesFiles = new CustomTable(1);
+
+			CustomCellTitle noViolatedFilesHeader = new CustomCellTitle(
+					new Phrase(getTextProperty("general.no_violated_files"), Style.DASHBOARD_TITLE_FONT));
+
+			tableMostViolatesFiles.addCell(noViolatedFilesHeader);
+
+			section.add(new Paragraph(" "));
+			section.add(tableMostViolatesFiles);
+		}
 	}
 }

@@ -35,6 +35,9 @@ public class Project {
 	// Most duplicated files
 	private List<FileInfo> mostDuplicatedFiles;
 
+	// Issue Details
+	private List<Issue> issues;
+
 	public Project(final String key) {
 		this.key = key;
 	}
@@ -188,13 +191,22 @@ public class Project {
 		this.mostDuplicatedFiles = mostDuplicatedFiles;
 	}
 
+	public List<Issue> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(List<Issue> issues) {
+		this.issues = issues;
+	}
+
 	@Override
 	public String toString() {
 		return "Project [id=" + id + ", key=" + key + ", name=" + name + ", version=" + version + ", languages="
 				+ languages + ", description=" + description + ", links=" + links + ", projectStatus=" + projectStatus
 				+ ", qualityProfiles=" + qualityProfiles + ", measures=" + measures + ", subprojects=" + subprojects
 				+ ", mostViolatedRules=" + mostViolatedRules + ", mostComplexFiles=" + mostComplexFiles
-				+ ", mostViolatedFiles=" + mostViolatedFiles + ", mostDuplicatedFiles=" + mostDuplicatedFiles + "]";
+				+ ", mostViolatedFiles=" + mostViolatedFiles + ", mostDuplicatedFiles=" + mostDuplicatedFiles
+				+ ", issues=" + issues + "]";
 	}
 
 }

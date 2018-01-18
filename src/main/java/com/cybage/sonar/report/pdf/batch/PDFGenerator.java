@@ -32,16 +32,19 @@ public class PDFGenerator {
 	private String projectVersion;
 	private List<String> sonarLanguage;
 	private Set<String> otherMetrics;
+	private Set<String> typesOfIssue;
 	private String leakPeriod;
 	private FileSystem fs;
 
 	public PDFGenerator(final String projectKey, final String projectVersion, final List<String> sonarLanguage,
-			final Set<String> otherMetrics, final String leakPeriod, final FileSystem fs, final String sonarHostUrl,
-			final String username, final String password, final String reportType) {
+			final Set<String> otherMetrics, final Set<String> typesOfIssue, final String leakPeriod,
+			final FileSystem fs, final String sonarHostUrl, final String username, final String password,
+			final String reportType) {
 		this.projectKey = projectKey;
 		this.projectVersion = projectVersion;
 		this.sonarLanguage = sonarLanguage;
 		this.otherMetrics = otherMetrics;
+		this.typesOfIssue = typesOfIssue;
 		this.leakPeriod = leakPeriod;
 		this.fs = fs;
 		this.sonarHostUrl = sonarHostUrl;
@@ -72,6 +75,7 @@ public class PDFGenerator {
 			String sonarProjectVersion = projectVersion;
 			List<String> sonarLanguage = this.sonarLanguage;
 			Set<String> otherMetrics = this.otherMetrics;
+			Set<String> typesOfIssue = this.typesOfIssue;
 			String leakPeriod = this.leakPeriod;
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
@@ -82,10 +86,10 @@ public class PDFGenerator {
 			PDFReporter reporter = null;
 			if (reportType != null) {
 				if (reportType.equals("pdf")) {
-					LOGGER.info("PDF report type selected");
+					// LOGGER.info("PDF report type selected");
 					reporter = new ExecutivePDFReporter(credentials, this.getClass().getResource("/sonar.png"),
-							sonarProjectId, sonarProjectVersion, sonarLanguage, otherMetrics, leakPeriod, config,
-							configLang);
+							sonarProjectId, sonarProjectVersion, sonarLanguage, otherMetrics, typesOfIssue, leakPeriod,
+							config, configLang);
 				}
 			} else {
 				LOGGER.info("No report type provided. Default report type selected (PDF)");

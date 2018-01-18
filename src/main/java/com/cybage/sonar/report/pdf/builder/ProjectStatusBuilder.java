@@ -3,8 +3,6 @@ package com.cybage.sonar.report.pdf.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonarqube.ws.WsQualityGates.ProjectStatusWsResponse;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.qualitygate.ProjectStatusWsRequest;
@@ -15,7 +13,7 @@ import com.cybage.sonar.report.pdf.entity.StatusPeriod;
 
 public class ProjectStatusBuilder {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectStatusBuilder.class);
+	// private static final Logger LOGGER = LoggerFactory.getLogger(ProjectStatusBuilder.class);
 
 	private static ProjectStatusBuilder builder;
 

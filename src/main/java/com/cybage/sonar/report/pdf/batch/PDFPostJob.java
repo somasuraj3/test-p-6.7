@@ -48,6 +48,8 @@ public class PDFPostJob implements PostJob {
 
 	public static final String OTHER_METRICS = "sonar.pdf.otherMetrics";
 
+	public static final String TYPES_OF_ISSUE = "sonar.pdf.issueDetails";
+
 	public static final String LEAK_PERIOD = "sonar.pdf.leakPeriod";
 	public static final String LEAK_PERIOD_DEFAULT_VALUE = LeakPeriods.PREVIOUS_VERSION;
 
@@ -64,7 +66,7 @@ public class PDFPostJob implements PostJob {
 		} else {
 
 			try {
-				Thread.sleep(4000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -86,6 +88,9 @@ public class PDFPostJob implements PostJob {
 			Set<String> otherMetrics = postJobContext.settings().hasKey(OTHER_METRICS)
 					? new HashSet<String>(Arrays.asList(postJobContext.settings().getStringArray(OTHER_METRICS)))
 					: null;
+			Set<String> typesOfIssue = postJobContext.settings().hasKey(TYPES_OF_ISSUE)
+					? new HashSet<String>(Arrays.asList(postJobContext.settings().getStringArray(TYPES_OF_ISSUE)))
+					: null;
 
 			// LOGGER.info("leak period in properties file : " +
 			// postJobContext.settings().getString(LEAK_PERIOD));
@@ -96,7 +101,7 @@ public class PDFPostJob implements PostJob {
 			LOGGER.info("Leak Period : " + leakPeriod);
 
 			PDFGenerator generator = new PDFGenerator(projectKey, projectVersion, sonarLanguage, otherMetrics,
-					leakPeriod, fs, sonarHostUrl, username, password, reportType);
+					typesOfIssue, leakPeriod, fs, sonarHostUrl, username, password, reportType);
 
 			try {
 				generator.execute();

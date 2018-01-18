@@ -15,6 +15,7 @@ import org.sonarqube.ws.client.component.ShowWsRequest;
 import org.sonarqube.ws.client.qualitygate.ProjectStatusWsRequest;
 
 import com.cybage.sonar.report.pdf.entity.FileInfo;
+import com.cybage.sonar.report.pdf.entity.Issue;
 import com.cybage.sonar.report.pdf.entity.Measures;
 import com.cybage.sonar.report.pdf.entity.Project;
 import com.cybage.sonar.report.pdf.entity.ProjectStatus;
@@ -55,7 +56,7 @@ public class ProjectBuilder {
 	 * @throws ReportException
 	 */
 	public Project initializeProject(final String key, final String version, final List<String> sonarLanguage,
-			final Set<String> otherMetrics) throws IOException, ReportException {
+			final Set<String> otherMetrics, final Set<String> typesOfIssue) throws IOException, ReportException {
 		Project project = new Project(key, version, sonarLanguage);
 
 		LOGGER.info("Retrieving project info for " + project.getKey());
@@ -75,6 +76,9 @@ public class ProjectBuilder {
 			initMostViolatedFiles(project);
 			initMostComplexFiles(project);
 			initMostDuplicatedFiles(project);
+			if (typesOfIssue != null) {
+				initIssueDetails(project, typesOfIssue);
+			}
 			/*
 			 * LOGGER.debug("Accessing Sonar: getting child projects");
 			 * 
@@ -161,21 +165,30 @@ public class ProjectBuilder {
 	private void initMostViolatedFiles(final Project project) throws IOException, ReportException {
 		LOGGER.info("Retrieving most violated files");
 		FileInfoBuilder fileInfoBuilder = FileInfoBuilder.getInstance(wsClient);
-		List<FileInfo> fileInfo = fileInfoBuilder.initProjectMostViolatedFilesByProjectKey(project.getKey());
-		project.setMostViolatedFiles(fileInfo);
+		List<FileInfo> filesInfo = fileInfoBuilder.initProjectMostViolatedFilesByProjectKey(project.getKey());
+		project.setMostViolatedFiles(filesInfo);
 	}
 
 	private void initMostComplexFiles(final Project project) throws IOException, ReportException {
 		LOGGER.info("Retrieving most complex files");
 		FileInfoBuilder fileInfoBuilder = FileInfoBuilder.getInstance(wsClient);
-		List<FileInfo> fileInfo = fileInfoBuilder.initProjectMostComplexFilesByProjectKey(project.getKey());
-		project.setMostComplexFiles(fileInfo);
+		List<FileInfo> filesInfo = fileInfoBuilder.initProjectMostComplexFilesByProjectKey(project.getKey());
+		project.setMostComplexFiles(filesInfo);
 	}
 
 	private void initMostDuplicatedFiles(final Project project) throws IOException, ReportException {
 		LOGGER.info("Retrieving most duplicated files");
 		FileInfoBuilder fileInfoBuilder = FileInfoBuilder.getInstance(wsClient);
-		List<FileInfo> fileInfo = fileInfoBuilder.initProjectMostDuplicatedFilesByProjectKey(project.getKey());
-		project.setMostDuplicatedFiles(fileInfo);
+		List<FileInfo> filesInfo = fileInfoBuilder.initProjectMostDuplicatedFilesByProjectKey(project.getKey());
+		project.setMostDuplicatedFiles(filesInfo);
+	}
+
+	private void initIssueDetails(final Project project, final Set<String> typesOfIssue)
+			throws IOException, ReportException {
+		LOGGER.info("Retrieving issue details");
+		IssueBuilder issueBuilder = IssueBuilder.getInstance(wsClient);
+		List<Issue> issues = issueBuilder.initIssueDetailsByProjectKey(project.getKey(), typesOfIssue);
+		project.setIssues(issues);
+		LOGGER.info("Count of issues : " + String.valueOf(issues.size()));
 	}
 }
