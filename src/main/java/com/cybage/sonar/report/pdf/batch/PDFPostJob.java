@@ -90,7 +90,7 @@ public class PDFPostJob implements PostJob {
 					: null;
 			Set<String> typesOfIssue = postJobContext.settings().hasKey(TYPES_OF_ISSUE)
 					? new HashSet<String>(Arrays.asList(postJobContext.settings().getStringArray(TYPES_OF_ISSUE)))
-					: null;
+					: new HashSet<>();
 
 			// LOGGER.info("leak period in properties file : " +
 			// postJobContext.settings().getString(LEAK_PERIOD));

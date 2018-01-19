@@ -14,7 +14,8 @@ import com.cybage.sonar.report.pdf.batch.PDFPostJob;
 				+ PDFPostJob.SKIP_PDF_DEFAULT_VALUE, global = true, project = true, module = false, type = PropertyType.BOOLEAN),
 		@Property(key = PDFPostJob.LEAK_PERIOD, name = "Leak Period", description = "Leak period.", defaultValue = PDFPostJob.LEAK_PERIOD_DEFAULT_VALUE, global = true, project = true, module = false, type = PropertyType.SINGLE_SELECT_LIST, options = {
 				"previous_version", "previous_analysis", "days" }),
-		@Property(key = PDFPostJob.OTHER_METRICS, name = "Other Metrics", description = "Comma separated metrics list that you would like to include explicitly in your PDF report.", defaultValue = "", global = true, project = true, module = false, type = PropertyType.TEXT) })
+		@Property(key = PDFPostJob.OTHER_METRICS, name = "Other Metrics", description = "Comma separated metrics list that you would like to include explicitly in your PDF report.", defaultValue = " ", global = true, project = true, module = false, type = PropertyType.TEXT),
+		@Property(key = PDFPostJob.TYPES_OF_ISSUE, name = "Issue Details", description = "Comma separated list of type of issues details that you would like to include explicitly in your PDF report. Allowed values are : ( BUG / CODE_SMELL / VULNERABILITY )", defaultValue = "NONE", global = true, project = true, module = false, type = PropertyType.STRING)})
 
 public class PDFReportPlugin implements Plugin {
 

@@ -262,10 +262,12 @@ public class ExecutivePDFReporter extends PDFReporter {
 			printMostComplexFiles(project, section14);
 			printMostDuplicatedFiles(project, section14);
 
-			chapter1.add(new Paragraph(" ", new Font(FontFamily.COURIER, 8)));
-			Section section15 = chapter1
-					.addSection(new Paragraph(getTextProperty("general.violations_details"), Style.TITLE_FONT));
-			printIssueDetails(project, section15);
+			if (this.typesOfIssue.size() > 0) {
+				chapter1.add(new Paragraph(" ", new Font(FontFamily.COURIER, 8)));
+				Section section15 = chapter1
+						.addSection(new Paragraph(getTextProperty("general.violations_details"), Style.TITLE_FONT));
+				printIssuesDetails(project, section15);
+			}
 
 			document.add(chapter1);
 
@@ -1727,79 +1729,95 @@ public class ExecutivePDFReporter extends PDFReporter {
 		}
 	}
 
-	protected void printIssueDetails(final Project project, final Section section) throws DocumentException {
+	protected void printIssuesDetails(final Project project, final Section section) throws DocumentException {
 
-		List<Issue> issues;
-
-		List<String> typesTitlesList = new ArrayList<>();
-		typesTitlesList.add(getTextProperty("metrics.code_smells"));
-		typesTitlesList.add(getTextProperty("metrics.vulnerabilities"));
-		typesTitlesList.add(getTextProperty("metrics.bugs"));
+		List<Issue> issues = new ArrayList<>();
 
 		for (String typeOfIssue : this.typesOfIssue) {
-			issues = project.getIssues().stream().filter(i -> i.getType().equals(typeOfIssue))
-					.collect(Collectors.toList());
-
-			Paragraph typesOfIssuesTitle = new Paragraph(typesTitlesList.stream()
-					.filter(t -> t.toUpperCase().contains(typeOfIssue.toUpperCase())).findFirst().get(),
+			Paragraph typesOfIssuesTitle = new Paragraph(org.apache.commons.lang3.StringUtils.capitalize(typeOfIssue),
 					Style.UNDERLINED_FONT);
-			
+
 			section.add(new Paragraph(" ", new Font(FontFamily.COURIER, 6)));
 			section.add(new Paragraph(typesOfIssuesTitle));
-				
-		}
 
-		
-		if (mostViolatedFiles.size() > 0) {
-			for (FileInfo fileInfo : mostViolatedFiles) {
+			issues = project.getIssues().stream()
+					.filter(i -> i.getType().toUpperCase().replace("_", "").replace(" ", "")
+							.contains(typeOfIssue.toUpperCase().replace(" ", "").replace("_", "")))
+					.collect(Collectors.toList());
 
-				CustomTable tableMostViolatesFiles = new CustomTable(2);
-				tableMostViolatesFiles.setWidths(new int[] { 4, 25 });
+			if (issues.size() > 0) {
+				for (Issue issue : issues) {
 
-				// File Name Header
-				CustomCellTitle fileNameHeader = new CustomCellTitle(
-						new Phrase(getTextProperty("genaral.file_name"), Style.DASHBOARD_TITLE_FONT));
-				tableMostViolatesFiles.addCell(fileNameHeader);
+					CustomTable tableIssueDetails = new CustomTable(2);
+					tableIssueDetails.setWidths(new int[] { 4, 25 });
 
-				// File Name Value
-				CustomCellTitle fileNameValue = new CustomCellTitle(
-						new Phrase(fileInfo.getName(), Style.DASHBOARD_DATA_FONT_2));
-				tableMostViolatesFiles.addCell(fileNameValue);
+					// File Name Header
+					CustomCellTitle fileNameHeader = new CustomCellTitle(
+							new Phrase(getTextProperty("genaral.file_name"), Style.DASHBOARD_TITLE_FONT));
+					tableIssueDetails.addCell(fileNameHeader);
 
-				// File Path Header
-				CustomCellTitle filePathHeader = new CustomCellTitle(
-						new Phrase(getTextProperty("general.file_path"), Style.DASHBOARD_TITLE_FONT));
-				tableMostViolatesFiles.addCell(filePathHeader);
+					// File Name Value
+					CustomCellTitle fileNameValue = new CustomCellTitle(
+							new Phrase(issue.getComponent(), Style.DASHBOARD_DATA_FONT_2));
+					tableIssueDetails.addCell(fileNameValue);
 
-				// File Path Value
-				CustomCellTitle filePathValue = new CustomCellTitle(
-						new Phrase(fileInfo.getPath(), Style.DASHBOARD_DATA_FONT_2));
-				tableMostViolatesFiles.addCell(filePathValue);
+					// File Path Header
+					CustomCellTitle filePathHeader = new CustomCellTitle(
+							new Phrase(getTextProperty("general.file_path"), Style.DASHBOARD_TITLE_FONT));
+					tableIssueDetails.addCell(filePathHeader);
 
-				// Violations Header
-				CustomCellTitle violationsHeader = new CustomCellTitle(
-						new Phrase(getTextProperty("general.file_violations"), Style.DASHBOARD_TITLE_FONT));
-				tableMostViolatesFiles.addCell(violationsHeader);
+					// File Path Value
+					CustomCellTitle filePathValue = new CustomCellTitle(
+							new Phrase(issue.getComponentPath(), Style.DASHBOARD_DATA_FONT_2));
+					tableIssueDetails.addCell(filePathValue);
 
-				// Name Value
-				CustomCellTitle violationsValue = new CustomCellTitle(
-						new Phrase(fileInfo.getViolations(), Style.DASHBOARD_DATA_FONT_2));
-				tableMostViolatesFiles.addCell(violationsValue);
+					// Severity Header
+					CustomCellTitle issueSeverityHeader = new CustomCellTitle(
+							new Phrase(getTextProperty("general.severity"), Style.DASHBOARD_TITLE_FONT));
+					tableIssueDetails.addCell(issueSeverityHeader);
+
+					// Severity Value
+					CustomCellTitle issueSeverityValue = new CustomCellTitle(
+							new Phrase(issue.getSeverity(), Style.DASHBOARD_DATA_FONT_2));
+					tableIssueDetails.addCell(issueSeverityValue);
+
+					// Issue Line Number Header
+					CustomCellTitle issueLineHeader = new CustomCellTitle(
+							new Phrase(getTextProperty("general.line"), Style.DASHBOARD_TITLE_FONT));
+					tableIssueDetails.addCell(issueLineHeader);
+
+					// Issue Line Number Value
+					CustomCellTitle issueLineValue = new CustomCellTitle(
+							new Phrase(issue.getLine().equals(0)? "NA" : issue.getLine().toString(), Style.DASHBOARD_DATA_FONT_2));
+					tableIssueDetails.addCell(issueLineValue);
+
+					// Issue Line Number Header
+					CustomCellTitle issueMessageHeader = new CustomCellTitle(
+							new Phrase(getTextProperty("general.message"), Style.DASHBOARD_TITLE_FONT));
+					tableIssueDetails.addCell(issueMessageHeader);
+
+					// Issue Line Number Value
+					CustomCellTitle issueMessageValue = new CustomCellTitle(
+							new Phrase(issue.getMessage(), Style.DASHBOARD_DATA_FONT_2));
+					tableIssueDetails.addCell(issueMessageValue);
+
+					section.add(new Paragraph(" "));
+					section.add(tableIssueDetails);
+				}
+
+			} else {
+				CustomTable tableMostViolatesFiles = new CustomTable(1);
+
+				CustomCellTitle noViolatedFilesHeader = new CustomCellTitle(
+						new Phrase(getTextProperty("general.no_violations"), Style.DASHBOARD_TITLE_FONT));
+
+				tableMostViolatesFiles.addCell(noViolatedFilesHeader);
 
 				section.add(new Paragraph(" "));
 				section.add(tableMostViolatesFiles);
 			}
 
-		} else {
-			CustomTable tableMostViolatesFiles = new CustomTable(1);
-
-			CustomCellTitle noViolatedFilesHeader = new CustomCellTitle(
-					new Phrase(getTextProperty("general.no_violated_files"), Style.DASHBOARD_TITLE_FONT));
-
-			tableMostViolatesFiles.addCell(noViolatedFilesHeader);
-
-			section.add(new Paragraph(" "));
-			section.add(tableMostViolatesFiles);
 		}
+
 	}
 }

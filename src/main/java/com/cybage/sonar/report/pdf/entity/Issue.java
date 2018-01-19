@@ -4,6 +4,9 @@ public class Issue {
 
 	// Component Name ( File Name / Directory Name / etc.. )
 	private String component;
+	
+	// Component Name ( File Name / Directory Name / etc.. )
+	private String componentPath;
 
 	// Issue Severity ( Info / Minor / Major / Critical / Blocker )
 	private String severity;
@@ -23,10 +26,11 @@ public class Issue {
 	// Efforts needed to resolve issue
 	private String effort;
 
-	public Issue(String component, String severity, Integer line, String status, String message, String type,
+	public Issue(String component, String componentPath, String severity, Integer line, String status, String message, String type,
 			String effort) {
 		super();
 		this.component = component;
+		this.componentPath = componentPath;
 		this.severity = severity;
 		this.line = line;
 		this.status = status;
@@ -41,6 +45,14 @@ public class Issue {
 
 	public void setComponent(String component) {
 		this.component = component;
+	}
+
+	public String getComponentPath() {
+		return componentPath;
+	}
+
+	public void setComponentPath(String componentPath) {
+		this.componentPath = componentPath;
 	}
 
 	public String getSeverity() {

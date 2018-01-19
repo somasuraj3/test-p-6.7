@@ -76,7 +76,7 @@ public class ProjectBuilder {
 			initMostViolatedFiles(project);
 			initMostComplexFiles(project);
 			initMostDuplicatedFiles(project);
-			if (typesOfIssue != null) {
+			if (typesOfIssue.size() > 0) {
 				initIssueDetails(project, typesOfIssue);
 			}
 			/*
@@ -189,6 +189,5 @@ public class ProjectBuilder {
 		IssueBuilder issueBuilder = IssueBuilder.getInstance(wsClient);
 		List<Issue> issues = issueBuilder.initIssueDetailsByProjectKey(project.getKey(), typesOfIssue);
 		project.setIssues(issues);
-		LOGGER.info("Count of issues : " + String.valueOf(issues.size()));
 	}
 }

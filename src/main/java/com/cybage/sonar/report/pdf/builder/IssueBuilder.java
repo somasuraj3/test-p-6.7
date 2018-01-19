@@ -55,8 +55,12 @@ public class IssueBuilder {
 				for (int i = 0; i < searchWsRes.getIssuesCount(); i++) {
 					org.sonarqube.ws.Issues.Issue issue = searchWsRes.getIssues(i);
 					Optional<String> component = searchWsRes.getComponentsList().stream()
+							.filter(c -> c.getId() == issue.getComponentId()).map(c -> c.getName()).findFirst();
+					
+					Optional<String> componentPath = searchWsRes.getComponentsList().stream()
 							.filter(c -> c.getId() == issue.getComponentId()).map(c -> c.getLongName()).findFirst();
-					issues.add(new Issue(component.get(), issue.getSeverity().name(), issue.getLine(), issue.getStatus(),
+					
+					issues.add(new Issue(component.get(), componentPath.get(), issue.getSeverity().name(), issue.getLine(), issue.getStatus(),
 							issue.getMessage().replaceAll("\\\"", "\""), issue.getType().name(), issue.getEffort()));
 				}
 				if (searchWsRes.getTotal() > (pageNumber * pageSize)) {
