@@ -88,7 +88,7 @@ public class FileInfoBuilder {
 
 		int limit = 5;
 		ComponentTreeWsRequest compTreeWsReq = new ComponentTreeWsRequest();
-		compTreeWsReq.setBaseComponentKey(key);
+		compTreeWsReq.setComponent(key);
 		compTreeWsReq.setMetricKeys(Arrays.asList(MetricKeys.COMPLEXITY));
 		compTreeWsReq.setMetricSort(MetricKeys.COMPLEXITY);
 		compTreeWsReq.setSort(Arrays.asList("metric"));
@@ -133,7 +133,7 @@ public class FileInfoBuilder {
 
 		int limit = 5;
 		ComponentTreeWsRequest compTreeWsReq = new ComponentTreeWsRequest();
-		compTreeWsReq.setBaseComponentKey(key);
+		compTreeWsReq.setComponent(key);
 		compTreeWsReq.setMetricKeys(Arrays.asList(MetricKeys.DUPLICATED_LINES));
 		compTreeWsReq.setMetricSort(MetricKeys.DUPLICATED_LINES);
 		compTreeWsReq.setSort(Arrays.asList("metric"));

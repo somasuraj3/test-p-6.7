@@ -62,6 +62,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -697,7 +698,7 @@ public class ExecutivePDFReporter extends PDFReporter {
 			for (Condition condition : project.getProjectStatus().getConditions()) {
 				if (condition.getStatus().equals(ProjectStatusKeys.STATUS_ERROR)) {
 					CustomCellTitle metricName = new CustomCellTitle(new Phrase(
-							getTextProperty("metrics." + condition.getMetricKey()) + " (since "
+							StringUtils.capitalize(condition.getMetricKey().replace("_", " ")) + " (since "
 									+ mapStatusPeriod.get(condition.getPeriodIndex()).getMode().replace("_", " ") + ")",
 							Style.DASHBOARD_TITLE_FONT));
 					tableQualityGates.addCell(metricName);
@@ -1788,7 +1789,8 @@ public class ExecutivePDFReporter extends PDFReporter {
 
 					// Issue Line Number Value
 					CustomCellTitle issueLineValue = new CustomCellTitle(
-							new Phrase(issue.getLine().equals(0)? "NA" : issue.getLine().toString(), Style.DASHBOARD_DATA_FONT_2));
+							new Phrase(issue.getLine().equals(0) ? "NA" : issue.getLine().toString(),
+									Style.DASHBOARD_DATA_FONT_2));
 					tableIssueDetails.addCell(issueLineValue);
 
 					// Issue Line Number Header

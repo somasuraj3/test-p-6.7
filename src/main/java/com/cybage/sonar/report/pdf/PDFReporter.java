@@ -122,7 +122,7 @@ public abstract class PDFReporter {
 			ProjectBuilder projectBuilder = ProjectBuilder.getInstance(wsClient);
 			project = projectBuilder.initializeProject(getProjectKey(), getProjectVersion(), getSonarLanguage(),
 					getOtherMetrics(), getTypesOfIssue());
-			// LOGGER.info("Project Information : " + project.toString());
+			//LOGGER.info("Project Information : " + project.toString());
 		}
 		return project;
 	}

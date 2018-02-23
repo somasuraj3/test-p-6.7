@@ -11,7 +11,8 @@ import com.cybage.sonar.report.pdf.entity.QualityProfile;
 
 public class QualityProfileBuilder {
 
-	// private static final Logger LOGGER = LoggerFactory.getLogger(QualityProfileBuilder.class);
+	// private static final Logger LOGGER =
+	// LoggerFactory.getLogger(QualityProfileBuilder.class);
 
 	private static QualityProfileBuilder builder;
 
@@ -30,9 +31,6 @@ public class QualityProfileBuilder {
 	}
 
 	public List<QualityProfile> initProjectQualityProfilesByProjectKey(final String key) {
-
-		// LOGGER.info("Retrieving quality profile info for " + key);
-
 		SearchWsRequest searchWsReq = new SearchWsRequest();
 		searchWsReq.setProjectKey(key);
 		SearchWsResponse searchWsRes = wsClient.qualityProfiles().search(searchWsReq);

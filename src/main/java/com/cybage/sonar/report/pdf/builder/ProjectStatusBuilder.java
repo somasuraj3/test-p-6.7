@@ -46,7 +46,6 @@ public class ProjectStatusBuilder {
 					condition.getComparator().toString(), condition.getPeriodIndex(), condition.getErrorThreshold(),
 					condition.getActualValue(), condition.getWarningThreshold());
 			conditions.add(cond);
-
 		}
 
 		List<StatusPeriod> statusPeriods = new ArrayList<>();
@@ -63,7 +62,6 @@ public class ProjectStatusBuilder {
 			}
 			statusPeriods.add(statusPeriod);
 		}
-
 		return new ProjectStatus(projectStatusWsRes.getProjectStatus().getStatus().toString(), conditions,
 				statusPeriods);
 

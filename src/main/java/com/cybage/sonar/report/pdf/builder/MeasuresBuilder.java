@@ -22,6 +22,7 @@ import org.sonarqube.ws.client.measure.ComponentWsRequest;
 import com.cybage.sonar.report.pdf.entity.Measure;
 import com.cybage.sonar.report.pdf.entity.Measures;
 import com.cybage.sonar.report.pdf.entity.Period_;
+import com.cybage.sonar.report.pdf.entity.exception.ReportException;
 import com.cybage.sonar.report.pdf.util.MetricKeys;
 
 public class MeasuresBuilder {
@@ -49,7 +50,7 @@ public class MeasuresBuilder {
 	}
 
 	public Measures initMeasuresByProjectKey(final String projectKey, final Set<String> otherMetrics)
-			throws HttpException, IOException {
+			throws HttpException, IOException, ReportException {
 
 		Measures measures = new Measures();
 		if (measuresKeys == null) {
@@ -73,9 +74,10 @@ public class MeasuresBuilder {
 	/**
 	 * This method does the required requests to get all measures from Sonar,
 	 * but taking care to avoid too large requests (measures are taken by 20).
+	 * @throws ReportException 
 	 */
 	private void initMeasuresSplittingRequests(final Measures measures, final String projectKey)
-			throws HttpException, IOException {
+			throws HttpException, IOException, ReportException {
 		Iterator<String> it = measuresKeys.iterator();
 		// LOGGER.debug("Getting " + measuresKeys.size() + " metric measures from Sonar by splitting requests");
 		Set<String> twentyMeasures = new HashSet<String>(20);
@@ -98,19 +100,13 @@ public class MeasuresBuilder {
 
 	/**
 	 * Add measures to this.
+	 * @throws ReportException 
 	 */
 	private void addMeasures(final Measures measures, final Set<String> measuresAsString, final String projectKey)
-			throws HttpException, IOException {
+			throws HttpException, IOException, ReportException {
 
-		/*
-		 * String[] measuresAsArray = measuresAsString .toArray(new
-		 * String[measuresAsString.size()]); ResourceQuery query =
-		 * ResourceQuery.createForMetrics(projectKey, measuresAsArray);
-		 * query.setDepth(0); query.setIncludeTrends(true); Resource resource =
-		 * wsClient.find(query);
-		 */
 		ComponentWsRequest compWsReq = new ComponentWsRequest();
-		compWsReq.setComponentKey(projectKey);
+		compWsReq.setComponent(projectKey);
 		compWsReq.setAdditionalFields(Arrays.asList("metrics", "periods"));
 		compWsReq.setMetricKeys(new ArrayList<String>(measuresAsString));
 
@@ -123,10 +119,14 @@ public class MeasuresBuilder {
 		}
 	}
 
-	private void addAllMeasuresFromDocument(final Measures measures, final ComponentWsResponse compWsRes) {
+	private void addAllMeasuresFromDocument(final Measures measures, final ComponentWsResponse compWsRes) throws ReportException {
 		List<org.sonarqube.ws.WsMeasures.Measure> allNodes = compWsRes.getComponent().getMeasuresList();
 		Metrics metrics = compWsRes.getMetrics();
 		List<org.sonarqube.ws.WsMeasures.Period> periods = compWsRes.getPeriods().getPeriodsList();
+		
+		if(periods.size() == 0){
+			throw new ReportException("Invalid leak period. Please set appropriate leak period.");
+		}
 		measures.setPeriods(
 				periods.stream().map(p -> new Period_(p.getIndex(), p.getMode(), p.getDate(), p.getParameter()))
 						.collect(Collectors.toList()));
@@ -138,7 +138,7 @@ public class MeasuresBuilder {
 
 	private void addMeasureFromNode(final Measures measures, final org.sonarqube.ws.WsMeasures.Measure measureNode,
 			Optional<Metric> metric) {
-		Measure measure = MeasureBuilder.initFromNode(measureNode, metric);
+		Measure measure = MeasureBuilder.initFromNode(measureNode, measures.getPeriods(), metric);
 		measures.addMeasure(measure.getMetric(), measure);
 	}
 }

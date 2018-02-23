@@ -108,7 +108,7 @@ public class PDFGenerator {
 			LOGGER.error("Problem in generating PDF file.");
 			e.printStackTrace();
 		} catch (ReportException e) {
-			LOGGER.error("Internal error: " + e.getMessage());
+			LOGGER.error(e.getMessage());
 			e.printStackTrace();
 		}
 	}

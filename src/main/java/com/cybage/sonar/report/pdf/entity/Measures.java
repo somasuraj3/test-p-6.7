@@ -48,6 +48,10 @@ public class Measures {
 	public void setPeriods(List<Period_> periods) {
 		this.periods = periods;
 	}
+	
+	public List<Period_> getPeriods() {
+		return this.periods;
+	}
 
 	@Override
 	public String toString() {

@@ -10,7 +10,7 @@ import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.postjob.PostJob;
 import org.sonar.api.batch.postjob.PostJobContext;
 import org.sonar.api.batch.postjob.PostJobDescriptor;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 
 import com.cybage.sonar.report.pdf.util.LeakPeriods;
 
@@ -21,9 +21,11 @@ public class PDFPostJob implements PostJob {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFPostJob.class);
 
 	private final FileSystem fs;
+	private Configuration configuration;
 
-	public PDFPostJob(Settings settings, FileSystem fs) {
+	public PDFPostJob(Configuration configuration, FileSystem fs) {
 		this.fs = fs;
+		this.configuration = configuration;
 	}
 
 	public static final String SKIP_PDF_KEY = "sonar.pdf.skip";
@@ -32,10 +34,10 @@ public class PDFPostJob implements PostJob {
 	public static final String REPORT_TYPE = "report.type";
 	public static final String REPORT_TYPE_DEFAULT_VALUE = "pdf";
 
-	public static final String USERNAME = "sonar.pdf.username";
+	public static final String USERNAME = "sonar.login";
 	public static final String USERNAME_DEFAULT_VALUE = "";
 
-	public static final String PASSWORD = "sonar.pdf.password";
+	public static final String PASSWORD = "sonar.password";
 	public static final String PASSWORD_DEFAULT_VALUE = "";
 
 	public static final String SONAR_HOST_URL = "sonar.host.url";
@@ -50,7 +52,7 @@ public class PDFPostJob implements PostJob {
 
 	public static final String TYPES_OF_ISSUE = "sonar.pdf.issueDetails";
 
-	public static final String LEAK_PERIOD = "sonar.pdf.leakPeriod";
+	public static final String LEAK_PERIOD = "sonar.leak.period";
 	public static final String LEAK_PERIOD_DEFAULT_VALUE = LeakPeriods.PREVIOUS_VERSION;
 
 	@Override
@@ -60,8 +62,8 @@ public class PDFPostJob implements PostJob {
 
 	@Override
 	public void execute(PostJobContext postJobContext) {
-		if (postJobContext.settings().hasKey(SKIP_PDF_KEY)
-				&& postJobContext.settings().getBoolean(SKIP_PDF_KEY) == true) {
+		if (postJobContext.config().hasKey(SKIP_PDF_KEY)
+				&& postJobContext.config().getBoolean(SKIP_PDF_KEY).get() == true) {
 			LOGGER.info("Skipping generation of PDF Report..");
 		} else {
 
@@ -70,33 +72,28 @@ public class PDFPostJob implements PostJob {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			String projectKey = postJobContext.settings().getString("sonar.projectKey");
+			String projectKey = postJobContext.config().get("sonar.projectKey").get();
 
 			LOGGER.info("Executing decorator: PDF Report");
-			String sonarHostUrl = postJobContext.settings().hasKey(SONAR_HOST_URL)
-					? postJobContext.settings().getString(SONAR_HOST_URL) : SONAR_HOST_URL_DEFAULT_VALUE;
-			String username = postJobContext.settings().hasKey(USERNAME) ? postJobContext.settings().getString(USERNAME)
+			String sonarHostUrl = postJobContext.config().hasKey(SONAR_HOST_URL)
+					? postJobContext.config().get(SONAR_HOST_URL).get() : SONAR_HOST_URL_DEFAULT_VALUE;
+			String username = postJobContext.config().hasKey(USERNAME) ? postJobContext.config().get(USERNAME).get()
 					: USERNAME_DEFAULT_VALUE;
-			String password = postJobContext.settings().hasKey(PASSWORD) ? postJobContext.settings().getString(PASSWORD)
+			String password = postJobContext.config().hasKey(PASSWORD) ? postJobContext.config().get(PASSWORD).get()
 					: PASSWORD_DEFAULT_VALUE;
-			String reportType = postJobContext.settings().hasKey(REPORT_TYPE)
-					? postJobContext.settings().getString(REPORT_TYPE) : REPORT_TYPE_DEFAULT_VALUE;
-			String projectVersion = postJobContext.settings().hasKey(SONAR_PROJECT_VERSION)
-					? postJobContext.settings().getString(SONAR_PROJECT_VERSION) : SONAR_PROJECT_VERSION_DEFAULT_VALUE;
-			List<String> sonarLanguage = postJobContext.settings().hasKey(SONAR_LANGUAGE)
-					? Arrays.asList(postJobContext.settings().getStringArray(SONAR_LANGUAGE)) : null;
-			Set<String> otherMetrics = postJobContext.settings().hasKey(OTHER_METRICS)
-					? new HashSet<String>(Arrays.asList(postJobContext.settings().getStringArray(OTHER_METRICS)))
-					: null;
-			Set<String> typesOfIssue = postJobContext.settings().hasKey(TYPES_OF_ISSUE)
-					? new HashSet<String>(Arrays.asList(postJobContext.settings().getStringArray(TYPES_OF_ISSUE)))
+			String reportType = postJobContext.config().hasKey(REPORT_TYPE)
+					? postJobContext.config().get(REPORT_TYPE).get() : REPORT_TYPE_DEFAULT_VALUE;
+			String projectVersion = postJobContext.config().hasKey(SONAR_PROJECT_VERSION)
+					? postJobContext.config().get(SONAR_PROJECT_VERSION).get() : SONAR_PROJECT_VERSION_DEFAULT_VALUE;
+			List<String> sonarLanguage = postJobContext.config().hasKey(SONAR_LANGUAGE)
+					? Arrays.asList(postJobContext.config().getStringArray(SONAR_LANGUAGE)) : null;
+			Set<String> otherMetrics = postJobContext.config().hasKey(OTHER_METRICS)
+					? new HashSet<String>(Arrays.asList(postJobContext.config().getStringArray(OTHER_METRICS))) : null;
+			Set<String> typesOfIssue = postJobContext.config().hasKey(TYPES_OF_ISSUE)
+					? new HashSet<String>(Arrays.asList(postJobContext.config().getStringArray(TYPES_OF_ISSUE)))
 					: new HashSet<>();
-
-			// LOGGER.info("leak period in properties file : " +
-			// postJobContext.settings().getString(LEAK_PERIOD));
-			String leakPeriod = postJobContext.settings().hasKey(LEAK_PERIOD) && LeakPeriods.getAllLeakPeriods()
-					.stream().filter(lp -> lp.equals(postJobContext.settings().getString(LEAK_PERIOD))).count() > 0
-							? postJobContext.settings().getString(LEAK_PERIOD) : LEAK_PERIOD_DEFAULT_VALUE;
+			String leakPeriod = postJobContext.config().hasKey(LEAK_PERIOD)
+					? postJobContext.config().get(LEAK_PERIOD).get() : LEAK_PERIOD_DEFAULT_VALUE;
 
 			LOGGER.info("Leak Period : " + leakPeriod);
 
@@ -106,7 +103,7 @@ public class PDFPostJob implements PostJob {
 			try {
 				generator.execute();
 			} catch (Exception ex) {
-				LOGGER.error("Error generating PDF report..");
+				LOGGER.error("Error in generating PDF report.");
 			}
 
 		}

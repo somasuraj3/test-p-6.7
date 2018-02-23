@@ -4,7 +4,7 @@
 
 	<groupId>com.cybage.sonar.report</groupId>
 	<artifactId>sonar-analysis-pdf-report-plugin</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.1</version>
 	<packaging>sonar-plugin</packaging>
 
 	<!-- <url>https://github.com/SonarCommunity/sonar-pdf-report</url> -->
@@ -41,7 +41,7 @@
 	<properties>
 		<sonar.pluginName>PDF Report</sonar.pluginName>
 		<sonar.pluginClass>com.cybage.sonar.report.pdf.plugin.PDFReportPlugin</sonar.pluginClass>
-		<sonar.version>5.6</sonar.version>
+		<sonar.version>6.7</sonar.version>
 	</properties>
 
 	<dependencies>

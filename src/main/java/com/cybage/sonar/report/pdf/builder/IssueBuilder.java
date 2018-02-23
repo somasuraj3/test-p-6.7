@@ -41,7 +41,7 @@ public class IssueBuilder {
 		List<Issue> issues = new ArrayList<>();
 		Integer pageNumber = 1;
 		Integer pageSize = 500;
-		
+
 		while (true) {
 			SearchWsRequest searchWsReq = new SearchWsRequest();
 			searchWsReq.setComponentKeys(Arrays.asList(key));
@@ -54,14 +54,16 @@ public class IssueBuilder {
 			if (searchWsRes.getTotal() > 0) {
 				for (int i = 0; i < searchWsRes.getIssuesCount(); i++) {
 					org.sonarqube.ws.Issues.Issue issue = searchWsRes.getIssues(i);
+
 					Optional<String> component = searchWsRes.getComponentsList().stream()
-							.filter(c -> c.getId() == issue.getComponentId()).map(c -> c.getName()).findFirst();
-					
+							.filter(c -> c.getKey().equals(issue.getComponent())).map(c -> c.getName()).findFirst();
+
 					Optional<String> componentPath = searchWsRes.getComponentsList().stream()
-							.filter(c -> c.getId() == issue.getComponentId()).map(c -> c.getLongName()).findFirst();
-					
-					issues.add(new Issue(component.get(), componentPath.get(), issue.getSeverity().name(), issue.getLine(), issue.getStatus(),
-							issue.getMessage().replaceAll("\\\"", "\""), issue.getType().name(), issue.getEffort()));
+							.filter(c -> c.getKey().equals(issue.getComponent())).map(c -> c.getLongName()).findFirst();
+
+					issues.add(new Issue(component.get(), componentPath.get(), issue.getSeverity().name(),
+							issue.getLine(), issue.getStatus(), issue.getMessage().replaceAll("\\\"", "\""),
+							issue.getType().name(), issue.getEffort()));
 				}
 				if (searchWsRes.getTotal() > (pageNumber * pageSize)) {
 					pageNumber++;
@@ -70,6 +72,7 @@ public class IssueBuilder {
 				}
 			} else {
 				LOGGER.debug("There are no issues in project : " + key);
+				break;
 			}
 		}
 		return issues;

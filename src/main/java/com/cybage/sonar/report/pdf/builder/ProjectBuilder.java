@@ -59,51 +59,36 @@ public class ProjectBuilder {
 			final Set<String> otherMetrics, final Set<String> typesOfIssue) throws IOException, ReportException {
 		Project project = new Project(key, version, sonarLanguage);
 
-		LOGGER.info("Retrieving project info for " + project.getKey());
+		try {
 
-		ShowWsRequest showWsReq = new ShowWsRequest();
-		showWsReq.setKey(project.getKey());
-		ShowWsResponse showWsRes = wsClient.components().show(showWsReq);
+			LOGGER.info("Retrieving project info for " + project.getKey());
 
-		ProjectStatusWsRequest projectStatusWsReq = new ProjectStatusWsRequest();
-		projectStatusWsReq.setProjectKey(key);
-		ProjectStatusWsResponse projectStatusWsRes = wsClient.qualityGates().projectStatus(projectStatusWsReq);
+			ShowWsRequest showWsReq = new ShowWsRequest();
+			showWsReq.setKey(project.getKey());
+			ShowWsResponse showWsRes = wsClient.components().show(showWsReq);
 
-		if (showWsRes != null) {
-			initFromNode(project, showWsRes, projectStatusWsRes);
-			initMeasures(project, otherMetrics);
-			initMostViolatedRules(project);
-			initMostViolatedFiles(project);
-			initMostComplexFiles(project);
-			initMostDuplicatedFiles(project);
-			if (typesOfIssue.size() > 0) {
-				initIssueDetails(project, typesOfIssue);
+			ProjectStatusWsRequest projectStatusWsReq = new ProjectStatusWsRequest();
+			projectStatusWsReq.setProjectKey(key);
+			ProjectStatusWsResponse projectStatusWsRes = wsClient.qualityGates().projectStatus(projectStatusWsReq);
+
+			if (showWsRes != null) {
+				initFromNode(project, showWsRes, projectStatusWsRes);
+				initMeasures(project, otherMetrics);
+				initMostViolatedRules(project);
+				initMostViolatedFiles(project);
+				initMostComplexFiles(project);
+				initMostDuplicatedFiles(project);
+				if (typesOfIssue.size() > 0) {
+					initIssueDetails(project, typesOfIssue);
+				}
+			} else {
+				LOGGER.info("Can't retrieve project info. Have you set username/password in Sonar settings?");
+				throw new ReportException("Can't retrieve project info. Parent project node is empty. Authentication?");
 			}
-			/*
-			 * LOGGER.debug("Accessing Sonar: getting child projects");
-			 * 
-			 * TreeWsRequest treeWsReq = new TreeWsRequest();
-			 * treeWsReq.setBaseComponentKey(project.getKey());
-			 * treeWsReq.setQualifiers(Arrays.asList("BRC"));
-			 * //resourceQueryChild.setDepth(1); //List<InputComponent>
-			 * childNodes = wsClient.findAll(treeWsReq); TreeWsResponse
-			 * treeWsRes = wsClient.components().tree(treeWsReq);
-			 * 
-			 * Iterator<Component> it =
-			 * treeWsRes.getComponentsList().iterator();
-			 * project.setSubprojects(new ArrayList<Project>(0)); if
-			 * (!it.hasNext()) { LOGGER.debug(project.getKey() +
-			 * " project has no childs"); } while (it.hasNext()) { Component
-			 * childNode = it.next(); Project childProject =
-			 * initializeProject(childNode.getKey());
-			 * project.getSubprojects().add(childProject); }
-			 */
-
-		} else {
-			LOGGER.info("Can't retrieve project info. Have you set username/password in Sonar settings?");
-			throw new ReportException("Can't retrieve project info. Parent project node is empty. Authentication?");
+		} catch (Exception ex) {
+			LOGGER.error("Exception in initializeProject()");
+			ex.printStackTrace();
 		}
-
 		return project;
 	}
 
@@ -133,7 +118,8 @@ public class ProjectBuilder {
 		project.setMostViolatedFiles(new LinkedList<FileInfo>());
 	}
 
-	private void initMeasures(final Project project, final Set<String> otherMetrics) throws IOException {
+	private void initMeasures(final Project project, final Set<String> otherMetrics)
+			throws IOException, HttpException, ReportException {
 		LOGGER.info("Retrieving measures");
 		MeasuresBuilder measuresBuilder = MeasuresBuilder.getInstance(wsClient);
 		Measures measures = measuresBuilder.initMeasuresByProjectKey(project.getKey(), otherMetrics);

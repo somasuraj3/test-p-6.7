@@ -5,5 +5,4 @@
 dependency-reduced-pom.xml
 .sonar/
 README.md
-SonarPDFPlugin.docx
-SonarPDFPlugin.pdf
+documentation/
