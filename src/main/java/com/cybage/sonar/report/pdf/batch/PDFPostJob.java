@@ -48,9 +48,9 @@ public class PDFPostJob implements PostJob {
 
 	public static final String SONAR_LANGUAGE = "sonar.language";
 
-	public static final String OTHER_METRICS = "sonar.pdf.otherMetrics";
+	public static final String OTHER_METRICS = "sonar.pdf.other.metrics";
 
-	public static final String TYPES_OF_ISSUE = "sonar.pdf.issueDetails";
+	public static final String TYPES_OF_ISSUE = "sonar.pdf.issue.details";
 
 	public static final String LEAK_PERIOD = "sonar.leak.period";
 	public static final String LEAK_PERIOD_DEFAULT_VALUE = LeakPeriods.PREVIOUS_VERSION;
